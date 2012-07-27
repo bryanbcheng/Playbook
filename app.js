@@ -69,22 +69,32 @@ $(function(){
 		}
 	});
 	
-	var Set = Backbone.Collection.extend({
+	var Set = Backbone.Model.extend({
+		
 		defaults: function() {
 			return {
 				name: "set_",
-				description: "no description"
+				description: "no description",
+				collection: []
 			};
 		},
 		
+		localStorage: new Store("test123"),
+		
+		
+	});
+	
+	/*
+	var ArticleCollection = Backbone.Collection.extend({
 		model: Article,
 		
 		localStorage: new Store("sets-backbone"),
 		
 		
 	});
-
-	var set = new Set;
+	*/
+	
+	var set = new Set({ id: 0 });
 	
 	var ArticleView = Backbone.View.extend({
 		li: "div",
@@ -92,7 +102,7 @@ $(function(){
 		template: $("#article-template").html(),
 		
 		events: {
-			"keypress .label" : "updateLabel",
+			"keypress .label" : "test",
 			"change select"   : "changeType",
 			"click .delete"   : "destroy"
 		},
@@ -116,6 +126,7 @@ $(function(){
 		},
 		
 		test: function() {
+			console.log(this.model);
 			console.log(this);
 		},
 		
@@ -180,20 +191,27 @@ $(function(){
 			});
 			stage.add(this.layer);
 			
-			this.collection.on('change', this.render, this);
-			this.collection.on('add', this.add, this);
-			this.collection.on('reset', this.addAll, this);
+			this.model.fetch();
+			//this.collection = this.model.collection;
 			
-			this.collection.fetch();
-			this.$el.html(Mustache.render(this.template, this.collection.toJSON()));
+			this.model.on('init', this.addAll, this);
+			this.model.on('change', this.render, this);
+			this.model.on('add', this.add, this);
+			//this.model.on('reset', this.addAll, this);
+			
+			//this.model.fetch();
+			//this.collection.fetch();
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			this.model.trigger('init', this);
 		},
 		
 		render: function() {
-			this.$el.html(Mustache.render(this.template, this.collection.toJSON()));
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			return this;
 		},
 		
 		add: function(item) {
+			console.log(item);
 			var article = createArticle(item);
 			
 			var view = new ArticleView({model: item});
@@ -219,7 +237,7 @@ $(function(){
 		
 		addAll: function(a) {
 			var tempLayer = this.layer;
-			this.collection.each(function(item) {	
+			$.each(this.model.get("collection"), function(index, item) {
 				var article = createArticle(item);
 				
 				var view = new ArticleView({model: item});
@@ -252,7 +270,7 @@ $(function(){
 		
 		updateName: function(e) {
 			$(e.currentTarget).parent().removeClass("edit");
-			this.collection.save({name: e.currentTarget.value});
+			this.model.save({name: e.currentTarget.value});
 		},
 		
 		editDescription: function(e) {
@@ -262,19 +280,26 @@ $(function(){
 		
 		updateDescription: function(e) {
 			$(e.currentTarget).parent().removeClass("edit");
-			this.collection.save({description: e.currentTarget.value});
+			this.model.save({description: e.currentTarget.value});
 		},
 		
 		addPlayer: function(e) {
-			this.collection.create({type: "player"});
+			var player = new Article({type: "player"});
+			this.model.get("collection").push(player);
+			this.model.trigger('add', player);
+			//this.collection.create({type: "player"});
 		},
 		
 		addBall: function(e) {
 			this.collection.create({type: "ball", color: "white"});
+		},
+		
+		addCone: function(e) {
+		
 		}
 	});
 
-	var setView = new SetView({collection: set});
+	var setView = new SetView({model: set});
 });
 
 function createArticle(item) {
