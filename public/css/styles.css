@@ -1,0 +1,43 @@
+
+
+
+
+
+#canvas {
+	width: 1000px;
+	float: left;
+}
+
+#set {
+	width: 200px;
+	float: left;
+}
+
+#set .name h2, #set .desc p {
+	display: block;
+}
+
+#set .name input, #set .desc textarea {
+	display: none;
+}
+
+#set .edit h2, #set .edit p {
+	display: none;
+}
+
+#set .edit input, #set .edit textarea {
+	display: block;
+} 
+
+#article {
+	width: 200px;
+	float: left;
+}
+
+#article div {
+	display: none;
+}
+
+#article div.selected {
+	display: block;
+}
