@@ -38,7 +38,7 @@
 			</div>
 			<div class="desc">
 				<p>
-					Description:{{description}}
+					Description: {{description}}
 				</p>
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
@@ -49,7 +49,7 @@
 	
 	<script type="text/template" id="article-template">
 		<div>
-			<span>Label: </span><input class="label">{{label}}</input>
+			<span>Label: </span><input class="label" value="{{label}}" maxlength=2></input>
 			<select>
 				<option value="player">Player</option>
 				<option value="ball">Ball</option>

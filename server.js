@@ -1,7 +1,8 @@
 /* Imports */
 var express = require('express'),
 	$ = require('jquery'),
-	_ = require('underscore');
+	_ = require('underscore'),
+	util = require('util');
 
 var app = express.createServer();
 
@@ -48,6 +49,30 @@ function post_set(req, res, next) {
     res.send(new_set);
 }
 
+// Update name/description of set
+function put_set(req, res, next) {
+	Set.findOne({'_id' :req.params._id}, function(err, set) {
+		if (err)
+			return next(err);
+		else if (!set) {
+			return next(new Error("Could not find set with _id=" + req.params._id));
+		}
+		
+		set.name = req.body.name;
+		set.description = req.body.description;
+		
+		set.save();
+		
+		// propagate up
+		
+		res.send(set);
+	});
+}
+
+function delete_set(req, res, next) {
+	// no implemented yet
+}
+
 function post_article(req, res, next) {
     Set.findOne({_id: req.body.set}, function(err, set) {
         if (err) {
@@ -59,7 +84,8 @@ function post_article(req, res, next) {
         new_article = new Article({x: req.body.x,
                                    y: req.body.y,
                                    type: req.body.type,
-                                   color: req.body.color});
+                                   color: req.body.color,
+                                   setId: req.body.set});
         new_article.save();
         set.articles.push(new_article);
         set.save();
@@ -77,25 +103,45 @@ function put_article(req, res, next) {
 		}
 		
 		for (var attr in req.body) {
-			article[attr] = req.body[attr];
+			if (attr !== 'set' && attr !== '_id')
+				article[attr] = req.body[attr];
 		}
 		
 		article.save();
 		
-		Set.findOne({'_id' : article.set}, function(err, set) {
-			$.each(set.articles, function (index, value) {
-				if (_.isEqual(article._id, value._id)) {
-					set.articles[index] = article;
-					return false;
-				}
-			});
-			console.log('aaa' + set);
-			set.save(function(err) {
-				console.log('hwhuwhwuwh');
-				if (err) console.log("123456" + err);
-			});
-			console.log('bbb' + set);
+		// propagate up
+		Set.findOne({'_id' : article.setId}, function(err, set) {
+			var updateArticle = set.articles.id(article._id);
+			for (var attr in req.body) {
+				if (attr !== 'set' && attr !== '_id')
+					updateArticle[attr] = req.body[attr];
+			}
+
+			set.save();
 		});
+		
+		res.send(article);
+	});
+}
+
+function delete_article(req, res, next) {
+	Article.findOne({'_id' :req.params._id}, function(err, article) {
+		if (err)
+			return next(err);
+		else if (!article) {
+			return next(new Error("Could not find article with _id=" + req.params._id));
+		}
+		
+		// propagate up
+		Set.findOne({'_id' : article.setId}, function(err, set) {
+			for (var attr in set.articles)
+				console.log(attr);
+			set.articles.id(article._id).remove();
+
+			set.save();
+		});
+		
+		article.remove();
 		
 		res.send(article);
 	});
@@ -107,11 +153,17 @@ app.get('/', function(req, res) {
 	res.sendfile('public/index.html');
 });
 
+// Set routes
 app.get('/set/:_id', get_set);
 app.post('/set', post_set);
+app.put('/set/:_id', put_set);
+app.delete('/set/:_id', delete_set);
+
+// Article routes
 //app.get('/article/:id', get_article);
 app.post('/article', post_article);
 app.put('/article/:_id', put_article);
+app.delete('/article/:_id', delete_article);
 
 app.listen(3000);
 

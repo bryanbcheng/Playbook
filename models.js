@@ -10,17 +10,23 @@ var mongoose = require('mongoose')
  * Schema definition
  */
 
+var Article = new Schema({
+    x			: Number
+  , y			: Number 
+  , type		: { type: String, enum: ['player', 'ball', 'cone'] }
+  , color		: String
+  , label		: { type: String, uppercase: true }
+  , setId		: Schema.ObjectId
+});
+
+Article.path('label').validate(function (v) {
+  return v.length <= 2;
+}, 'Label too long'); 
+
 var Set = new Schema({
     name		: String
   ,	description	: String
   , articles	: [Article]
-});
-
-var Article = new Schema({
-    x			: Number
-  , y			: Number 
-  , type		: String
-  , color		: String
 });
 
 /**

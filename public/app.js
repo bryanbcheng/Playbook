@@ -69,7 +69,8 @@ $(function() {
 				x: 0,
 				y: 0,
 				type: "player",
-				color: "blue"
+				color: "blue",
+				label: ""
 			};
 		},
 		
@@ -116,7 +117,7 @@ $(function() {
 		template: $("#article-template").html(),
 		
 		events: {
-			"keypress .label" : "test",
+			"keyup .label"    : "updateLabel",
 			"change select"   : "changeType",
 			"click .delete"   : "destroy"
 		},
@@ -143,17 +144,29 @@ $(function() {
 			console.log(this.model);
 			console.log(this);
 		},
-		
+
 		updateLabel: function(e) {
-			console.log("Not yet implemented.");
+			console.log(e);
+			var pos = getCaretPosition(this.$el.find(".label")[0]);
+			this.model.save({label: e.target.value.toUpperCase()});
+			this.$el.find(".label").focus();
+			setCaretPosition(this.$el.find(".label")[0], pos);
+			
+			this.replaceShape(this);
 		},
 		
 		changeType: function(e) {
-			this.model.save({type: e.currentTarget.value});
+			var articleColor = "blue";
+			if (e.currentTarget.value === "ball") articleColor = "white";
+			else if (e.currentTarget.value === "cone") articleColor = "orange";
+			this.model.save({type: e.currentTarget.value, color: articleColor});
 			
-			var article = createArticle(this.model);
+			this.replaceShape(this);
+		},
+		
+		replaceShape: function(view) {
+			var article = createArticle(view.model);
 			
-			var view = this;
 			article.on('click', function(e) {
 				view.show();
 			});		
@@ -163,14 +176,15 @@ $(function() {
 			});
 		
 			article.on('dragend', function(e) {
+				console.log(this);
 				view.model.save({x : this.getX(), y : this.getY()});
 			});
 			
-			this.shape.parent.add(article);
-			this.shape.parent.remove(this.shape);
-			this.shape.parent.draw();
+			view.shape.parent.add(article);
+			view.shape.parent.remove(view.shape);
+			view.shape.parent.draw();
 			
-			this.shape = article;
+			view.shape = article;
 		},
 		
 		destroy: function() {
@@ -246,9 +260,7 @@ $(function() {
 		
 		addAll: function() {
 			var tempModel = this.model;
-			console.log(this.model.get("articles"));
 			this.model.get("articles").each(function(item) {
-				console.log(this);
 				tempModel.trigger('add', item);
 			});
 		},
@@ -280,16 +292,18 @@ $(function() {
 		},
 		
 		addBall: function(e) {
-			this.collection.create({type: "ball", color: "white"});
+			var ball = new $.playbook.Article({type: "ball", color: "white", set: this.model.get("_id")});
+			ball.save();
+			this.model.trigger('add', ball);
 		},
 		
 		addCone: function(e) {
-			this;
+			var cone = new $.playbook.Article({type: "cone", color: "orange", set: this.model.get("_id")});
+			cone.save();
+			this.model.trigger('add', cone);
 		}
 		
 	});
-	
-	//var setView = new $.playbook.SetView({model: set});
 	
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
@@ -311,18 +325,31 @@ $(function() {
 	
 	$.playbook.bootstrap();
 	$("#start-button").on("click", function(event) {
-		$.playbook.app.navigate('set/501611993b45987f33000001', {trigger: true});
+		//var a = new $.playbook.Set();
+		//a.save();
+		$.playbook.app.navigate('set/50173e7897899a2062000002', {trigger: true});
 	});
 });
 
 function createArticle(item) {
+	var group = new Kinetic.Group({
+		x: item.get("x"),
+		y: item.get("y"),
+		draggable: true
+	});
+	
 	if (item.get("type") === "player") {
-		return createPlayer(item);
+		group.add(createPlayer(item));
 	} else if (item.get("type") === "ball") {
-		return createBall(item);
+		group.add(createBall(item));
 	} else if (item.get("type") === "cone") {
-		return createCone(item);
+		group.add(createCone(item));
 	}
+	
+	if (item.get("label"))
+		group.add(createLabel(item));
+		
+	return group;
 }
 
 function createPlayer(player) {
@@ -331,8 +358,8 @@ function createPlayer(player) {
 		fill: player.get("color"),
 		stroke: "black",
 		strokeWidth: 1,
-		x: player.get("x"),
-		y: player.get("y"),
+		//x: player.get("x"),
+		//y: player.get("y"),
 		draggable: true
 	});
 }
@@ -340,11 +367,11 @@ function createPlayer(player) {
 function createBall(ball) {
 	return new Kinetic.Circle({
 		radius: 1.5 * SCALE,
-		fill: "white",
+		fill: ball.get("color"),
 		stroke: "black",
 		strokeWidth: 1,
-		x: ball.get("x"),
-		y: ball.get("y"),
+		//x: ball.get("x"),
+		//y: ball.get("y"),
 		draggable: true
 	});
 }
@@ -353,11 +380,58 @@ function createCone(cone) {
 	return new Kinetic.RegularPolygon({
 		sides: 3,
 		radius: 1.5 * SCALE,
-		fill: "orange",
+		fill: cone.get("color"),
 		stroke: "black",
 		strokeWidth: 1,
-		x: cone.get("x"),
-		y: cone.get("y"),
+		//x: cone.get("x"),
+		//y: cone.get("y"),
 		draggable: true
 	});
+}
+
+function createLabel(label) {
+	// Use custom shape to draw text, Kinetic.Text too limited options
+	return new Kinetic.Shape({
+		drawFunc: function(context) {
+			context.beginPath();
+			context.closePath(); 			
+ 			context.fillStyle = "black";
+ 			context.font = "15px Arial";
+ 			context.textAlign = "center";
+ 			context.textBaseline = "middle";
+ 			context.fillText(label.get("label"), 0, 0);
+		},
+		//x: label.get("x"),
+		//y: label.get("y"),
+		draggable: true
+	});
+}
+
+function getCaretPosition (ctrl) {
+	var CaretPos = 0;	// IE Support
+	if (document.selection) {
+	ctrl.focus ();
+		var Sel = document.selection.createRange ();
+		Sel.moveStart ('character', -ctrl.value.length);
+		CaretPos = Sel.text.length;
+	}
+	// Firefox support
+	else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+		CaretPos = ctrl.selectionStart;
+	return (CaretPos);
+}
+
+function setCaretPosition(ctrl, pos){
+	if(ctrl.setSelectionRange)
+	{
+		ctrl.focus();
+		ctrl.setSelectionRange(pos,pos);
+	}
+	else if (ctrl.createTextRange) {
+		var range = ctrl.createTextRange();
+		range.collapse(true);
+		range.moveEnd('character', pos);
+		range.moveStart('character', pos);
+		range.select();
+	}
 }
