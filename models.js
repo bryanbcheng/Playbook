@@ -32,7 +32,7 @@ var Path = new Schema({
 
 var Set = new Schema({
     name		: String
-  ,	number		: Number
+  ,	number		: { type: Number, required: true }
   , comments	: String
   , paths		: [Path]
   , playId		: { type: Schema.ObjectId, required: true }
@@ -43,6 +43,8 @@ var Set = new Schema({
 var Play = new Schema({
 	name		: String
   , descripion	: String
+  , sport		: { type : String, enum: ['ultimate'] }
+  , size		: { type : String, enum: ['full', 'half'] }
   , articles	: [Article]
   , sets		: [Set]
 });

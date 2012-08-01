@@ -8,9 +8,22 @@
 	float: left;
 }
 
+#play {
+	width: 200px;
+	float: left;
+}
+
 #set {
 	width: 200px;
 	float: left;
+}
+
+#set div {
+	display: none;
+}
+
+#set div.selected {
+	display: block;
 }
 
 #set .name h2, #set .desc p {
@@ -34,7 +47,7 @@
 	float: left;
 }
 
-#article div {
+#article div.article-view {
 	display: none;
 }
 

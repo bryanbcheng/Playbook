@@ -74,6 +74,7 @@ function delete_play(req, res, next) {
 	// no implemented yet
 }
 
+/*
 function get_set(req, res, next) {
     var send_result = function(err, set) {
         if (err) {
@@ -93,19 +94,23 @@ function get_set(req, res, next) {
         Set.find({}, send_result);        
     }
 }
+*/
 
 function post_set(req, res, next) {
-	Play.findOne({_id: req.body.playId}, function(err, play) {
+	Play.findOne({_id: req.body.play}, function(err, play) {
         if (err) {
             return next(err);
         } else if(!play) {
-            return next(new Error("Could not find play with _id=" + req.body.playId));
+            return next(new Error("Could not find play with _id=" + req.body.play));
         }
         
         new_set = new Set({
 			name : req.body.name,
+			number : req.body.number,
 			comments : req.body.comments,
-			playId : req.body.playId
+			playId : req.body.play,
+			prevSetId : req.body.prevSetId,
+			nextSetId : req.body.nextSetId
 		});
         
         new_set.save();
@@ -125,37 +130,63 @@ function put_set(req, res, next) {
 			return next(new Error("Could not find set with _id=" + req.params._id));
 		}
 		
-		set.name = req.body.name;
-		set.comments = req.body.comments;
+		for (var attr in req.body) {
+			if (attr !== 'play' && attr !== '_id')
+				set[attr] = req.body[attr];
+		}
 		
 		set.save();
 		
 		// propagate up
+		Play.findOne({'_id' : set.playId}, function(err, play) {
+			var updateSet = play.sets.id(article._id);
+			for (var attr in req.body) {
+				if (attr !== 'set' && attr !== '_id')
+					updateSet[attr] = req.body[attr];
+			}
+
+			play.save();
+		});
 		
 		res.send(set);
 	});
 }
 
 function delete_set(req, res, next) {
-	// no implemented yet
+	Set.findOne({'_id' :req.params._id}, function(err, set) {
+		if (err)
+			return next(err);
+		else if (!set) {
+			return next(new Error("Could not find set with _id=" + req.params._id));
+		}
+		
+		// propagate up
+		Play.findOne({'_id' : set.playId}, function(err, play) {
+			play.sets.id(set._id).remove();
+
+			play.save();
+		});
+		
+		set.remove();
+		
+		res.send(set);
+	});
 }
 
 function post_article(req, res, next) {
-    Set.findOne({_id: req.body.set}, function(err, set) {
+	Play.findOne({_id: req.body.play}, function(err, play) {
         if (err) {
             return next(err);
-        } else if(!set) {
-            return next(new Error("Could not find set with _id=" + req.body.set));
+        } else if(!play) {
+            return next(new Error("Could not find play with _id=" + req.body.play));
         }
         
-        new_article = new Article({x: req.body.x,
-                                   y: req.body.y,
-                                   type: req.body.type,
+        new_article = new Article({type: req.body.type,
                                    color: req.body.color,
-                                   setId: req.body.set});
+                                   playId: req.body.play});
         new_article.save();
-        set.articles.push(new_article);
-        set.save();
+        play.articles.push(new_article);
+        play.save();
         
         res.send(new_article);
     });
@@ -170,21 +201,21 @@ function put_article(req, res, next) {
 		}
 		
 		for (var attr in req.body) {
-			if (attr !== 'set' && attr !== '_id')
+			if (attr !== '_id')
 				article[attr] = req.body[attr];
 		}
 		
 		article.save();
 		
 		// propagate up
-		Set.findOne({'_id' : article.setId}, function(err, set) {
-			var updateArticle = set.articles.id(article._id);
+		Play.findOne({'_id' : article.playId}, function(err, play) {
+			var updateArticle = play.articles.id(article._id);
 			for (var attr in req.body) {
 				if (attr !== 'set' && attr !== '_id')
 					updateArticle[attr] = req.body[attr];
 			}
 
-			set.save();
+			play.save();
 		});
 		
 		res.send(article);
@@ -200,12 +231,10 @@ function delete_article(req, res, next) {
 		}
 		
 		// propagate up
-		Set.findOne({'_id' : article.setId}, function(err, set) {
-			for (var attr in set.articles)
-				console.log(attr);
-			set.articles.id(article._id).remove();
+		Play.findOne({'_id' : article.playId}, function(err, play) {
+			play.articles.id(article._id).remove();
 
-			set.save();
+			play.save();
 		});
 		
 		article.remove();

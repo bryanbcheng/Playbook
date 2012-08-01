@@ -18,12 +18,13 @@
 	<script src="field.js"></script>
 	<script src="app.js"></script>
 	
-	<div id="play">
+	<div id="playbook">
 		<header>
 			<h1>Playbook</h1>
 		</header>
 		<button id="start-button">Start</button>
 		<div id="canvas"></div>
+		<div id="play"></div>
 		<div id="set"></div>
 		<div id="article"></div>
 	</div>
@@ -42,6 +43,13 @@
 				</p>
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
+			<ul class="set-list">
+				{{#sets}}
+				<li>
+					{{number}} {{name}}
+				</li>
+				{{/sets}}
+			</ul>
 			<button class="add-set">Add Set</button>
 			<button class="add-player">Add Player</button>
 			<button class="add-ball">Add Ball</button>
@@ -50,7 +58,7 @@
 	</script>
 	
 	<script type="text/template" id="set-template">
-		<div>
+		<div class="set-view">
 			<div class="name">
 				<h2>Name: {{name}}</h2>
 				<input class="name-edit" value={{name}}></input>
@@ -65,7 +73,7 @@
 	</script>
 	
 	<script type="text/template" id="article-template">
-		<div>
+		<div class="article-view">
 			<span>Label: </span><input class="label" value="{{label}}" maxlength=2></input>
 			<select>
 				<option value="player">Player</option>
