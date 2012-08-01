@@ -23,44 +23,6 @@ $(document).ready(function() {
 $(function() {
 	$.playbook = {}
 	
-	/*
-	$.playbook.Play = Backbone.Model.extend({
-		defaults: function() {
-			return {
-				name: "untitled play",
-				teams: [],
-				ball: "default",
-				sets: [],
-				steps: []
-			};
-		},
-		
-		addTeam: function() {
-		
-		},
-		
-		removeTeam: function() {
-		
-		},
-		
-		addSet: function() {
-		
-		},
-		
-		removeSet: function() {
-		
-		},
-		
-		addStep: function() {
-		
-		},
-		
-		removeStep: function() {
-		
-		}
-	});
-	*/
-	
 	$.playbook.Article = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
@@ -76,11 +38,7 @@ $(function() {
 		
 		urlRoot: "/article"
 	});
-	/*
-	ArticleCollection = Backbone.Collection.extend({
-		localStorage: new Store("articles")
-	});
-	*/
+	
 	$.playbook.Set = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
@@ -97,15 +55,71 @@ $(function() {
 		
 		defaults: function() {
 			return {
-				name: "set_",
-				description: "no description",
+				name: "" ,
+				comments: "",
 			};
+		},
+		
+		initialize: function() {
+			if (!this.name) this.name = "Set_" + this.number;
 		},
 		
 		urlRoot: "/set"
 		//localStorage: new Store("sets"),
 		
 		
+	});
+	
+	$.playbook.Play = Backbone.Model.extend({
+		idAttribute: "_id",
+		
+		relations: [
+			{
+				type: Backbone.HasMany,
+				key: 'articles',
+				relatedModel: '$.playbook.Article',
+				reverseRelation: {
+					key: 'play',
+					includeInJSON: '_id',
+				}
+			},
+			{
+				type: Backbone.HasMany,
+				key: 'sets',
+				relatedModel: '$.playbook.Set',
+				reverseRelation: {
+					key: 'play',
+					includeInJSON: '_id',
+				}
+			}
+		],
+		
+		defaults: function() {
+			return {
+				name: "untitled play",
+				description: "no description"
+			};
+		},
+		
+		urlRoot: "/play",
+		
+		/*
+		addTeam: function() {
+		
+		},
+		
+		removeTeam: function() {
+		
+		},
+		*/
+		
+		addSet: function() {
+		
+		},
+		
+		removeSet: function() {
+		
+		},
 	});
 	
 	//var set = new $.playbook.Set({name : "test1", description : "arrow", _id : "501611993b45987f33000001" });
@@ -117,9 +131,9 @@ $(function() {
 		template: $("#article-template").html(),
 		
 		events: {
-			"keyup .label"    : "updateLabel",
-			"change select"   : "changeType",
-			"click .delete"   : "destroy"
+			"keyup .label"  : "updateLabel",
+			"change select" : "changeType",
+			"click .delete" : "destroy"
 		},
 		
 		initialize: function() {
@@ -196,17 +210,15 @@ $(function() {
 	});
 	
 	$.playbook.SetView = Backbone.View.extend({
-		el: $("#set"),
+		li: "div",
 		
 		template: $("#set-template").html(),
 		
 		events: {
-			"dblclick .name"    : "editName",
-			"blur .name-edit"   : "updateName",
-			"dblclick .desc"    : "editDescription",
-			"blur .desc-edit"   : "updateDescription",
-			"click #add-player" : "addPlayer",
-			"click #add-ball"   : "addBall"
+			"dblclick .name"      : "editName",
+			"blur .name-edit"     : "updateName",
+			"dblclick .comments"  : "editComments",
+			"blur .comments-edit" : "updateComments",
 		},
 		
 		initialize: function() {
@@ -260,7 +272,97 @@ $(function() {
 		
 		addAll: function() {
 			var tempModel = this.model;
-			this.model.get("articles").each(function(item) {
+			this.model.get("paths").each(function(item) {
+				tempModel.trigger('add', item);
+			});
+		},
+		
+		editName: function(e) {
+			$(e.currentTarget).addClass("edit");
+			$(e.currentTarget).find("input").focus();
+		},
+		
+		updateName: function(e) {
+			$(e.currentTarget).parent().removeClass("edit");
+			this.model.save({name: e.currentTarget.value});
+		},
+		
+		editComments: function(e) {
+			$(e.currentTarget).addClass("edit");
+			$(e.currentTarget).find("textarea").focus();
+		},
+		
+		updateComments: function(e) {
+			$(e.currentTarget).parent().removeClass("edit");
+			this.model.save({description: e.currentTarget.value});
+		},
+	});
+	
+	$.playbook.PlayView = Backbone.View.extend({
+		li: "div",
+		
+		template: $("#play-template").html(),
+		
+		events: {
+			"dblclick .name"	: "editName",
+			"blur .name-edit"	: "updateName",
+			"dblclick .desc"	: "editDescription",
+			"blur .desc-edit"	: "updateDescription",
+			"click .add-player"	: "addPlayer",
+			"click .add-ball"	: "addBall",
+			"click .add-cone"	: "addCone"
+		},
+		
+		initialize: function() {
+			// create stage
+			
+			this.model.on('change', this.render, this);
+			this.model.on('add', this.add, this);
+			this.model.on('init', this.addAll, this);
+			
+			this.model.fetch({
+				success: function(model, response) {
+					model.trigger('init');
+				}
+			});
+		},
+		
+		render: function() {
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			return this;
+		},
+		
+		add: function(item) {
+			/*
+			var article = createArticle(item);
+			
+			var view = new $.playbook.ArticleView({model: item});
+			view.shape = article;
+			
+			// Add info div
+			$("#article").append(view.render().el);
+			
+			article.on('click', function(e) {
+				view.show();
+			});
+				
+			article.on('dragstart', function(e) {
+				view.show();
+			});
+			
+			article.on('dragend', function(e) {
+				item.save({x : this.getX(), y : this.getY()});
+			});
+			
+			this.layer.add(article);
+			this.layer.draw();
+			*/
+		},
+		
+		addAll: function() {
+			var tempModel = this.model;
+			console.log(this.model.get("sets"));
+			this.model.get("sets").each(function(item) {
 				tempModel.trigger('add', item);
 			});
 		},
@@ -286,34 +388,39 @@ $(function() {
 		},
 		
 		addPlayer: function(e) {
-			var player = new $.playbook.Article({type: "player", set: this.model.get("_id")});
+			var player = new $.playbook.Article({type: "player", play: this.model.get("_id")});
 			player.save();
 			this.model.trigger('add', player);
 		},
 		
 		addBall: function(e) {
-			var ball = new $.playbook.Article({type: "ball", color: "white", set: this.model.get("_id")});
+			var ball = new $.playbook.Article({type: "ball", color: "white", play: this.model.get("_id")});
 			ball.save();
 			this.model.trigger('add', ball);
 		},
 		
 		addCone: function(e) {
-			var cone = new $.playbook.Article({type: "cone", color: "orange", set: this.model.get("_id")});
+			var cone = new $.playbook.Article({type: "cone", color: "orange", play: this.model.get("_id")});
 			cone.save();
 			this.model.trigger('add', cone);
 		}
-		
 	});
 	
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
-			"set/:_id":		"show_set",
+			"play/:_id":	"show_play",
+			//"set/:_id":		"show_set",
 		},
 		
+		show_play : function(_id) {
+			var play = new $.playbook.Play({_id: _id});
+			var playView = new $.playbook.PlayView({model: play});
+		},
+		/*
 		show_set : function(_id) {
 			var set = new $.playbook.Set({_id: _id});
 			var setView = new $.playbook.SetView({model: set});
-		},
+		},*/
 	});
 	
 	$.playbook.app = null;
@@ -325,9 +432,14 @@ $(function() {
 	
 	$.playbook.bootstrap();
 	$("#start-button").on("click", function(event) {
-		//var a = new $.playbook.Set();
-		//a.save();
-		$.playbook.app.navigate('set/50173e7897899a2062000002', {trigger: true});
+		
+// 		var a = new $.playbook.Play();
+// 		a.save({}, {success: function() {
+// 			var b = new $.playbook.Set({number : 1, playId : a.get("_id")});
+// 			b.save();
+// 		}});
+		
+		$.playbook.app.navigate('play/50189f152cb5a523bb000004', {trigger: true});
 	});
 });
 

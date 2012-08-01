@@ -30,7 +30,7 @@
 	
 	<!-- Templates -->
 	
-	<script type="text/template" id="set-template">
+	<script type="text/template" id="play-template">
 		<div>
 			<div class="name">
 				<h2>Name: {{name}}</h2>
@@ -42,8 +42,25 @@
 				</p>
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
-			<button id="add-player">Add Player</button>
-			<button id="add-ball">Add Ball</button>
+			<button class="add-set">Add Set</button>
+			<button class="add-player">Add Player</button>
+			<button class="add-ball">Add Ball</button>
+			<button class="add-cone">Add Cone</button>
+		</div>
+	</script>
+	
+	<script type="text/template" id="set-template">
+		<div>
+			<div class="name">
+				<h2>Name: {{name}}</h2>
+				<input class="name-edit" value={{name}}></input>
+			</div>
+			<div class="comments">
+				<p>
+					Comments: {{comments}}
+				</p>
+				<textarea class="comments-edit">{{comments}}</textarea>
+			</div>
 		</div>
 	</script>
 	

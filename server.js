@@ -18,10 +18,61 @@ app.configure(function() {
 
 var mongoose = require('mongoose')
   , db = mongoose.connect('mongodb://localhost/playbook')
+  , Play = require('./models.js').Play(db)
   , Set = require('./models.js').Set(db)
   , Article = require('./models.js').Article(db);
 
 /* Views */
+
+function get_play(req, res, next) {
+	var send_result = function(err, play) {
+        if (err) {
+            return next(err);
+        }
+        
+        if(play) {
+            res.send(play);
+        } else {
+            return next(new Error("Could not find play"));
+        }
+    };
+    
+    if('_id' in req.params) {
+        Play.findOne({'_id': req.params._id}, send_result);
+    } else {
+        Play.find({}, send_result);        
+    }
+}
+
+function post_play(req, res, next) {
+	new_play = new Play({name: req.body.name, description: req.body.description});
+    new_play.save();
+    res.send(new_play);
+}
+
+// Update name/description of play
+function put_play(req, res, next) {
+	Play.findOne({'_id' :req.params._id}, function(err, play) {
+		if (err)
+			return next(err);
+		else if (!play) {
+			return next(new Error("Could not find play with _id=" + req.params._id));
+		}
+		
+		play.name = req.body.name;
+		play.description = req.body.description;
+		
+		play.save();
+		
+		// propagate up
+		
+		res.send(play);
+	});
+}
+
+function delete_play(req, res, next) {
+	// no implemented yet
+}
 
 function get_set(req, res, next) {
     var send_result = function(err, set) {
@@ -44,12 +95,28 @@ function get_set(req, res, next) {
 }
 
 function post_set(req, res, next) {
-	new_set = new Set({name: req.body.name, description: req.body.description});
-    new_set.save();
-    res.send(new_set);
+	Play.findOne({_id: req.body.playId}, function(err, play) {
+        if (err) {
+            return next(err);
+        } else if(!play) {
+            return next(new Error("Could not find play with _id=" + req.body.playId));
+        }
+        
+        new_set = new Set({
+			name : req.body.name,
+			comments : req.body.comments,
+			playId : req.body.playId
+		});
+        
+        new_set.save();
+        play.sets.push(new_set);
+        play.save();
+        
+        res.send(new_set);
+    });
 }
 
-// Update name/description of set
+// Update name/comments of set
 function put_set(req, res, next) {
 	Set.findOne({'_id' :req.params._id}, function(err, set) {
 		if (err)
@@ -59,7 +126,7 @@ function put_set(req, res, next) {
 		}
 		
 		set.name = req.body.name;
-		set.description = req.body.description;
+		set.comments = req.body.comments;
 		
 		set.save();
 		
@@ -153,8 +220,14 @@ app.get('/', function(req, res) {
 	res.sendfile('public/index.html');
 });
 
+// Play routes
+app.get('/play/:_id', get_play);
+app.post('/play', post_play);
+app.put('/play/:_id', put_play);
+app.delete('/play/:_id', delete_play);
+
 // Set routes
-app.get('/set/:_id', get_set);
+//app.get('/set/:_id', get_set);
 app.post('/set', post_set);
 app.put('/set/:_id', put_set);
 app.delete('/set/:_id', delete_set);
