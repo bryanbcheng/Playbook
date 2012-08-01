@@ -59,8 +59,10 @@ function put_play(req, res, next) {
 			return next(new Error("Could not find play with _id=" + req.params._id));
 		}
 		
-		play.name = req.body.name;
-		play.description = req.body.description;
+		for (var attr in req.body) {
+			if (attr !== '_id')
+				play[attr] = req.body[attr];
+		}
 		
 		play.save();
 		
@@ -139,9 +141,9 @@ function put_set(req, res, next) {
 		
 		// propagate up
 		Play.findOne({'_id' : set.playId}, function(err, play) {
-			var updateSet = play.sets.id(article._id);
+			var updateSet = play.sets.id(set._id);
 			for (var attr in req.body) {
-				if (attr !== 'set' && attr !== '_id')
+				if (attr !== 'play' && attr !== '_id')
 					updateSet[attr] = req.body[attr];
 			}
 
@@ -201,7 +203,7 @@ function put_article(req, res, next) {
 		}
 		
 		for (var attr in req.body) {
-			if (attr !== '_id')
+			if (attr !== 'play' && attr !== '_id')
 				article[attr] = req.body[attr];
 		}
 		
@@ -211,7 +213,7 @@ function put_article(req, res, next) {
 		Play.findOne({'_id' : article.playId}, function(err, play) {
 			var updateArticle = play.articles.id(article._id);
 			for (var attr in req.body) {
-				if (attr !== 'set' && attr !== '_id')
+				if (attr !== 'play' && attr !== '_id')
 					updateArticle[attr] = req.body[attr];
 			}
 

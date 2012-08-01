@@ -294,7 +294,7 @@ $(function() {
 		
 		updateComments: function(e) {
 			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({description: e.currentTarget.value});
+			this.model.save({comments: e.currentTarget.value});
 		},
 		
 		show: function() {

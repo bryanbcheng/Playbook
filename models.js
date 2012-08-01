@@ -42,7 +42,7 @@ var Set = new Schema({
 
 var Play = new Schema({
 	name		: String
-  , descripion	: String
+  , description	: String
   , sport		: { type : String, enum: ['ultimate'] }
   , size		: { type : String, enum: ['full', 'half'] }
   , articles	: [Article]

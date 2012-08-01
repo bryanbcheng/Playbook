@@ -13,6 +13,22 @@
 	float: left;
 }
 
+#play .name h2, #play .desc p {
+	display: block;
+}
+
+#play .name input, #play .desc textarea {
+	display: none;
+}
+
+#play .edit h2, #play .edit p {
+	display: none;
+}
+
+#play .edit input, #play .edit textarea {
+	display: block;
+}
+
 #set {
 	width: 200px;
 	float: left;
@@ -26,11 +42,15 @@
 	display: block;
 }
 
-#set .name h2, #set .desc p {
+#set div.selected div {
 	display: block;
 }
 
-#set .name input, #set .desc textarea {
+#set .name h2, #set .comments p {
+	display: block;
+}
+
+#set .name input, #set .comments textarea {
 	display: none;
 }
 
@@ -47,7 +67,7 @@
 	float: left;
 }
 
-#article div.article-view {
+#article div {
 	display: none;
 }
 
