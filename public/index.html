@@ -15,7 +15,7 @@
 	<script src="js/backbone-relational.js"></script>
 	<script src="js/mustache.js"></script>
 	<script src="js/kinetic-v3.10.4.min.js"></script>
-	<script src="field.js"></script>
+	<script src="draw.js"></script>
 	<script src="app.js"></script>
 	
 	<div id="playbook">
@@ -45,7 +45,7 @@
 			</div>
 			<ul class="set-list">
 				{{#sets}}
-				<li>
+				<li id="{{_id}}">
 					{{number}} {{name}}
 				</li>
 				{{/sets}}

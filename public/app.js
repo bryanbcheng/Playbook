@@ -7,19 +7,6 @@ var START_Y = 50;
 var stage;
 var articleId = 0;
 
-// $(document).ready(function() {
-// 	stage = new Kinetic.Stage({
-// 		container: "canvas",
-// 		width: 1000,
-// 		height: 1000,
-// 	});
-// 
-// 	// Depending on field
-// 	var field = ultimateField();
-// 	
-//     stage.add(field);
-// });
-
 $(function() {
 	$.playbook = {}
 	
@@ -67,9 +54,6 @@ $(function() {
 		},
 		
 		urlRoot: "/set"
-		//localStorage: new Store("sets"),
-		
-		
 	});
 	
 	$.playbook.Play = Backbone.RelationalModel.extend({
@@ -104,28 +88,7 @@ $(function() {
 		},
 		
 		urlRoot: "/play",
-		
-		/*
-		addTeam: function() {
-		
-		},
-		
-		removeTeam: function() {
-		
-		},
-		*/
-		
-		addSet: function() {
-		
-		},
-		
-		removeSet: function() {
-		
-		},
 	});
-	
-	//var set = new $.playbook.Set({name : "test1", description : "arrow", _id : "501611993b45987f33000001" });
-	//set.save();
 	
 	$.playbook.ArticleView = Backbone.View.extend({
 		tagName: "div",
@@ -229,14 +192,6 @@ $(function() {
 			this.model.on('change', this.render, this);
 			//this.model.on('add', this.add, this);
 			this.model.on('init', this.addAll, this);
-			
-			/*
-			this.model.fetch({
-				success: function(model, response) {
-					//model.trigger('init');
-				}
-			});
-			*/
 		},
 		
 		render: function() {
@@ -340,6 +295,7 @@ $(function() {
 			stage.add(field);
 			
 			this.model.on('change', this.render, this);
+			this.model.on('refresh', this.render, this); // same action, but different cause
 			this.model.on('addSet', this.addSet, this);
 			this.model.on('addArticle', this.addArticle, this);
 			this.model.on('init', this.addAll, this);
@@ -364,10 +320,15 @@ $(function() {
 			
 			if (show) view.show();
 			
-			// select view
+			// select li in list of sets
 		},
 		
 		addArticle: function(item) {
+			/***************************************/
+			/***************************************/
+			// ADD ARTICLE FOR EACH LAYER / SET!!!!!!
+			/***************************************/
+			/***************************************/
 			var article = createArticle(item);
 			
 			var view = new $.playbook.ArticleView({model: item});
@@ -424,7 +385,8 @@ $(function() {
 		addNewSet: function(e) {
 			var set = new $.playbook.Set({number: this.model.get("sets").length + 1, play: this.model});
 			set.save();
-			this.model.trigger('addSet', set, true);
+			this.model.trigger("addSet", set, true);
+			this.model.trigger("refresh");
 		},
 		
 		addPlayer: function(e) {
@@ -483,81 +445,7 @@ $(function() {
 	});
 });
 
-function createArticle(item) {
-	var group = new Kinetic.Group({
-		x: item.get("x"),
-		y: item.get("y"),
-		draggable: true
-	});
-	
-	if (item.get("type") === "player") {
-		group.add(createPlayer(item));
-	} else if (item.get("type") === "ball") {
-		group.add(createBall(item));
-	} else if (item.get("type") === "cone") {
-		group.add(createCone(item));
-	}
-	
-	if (item.get("label"))
-		group.add(createLabel(item));
-		
-	return group;
-}
-
-function createPlayer(player) {
-	return new Kinetic.Circle({
-		radius: 1.5 * SCALE,
-		fill: player.get("color"),
-		stroke: "black",
-		strokeWidth: 1,
-		//x: player.get("x"),
-		//y: player.get("y"),
-		draggable: true
-	});
-}
-
-function createBall(ball) {
-	return new Kinetic.Circle({
-		radius: 1.5 * SCALE,
-		fill: ball.get("color"),
-		stroke: "black",
-		strokeWidth: 1,
-		//x: ball.get("x"),
-		//y: ball.get("y"),
-		draggable: true
-	});
-}
-
-function createCone(cone) {
-	return new Kinetic.RegularPolygon({
-		sides: 3,
-		radius: 1.5 * SCALE,
-		fill: cone.get("color"),
-		stroke: "black",
-		strokeWidth: 1,
-		//x: cone.get("x"),
-		//y: cone.get("y"),
-		draggable: true
-	});
-}
-
-function createLabel(label) {
-	// Use custom shape to draw text, Kinetic.Text too limited options
-	return new Kinetic.Shape({
-		drawFunc: function(context) {
-			context.beginPath();
-			context.closePath(); 			
- 			context.fillStyle = "black";
- 			context.font = "15px Arial";
- 			context.textAlign = "center";
- 			context.textBaseline = "middle";
- 			context.fillText(label.get("label"), 0, 0);
-		},
-		//x: label.get("x"),
-		//y: label.get("y"),
-		draggable: true
-	});
-}
+/* Util functions */
 
 function getCaretPosition (ctrl) {
 	var CaretPos = 0;	// IE Support
