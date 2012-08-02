@@ -117,20 +117,20 @@ function ultimateField() {
 
 function createArticle(item) {
 	var group = new Kinetic.Group({
-		x: item.get("x"),
-		y: item.get("y"),
+		x: item.x,
+		y: item.y,
 		draggable: true
 	});
 	
-	if (item.get("type") === "player") {
+	if (item.type === "player") {
 		group.add(createPlayer(item));
-	} else if (item.get("type") === "ball") {
+	} else if (item.type === "ball") {
 		group.add(createBall(item));
-	} else if (item.get("type") === "cone") {
+	} else if (item.type === "cone") {
 		group.add(createCone(item));
 	}
 	
-	if (item.get("label"))
+	if (item.label)
 		group.add(createLabel(item));
 		
 	return group;
@@ -139,11 +139,9 @@ function createArticle(item) {
 function createPlayer(player) {
 	return new Kinetic.Circle({
 		radius: 1.5 * SCALE,
-		fill: player.get("color"),
+		fill: player.color,
 		stroke: "black",
 		strokeWidth: 1,
-		//x: player.get("x"),
-		//y: player.get("y"),
 		draggable: true
 	});
 }
@@ -151,11 +149,9 @@ function createPlayer(player) {
 function createBall(ball) {
 	return new Kinetic.Circle({
 		radius: 1.5 * SCALE,
-		fill: ball.get("color"),
+		fill: ball.color,
 		stroke: "black",
 		strokeWidth: 1,
-		//x: ball.get("x"),
-		//y: ball.get("y"),
 		draggable: true
 	});
 }
@@ -164,11 +160,9 @@ function createCone(cone) {
 	return new Kinetic.RegularPolygon({
 		sides: 3,
 		radius: 1.5 * SCALE,
-		fill: cone.get("color"),
+		fill: cone.color,
 		stroke: "black",
 		strokeWidth: 1,
-		//x: cone.get("x"),
-		//y: cone.get("y"),
 		draggable: true
 	});
 }
@@ -183,10 +177,8 @@ function createLabel(label) {
  			context.font = "15px Arial";
  			context.textAlign = "center";
  			context.textBaseline = "middle";
- 			context.fillText(label.get("label"), 0, 0);
+ 			context.fillText(label.label, 0, 0);
 		},
-		//x: label.get("x"),
-		//y: label.get("y"),
 		draggable: true
 	});
 }

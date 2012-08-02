@@ -20,6 +20,7 @@ var mongoose = require('mongoose')
   , db = mongoose.connect('mongodb://localhost/playbook')
   , Play = require('./models.js').Play(db)
   , Set = require('./models.js').Set(db)
+  , Path = require('./models.js').Path(db)
   , Article = require('./models.js').Article(db);
 
 /* Views */
@@ -87,16 +88,9 @@ function post_set(req, res, next) {
         new_set = new Set({
 			name : req.body.name,
 			number : req.body.number,
-			comments : req.body.comments,
-			prevSetId : req.body.prevSetId,
-			nextSetId : req.body.nextSetId
+			comments : req.body.comments
 		});
-        
-        // Link to last set
-        if (req.body.prevSetId) {
-        	play.sets.id(req.body.prevSetId).nextSetId = new_set._id;
-        }
-        
+       	
         play.sets.push(new_set);
         play.save();
         
@@ -152,10 +146,10 @@ function post_path(req, res, next) {
         	startY: req.body.startY,
         	endX: req.body.endX,
         	endY: req.body.endY,
-        	articleId: req.body.article
+        	articleId: req.body.articleId
         });
         
-        play.sets.paths.push(new_path);
+        play.sets.id(req.body.set).paths.push(new_path);
         play.save();
         
         res.send(new_path);
@@ -172,7 +166,7 @@ function put_path(req, res, next) {
 		
 		var updatePath = play.sets.paths.id(req.params._id);
 		for (var attr in req.body) {
-			if (attr !== 'set' && attr !== 'article' && attr !== '_id')
+			if (attr !== 'set' && attr !== '_id')
 				updatePath[attr] = req.body[attr];
 		}
 		

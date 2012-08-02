@@ -33,8 +33,6 @@ var Set = new Schema({
   ,	number		: { type: Number, required: true }
   , comments	: String
   , paths		: [Path]
-  , prevSetId	: Schema.ObjectId
-  , nextSetId	: Schema.ObjectId
 });
 
 var Play = new Schema({
@@ -58,6 +56,11 @@ exports.Play = function(db) {
 mongoose.model('Set', Set);
 exports.Set = function(db) {
   return db.model('Set');
+};
+
+mongoose.model('Path', Path);
+exports.Path = function(db) {
+	return db.model('Path');
 };
 
 mongoose.model('Article', Article);
