@@ -76,28 +76,6 @@ function delete_play(req, res, next) {
 	// no implemented yet
 }
 
-/*
-function get_set(req, res, next) {
-    var send_result = function(err, set) {
-        if (err) {
-            return next(err);
-        }
-        
-        if(set) {
-            res.send(set);
-        } else {
-            return next(new Error("Could not find set"));
-        }
-    };
-    
-    if('_id' in req.params) {
-        Set.findOne({'_id': req.params._id}, send_result);
-    } else {
-        Set.find({}, send_result);        
-    }
-}
-*/
-
 function post_set(req, res, next) {
 	Play.findOne({_id: req.body.play}, function(err, play) {
         if (err) {
@@ -110,12 +88,15 @@ function post_set(req, res, next) {
 			name : req.body.name,
 			number : req.body.number,
 			comments : req.body.comments,
-			playId : req.body.play,
 			prevSetId : req.body.prevSetId,
 			nextSetId : req.body.nextSetId
 		});
         
-        new_set.save();
+        // Link to last set
+        if (req.body.prevSetId) {
+        	play.sets.id(req.body.prevSetId).nextSetId = new_set._id;
+        }
+        
         play.sets.push(new_set);
         play.save();
         
@@ -125,53 +106,93 @@ function post_set(req, res, next) {
 
 // Update name/comments of set
 function put_set(req, res, next) {
-	Set.findOne({'_id' :req.params._id}, function(err, set) {
+	Play.findOne({'sets._id': req.params._id}, function(err, play) {
 		if (err)
 			return next(err);
-		else if (!set) {
+		else if (!play) {
 			return next(new Error("Could not find set with _id=" + req.params._id));
 		}
 		
+		var updateSet = play.sets.id(req.params._id);
 		for (var attr in req.body) {
 			if (attr !== 'play' && attr !== '_id')
-				set[attr] = req.body[attr];
+				updateSet[attr] = req.body[attr];
 		}
 		
-		set.save();
+		play.save();
 		
-		// propagate up
-		Play.findOne({'_id' : set.playId}, function(err, play) {
-			var updateSet = play.sets.id(set._id);
-			for (var attr in req.body) {
-				if (attr !== 'play' && attr !== '_id')
-					updateSet[attr] = req.body[attr];
-			}
-
-			play.save();
-		});
-		
-		res.send(set);
+		res.send(updateSet);
 	});
 }
 
 function delete_set(req, res, next) {
-	Set.findOne({'_id' :req.params._id}, function(err, set) {
+	Play.findOne({'sets._id': req.params._id}, function(err, play) {
 		if (err)
 			return next(err);
-		else if (!set) {
+		else if (!play) {
 			return next(new Error("Could not find set with _id=" + req.params._id));
 		}
 		
-		// propagate up
-		Play.findOne({'_id' : set.playId}, function(err, play) {
-			play.sets.id(set._id).remove();
+		var deleteSet = play.sets.id(req.params._id);
+		deleteSet.remove();
+		res.send(deleteSet);
+	});
+}
 
-			play.save();
-		});
+function post_path(req, res, next) {
+	Play.findOne({'sets._id': req.body.set}, function(err, play) {
+        if (err) {
+            return next(err);
+        } else if(!play) {
+            return next(new Error("Could not find set with _id=" + req.body.set));
+        }
+        
+        new_path = new Path({
+        	startX: req.body.startX,
+        	startY: req.body.startY,
+        	endX: req.body.endX,
+        	endY: req.body.endY,
+        	articleId: req.body.article
+        });
+        
+        play.sets.paths.push(new_path);
+        play.save();
+        
+        res.send(new_path);
+    });
+}
+
+function put_path(req, res, next) {
+	Play.findOne({'sets.paths._id': req.params._id}, function(err, play) {
+		if (err)
+			return next(err);
+		else if (!play) {
+			return next(new Error("Could not find path with _id=" + req.params._id));
+		}
 		
-		set.remove();
+		var updatePath = play.sets.paths.id(req.params._id);
+		for (var attr in req.body) {
+			if (attr !== 'set' && attr !== 'article' && attr !== '_id')
+				updatePath[attr] = req.body[attr];
+		}
 		
-		res.send(set);
+		play.save();
+		
+		res.send(updatePath);
+	});
+}
+
+function delete_path(req, res, next) {
+	Play.findOne({'sets.paths._id': req.params._id}, function(err, play) {
+		if (err)
+			return next(err);
+		else if (!play) {
+			return next(new Error("Could not find path with _id=" + req.params._id));
+		}
+		
+		var deletePath = play.sets.paths.id(req.params._id);
+		deletePath.remove();
+		res.send(deletePath);
 	});
 }
 
@@ -183,10 +204,12 @@ function post_article(req, res, next) {
             return next(new Error("Could not find play with _id=" + req.body.play));
         }
         
-        new_article = new Article({type: req.body.type,
-                                   color: req.body.color,
-                                   playId: req.body.play});
-        new_article.save();
+        new_article = new Article({
+        	type: req.body.type,
+        	color: req.body.color,
+        	label: req.body.label
+        });
+        
         play.articles.push(new_article);
         play.save();
         
@@ -195,53 +218,36 @@ function post_article(req, res, next) {
 }
 
 function put_article(req, res, next) {
-	Article.findOne({'_id' :req.params._id}, function(err, article) {
+	Play.findOne({'articles._id': req.params._id}, function(err, play) {
 		if (err)
 			return next(err);
-		else if (!article) {
+		else if (!play) {
 			return next(new Error("Could not find article with _id=" + req.params._id));
 		}
 		
+		var updateArticle = play.articles.id(req.params._id);
 		for (var attr in req.body) {
 			if (attr !== 'play' && attr !== '_id')
-				article[attr] = req.body[attr];
+				updateArticle[attr] = req.body[attr];
 		}
 		
-		article.save();
+		play.save();
 		
-		// propagate up
-		Play.findOne({'_id' : article.playId}, function(err, play) {
-			var updateArticle = play.articles.id(article._id);
-			for (var attr in req.body) {
-				if (attr !== 'play' && attr !== '_id')
-					updateArticle[attr] = req.body[attr];
-			}
-
-			play.save();
-		});
-		
-		res.send(article);
+		res.send(updateArticle);
 	});
 }
 
 function delete_article(req, res, next) {
-	Article.findOne({'_id' :req.params._id}, function(err, article) {
+	Play.findOne({'articles._id': req.params._id}, function(err, play) {
 		if (err)
 			return next(err);
-		else if (!article) {
+		else if (!play) {
 			return next(new Error("Could not find article with _id=" + req.params._id));
 		}
 		
-		// propagate up
-		Play.findOne({'_id' : article.playId}, function(err, play) {
-			play.articles.id(article._id).remove();
-
-			play.save();
-		});
-		
-		article.remove();
-		
-		res.send(article);
+		var deleteArticle = play.articles.id(req.params._id);
+		deleteArticle.remove();
+		res.send(deleteArticle);
 	});
 }
 
@@ -262,6 +268,11 @@ app.delete('/play/:_id', delete_play);
 app.post('/set', post_set);
 app.put('/set/:_id', put_set);
 app.delete('/set/:_id', delete_set);
+
+// Path routes
+app.post('/path', post_path);
+app.put('/path/:_id', put_path);
+app.delete('path/:_id', delete_path);
 
 // Article routes
 //app.get('/article/:id', get_article);

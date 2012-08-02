@@ -43,18 +43,18 @@
 				</p>
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
-			<ul class="set-list">
-				{{#sets}}
-				<li id="{{_id}}">
-					{{number}} {{name}}
-				</li>
-				{{/sets}}
-			</ul>
+			<ul class="set-list"></ul>
 			<button class="add-set">Add Set</button>
 			<button class="add-player">Add Player</button>
 			<button class="add-ball">Add Ball</button>
 			<button class="add-cone">Add Cone</button>
 		</div>
+	</script>
+	
+	<script type="text/template" id="set-list-template" >
+		<li id="{{_id}}">
+			{{number}} {{name}}
+		</li>
 	</script>
 	
 	<script type="text/template" id="set-template">

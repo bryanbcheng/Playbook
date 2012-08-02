@@ -5,7 +5,7 @@ var START_Y = 50;
 
 /* GLOBALS */
 var stage;
-var articleId = 0;
+var testSet = [];
 
 $(function() {
 	$.playbook = {}
@@ -26,14 +26,26 @@ $(function() {
 		urlRoot: "/article"
 	});
 	
+	$.playbook.Path = Backbone.RelationalModel.extend({
+		idAttribute: "_id",
+		
+		defaults: function() {
+			return {
+				startX: null,
+				startY: null
+			}
+		},
+		
+		urlRoot: "/path"
+	});
+	
 	$.playbook.Set = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
 		relations: [{
 			type: Backbone.HasMany,
-			key: 'articles',
-			relatedModel: '$.playbook.Article',
-			//collectionType: 'ArticleCollection',
+			key: 'paths',
+			relatedModel: '$.playbook.Path',
 			reverseRelation: {
 				key: 'set',
 				includeInJSON: '_id',
@@ -149,7 +161,6 @@ $(function() {
 			});
 		
 			article.on('dragend', function(e) {
-				console.log(this);
 				view.model.save({x : this.getX(), y : this.getY()});
 			});
 			
@@ -172,6 +183,7 @@ $(function() {
 		tagName: "div",
 		
 		template: $("#set-template").html(),
+		templateLi: $("#set-list-template").html(),
 		
 		events: {
 			"dblclick .name"      : "editName",
@@ -197,6 +209,10 @@ $(function() {
 		render: function() {
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			return this;
+		},
+		
+		renderLi: function() {
+			return Mustache.render(this.templateLi, this.model.toJSON());
 		},
 		
 		add: function(item) {
@@ -253,14 +269,15 @@ $(function() {
 		},
 		
 		show: function() {
+			if (stage.current) stage.current.hide();
+			stage.current = this.layer;
 			this.layer.show();
 			
 			this.$el.siblings().removeClass("selected");
 			this.$el.addClass("selected");
-		},
-		
-		hide: function() {
-			this.layer.hide();
+			
+			$("#" + this.model.get("_id")).siblings().removeClass("selected");
+			$("#" + this.model.get("_id")).addClass("selected");
 		}
 	});
 	
@@ -295,8 +312,7 @@ $(function() {
 			stage.add(field);
 			
 			this.model.on('change', this.render, this);
-			this.model.on('refresh', this.render, this); // same action, but different cause
-			this.model.on('addSet', this.addSet, this);
+			this.model.on('add:sets', this.addSet, this);
 			this.model.on('addArticle', this.addArticle, this);
 			this.model.on('init', this.addAll, this);
 			
@@ -312,15 +328,19 @@ $(function() {
 			return this;
 		},
 		
-		addSet: function(item, show) {
+		addSet: function(item) {
+			if (!item.get("_id")) return; // hack for silently creating relational model
 			var view = new $.playbook.SetView({model: item});
 			
 			// Add info div
 			$("#set").append(view.render().el);
 			
-			if (show) view.show();
+			$("#play .set-list").append(view.renderLi());
+			$("#" + item.get("_id")).on("click", function(e) {
+				view.show();
+			});
 			
-			// select li in list of sets
+			view.show();
 		},
 		
 		addArticle: function(item) {
@@ -350,16 +370,17 @@ $(function() {
 			});
 			
 			// add to each layer
-			this.layer.add(article);
+			stage.current.add(article);
 			// redraw top layer
-			this.layer.draw();
+			stage.current.draw();
 		},
 		
 		addAll: function() {
-			var tempModel = this.model;
-			this.model.get("sets").each(function(item) {
-				tempModel.trigger('addSet', item, item.get("number") === 1);
-			});
+			var temp = this;
+			
+			//this.model.get("sets").each(function(item) {
+			//	temp.addInitialSet(item, item.get("number") === 1);
+			//});
 		},
 		
 		editName: function(e) {
@@ -383,10 +404,26 @@ $(function() {
 		},
 		
 		addNewSet: function(e) {
-			var set = new $.playbook.Set({number: this.model.get("sets").length + 1, play: this.model});
-			set.save();
-			this.model.trigger("addSet", set, true);
-			this.model.trigger("refresh");
+			var lastSet = this.model.get("sets").max(function(set) {
+				return set.get("number");
+			});
+			
+			var set = new $.playbook.Set({
+				number: this.model.get("sets").length + 1,
+				prevSetId: lastSet ? lastSet.get("_id") : null,
+				play: this.model
+			});
+			testSet.push(set);
+			
+			set.save({}, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					model.get("play").trigger("add:sets", model);
+					
+					// sync previous set's nextSetId to this set's id
+				}
+			});
 		},
 		
 		addPlayer: function(e) {

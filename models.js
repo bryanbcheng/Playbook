@@ -14,7 +14,6 @@ var Article = new Schema({
     type		: { type: String, enum: ['player', 'ball', 'cone'] }
   , color		: String
   , label		: { type: String, uppercase: true }
-  , playId		: { type: Schema.ObjectId, required: true }
 });
 
 Article.path('label').validate(function (v) {
@@ -22,12 +21,11 @@ Article.path('label').validate(function (v) {
 }, 'Label too long'); 
 
 var Path = new Schema({
-	articleId	: { type: Schema.ObjectId, required: true }
-  , setId		: { type: Schema.ObjectId, required: true }
-  , startX		: Number
+  	startX		: Number
   , startY		: Number
   , endX		: Number
   , endY		: Number
+  , articleId	: { type: Schema.ObjectId, required: true }
 });
 
 var Set = new Schema({
@@ -35,7 +33,6 @@ var Set = new Schema({
   ,	number		: { type: Number, required: true }
   , comments	: String
   , paths		: [Path]
-  , playId		: { type: Schema.ObjectId, required: true }
   , prevSetId	: Schema.ObjectId
   , nextSetId	: Schema.ObjectId
 });

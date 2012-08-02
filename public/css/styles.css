@@ -29,6 +29,18 @@
 	display: block;
 }
 
+#play .set-list {
+	
+}
+
+#play .set-list li:hover {
+	background: #ffa;
+}
+
+#play .set-list li.selected {
+	background: yellow;
+}
+
 #set {
 	width: 200px;
 	float: left;
