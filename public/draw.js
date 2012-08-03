@@ -182,3 +182,13 @@ function createLabel(label) {
 		draggable: true
 	});
 }
+
+function createLine(line) {
+	return new Kinetic.Line({
+			points: line.points,
+			lineCap: "round",
+			dashArray: [20, 20],
+			//fill: "black",
+			stroke: "black"
+	});
+}

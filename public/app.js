@@ -34,31 +34,51 @@ $(function() {
 			}
 		},
 		
-		urlRoot: "/path"
+		urlRoot: "/path",
+		
+		moveTo: function(x, y) {
+			this.save({endX: x, endY: y});
+			
+			var nextSetNum = this.get("set").get("number") + 1;
+			var nextSet = this.get("set").get("play").get("sets").find(function(set) {
+				return set.get("number") === nextSetNum;
+			});
+			
+			if (nextSet) {
+				var articleId = this.get("articleId");
+				var nextPath = nextSet.get("paths").find(function(path) {
+					return path.get("articleId") === articleId;
+				});
+				
+				nextPath.save({startX: x, startY: y});
+			}
+		}
 	});
 	
 	$.playbook.Set = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
-		relations: [{
-			type: Backbone.HasMany,
-			key: 'paths',
-			relatedModel: '$.playbook.Path',
-			reverseRelation: {
-				key: 'set',
-				includeInJSON: '_id',
-			}
-		},
-		{
-			type: Backbone.HasOne,
-			key: 'prevSet',
-			relatedModel: '$.playbook.Set',
-			reverseRelation: {
+		relations: [
+			{
+				type: Backbone.HasMany,
+				key: 'paths',
+				relatedModel: '$.playbook.Path',
+				reverseRelation: {
+					key: 'set',
+					includeInJSON: '_id',
+				}
+			}/*,
+			{
 				type: Backbone.HasOne,
-				key: 'nextSet',
-				includeInJSON: '_id',
-			}
-		}],
+				key: 'prevSet',
+				relatedModel: '$.playbook.Set',
+				reverseRelation: {
+					type: Backbone.HasOne,
+					key: 'nextSet',
+					includeInJSON: '_id',
+				}
+			}*/
+		],
 		
 		defaults: function() {
 			return {
@@ -120,6 +140,10 @@ $(function() {
 		},
 		
 		initialize: function() {
+			this.paths = [];
+		
+			this.model.on('addPathShape', this.addPathShape, this);
+			this.model.on('show', this.show, this);
 			this.model.on('change', this.render, this);
       		this.model.on('destroy', this.remove, this);
 		},
@@ -132,12 +156,19 @@ $(function() {
 			return this;
 		},
 		
+		addPathShape: function(path) {
+			this.paths.push(path);
+		},
+		
 		show: function() {
 			this.$el.siblings().removeClass("selected");
 			this.$el.addClass("selected");
 		},
 		
 		updateLabel: function(e) {
+			if (e.target.value.toUpperCase() === this.model.get("label"))
+				return;
+		
 			var pos = getCaretPosition(this.$el.find(".label")[0]);
 			this.model.save({label: e.target.value.toUpperCase()});
 			this.$el.find(".label").focus();
@@ -156,33 +187,98 @@ $(function() {
 		},
 		
 		replaceShape: function(view) {
-			var article = createArticle(view.model);
-			
-			article.on('click', function(e) {
-				view.show();
-			});		
-						
-			article.on('dragstart', function(e) {
-				view.show();
-			});
-		
-			article.on('dragend', function(e) {
-				view.model.save({x : this.getX(), y : this.getY()});
-			});
-			
-			view.shape.parent.add(article);
-			view.shape.parent.remove(view.shape);
-			view.shape.parent.draw();
-			
-			view.shape = article;
+			for (var index in view.paths) {
+				var path = view.paths[index];
+				
+				path.trigger("change");
+			}
 		},
 		
 		destroy: function() {
-			// Potentially need to save parent here
-			this.shape.parent.remove(this.shape);
-			this.shape.parent.draw();
+			for (var index in this.shapes) {
+				var shape = this.shapes[index].shape;
+				var model = this.shapes[index].model;
+				
+				// Potentially need to save parent here
+				shape.parent.remove(shape);
+				shape.parent.draw();
+				// DOESNT WORK YET
+				model.destroy();
+			}
+			
 			this.model.destroy();
 		}
+	});
+	
+	// Hidden view, used to control path model
+	$.playbook.PathView = Backbone.View.extend({
+		initialize: function(options) {
+			this.layer = options.layer;
+			var tempModel = this.model;
+			this.article = this.model.get("set").get("play").get("articles").find(function(article) {
+				return article.get("_id") === tempModel.get("articleId");
+			});
+			this.article.trigger("addPathShape", this.model);
+			this.shape = null;
+			this.line = null;
+			
+			this.model.on("change", this.render, this);
+			
+			this.model.trigger("change");
+		},
+		
+		render: function() {
+			var view = this;
+		
+			if (this.shape) this.shape.parent.remove(this.shape);
+			this.shape = createArticle({
+				x: view.model.get("endX"),
+				y: view.model.get("endY"),
+				type: view.article.get("type"),
+				color: view.article.get("color"),
+				label: view.article.get("label")
+			});
+			
+			if (this.line) this.line.parent.remove(this.line);
+			
+			if (this.model.get("startX") && this.model.get("startY")) {
+				this.line = createLine({
+					points: [
+						view.model.get("startX"), view.model.get("startY"),
+						view.model.get("endX"), view.model.get("endY")
+					]
+				});
+				
+				this.layer.add(this.line);
+				this.line.moveToBottom();
+			}
+			
+			// event handlers
+			this.shape.on('click', function(e) {
+				view.article.trigger("show");
+			});
+				
+			this.shape.on('dragstart', function(e) {
+				view.article.trigger("show");
+			});
+			
+			if (this.model.get("startX") && this.model.get("startY")) {
+				this.shape.on('dragmove', function(e) {
+					view.layer.remove(view.line);
+					view.line = createLine({points: [view.model.get("startX"), view.model.get("startY"), this.getX(), this.getY()]});
+					view.layer.add(view.line);
+					view.line.moveToBottom();
+					view.layer.draw();
+				});
+			}
+			
+			this.shape.on('dragend', function(e) {
+				view.model.moveTo(this.getX(), this.getY());
+			});
+			
+			this.layer.add(this.shape);
+			this.layer.draw();
+		},
 	});
 	
 	$.playbook.SetView = Backbone.View.extend({
@@ -224,63 +320,8 @@ $(function() {
 			return Mustache.render(this.templateLi, this.model.toJSON());
 		},
 		
-		add: function(item) {
-			/*
-			var article = createArticle(item);
-			
-			var view = new $.playbook.ArticleView({model: item});
-			view.shape = article;
-			
-			// Add info div
-			$("#article").append(view.render().el);
-			
-			article.on('click', function(e) {
-				view.show();
-			});
-				
-			article.on('dragstart', function(e) {
-				view.show();
-			});
-			
-			article.on('dragend', function(e) {
-				item.save({x : this.getX(), y : this.getY()});
-			});
-			
-			this.layer.add(article);
-			this.layer.draw();*/
-		},
-		
 		addPath: function(item) {
-			// logic to draw shape + path
-			var article = this.model.get("play").get("articles").find(function(article) {
-				return article.get("_id") === item.get("articleId");
-			});
-			
-			var shape = createArticle({
-				x: item.get("endX"),
-				y: item.get("endY"),
-				type: article.get("type"),
-				color: article.get("color"),
-				label: article.get("label")
-			});
-			
-			//this.shape = shape;
-			
-			// event handlers
-			shape.on('click', function(e) {
-				//view.show();
-			});
-				
-			shape.on('dragstart', function(e) {
-				//view.show();
-			});
-			
-			shape.on('dragend', function(e) {
-				item.save({endX : this.getX(), endY : this.getY()});
-			});
-			
-			this.layer.add(shape);
-			this.layer.draw();
+			var pathView = new $.playbook.PathView({model: item, layer: this.layer});
 		},
 		
 		addAll: function() {
@@ -419,12 +460,12 @@ $(function() {
 		addAll: function() {
 			// may not be needed
 			var tempModel = this.model;
-			this.model.get("sets").each(function(set) {
-				tempModel.trigger("addSet", set, set.get("number") === 1);
-			});
-			
 			this.model.get("articles").each(function(article) {
 				tempModel.trigger("addArticle", article);
+			});
+			
+			this.model.get("sets").each(function(set) {
+				tempModel.trigger("addSet", set, set.get("number") === 1);
 			});
 		},
 		
@@ -449,13 +490,34 @@ $(function() {
 		},
 		
 		createSet: function(e) {
-			var set = new $.playbook.Set({number: this.model.get("sets").length + 1,  play: this.model});
+			// build off the last set
+			var lastSet = this.model.get("sets").max(function(set) {
+				return set.get("number");
+			});
+		
+			var newSet = new $.playbook.Set({number: this.model.get("sets").length + 1,  play: this.model});
 			
-			set.save({}, {
+			newSet.save({}, {
 				silent: true,
 				wait: true,
 				success: function(model, response) {
-					model.get("play").trigger("addNewSet", model);
+					// Copy the article locations from the last set
+					if (lastSet) {
+						lastSet.get("paths").each(function(path) {
+							var newPath = new $.playbook.Path({
+								startX: path.get("endX"),
+								startY: path.get("endY"),
+								endX: path.get("endX"),
+								endY: path.get("endY"),
+								set: model,
+								articleId: path.get("articleId")
+							});
+						});
+					}
+					
+					model.save({}, {success: function(model, response) {
+						model.get("play").trigger("addNewSet", model);
+					}});
 				}
 			});
 		},

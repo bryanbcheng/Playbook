@@ -164,7 +164,7 @@ function put_path(req, res, next) {
 			return next(new Error("Could not find path with _id=" + req.params._id));
 		}
 		
-		var updatePath = play.sets.paths.id(req.params._id);
+		var updatePath = play.sets.id(req.body.set).paths.id(req.params._id);
 		for (var attr in req.body) {
 			if (attr !== 'set' && attr !== '_id')
 				updatePath[attr] = req.body[attr];
@@ -184,7 +184,7 @@ function delete_path(req, res, next) {
 			return next(new Error("Could not find path with _id=" + req.params._id));
 		}
 		
-		var deletePath = play.sets.paths.id(req.params._id);
+		var deletePath = play.sets.id(req.body.set).paths.id(req.params._id);
 		deletePath.remove();
 		res.send(deletePath);
 	});
@@ -266,7 +266,7 @@ app.delete('/set/:_id', delete_set);
 // Path routes
 app.post('/path', post_path);
 app.put('/path/:_id', put_path);
-app.delete('path/:_id', delete_path);
+app.delete('/path/:_id', delete_path);
 
 // Article routes
 //app.get('/article/:id', get_article);
