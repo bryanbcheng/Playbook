@@ -21,7 +21,7 @@ $(function() {
 			};
 		},
 		
-		urlRoot: "/article"
+		urlRoot: "/api/article"
 	});
 	
 	$.playbook.Path = Backbone.RelationalModel.extend({
@@ -34,7 +34,7 @@ $(function() {
 			}
 		},
 		
-		urlRoot: "/path",
+		urlRoot: "/api/path",
 		
 		moveTo: function(x, y) {
 			this.save({endX: x, endY: y});
@@ -52,6 +52,11 @@ $(function() {
 				
 				nextPath.save({startX: x, startY: y});
 			}
+		},
+		
+		destroy: function() {
+			// remove drawing
+			this.destroy();
 		}
 	});
 	
@@ -91,7 +96,7 @@ $(function() {
 			if (!this.get("name")) this.set("name", "Set_" + this.get("number"));
 		},
 		
-		urlRoot: "/set"
+		urlRoot: "/api/set"
 	});
 	
 	$.playbook.Play = Backbone.RelationalModel.extend({
@@ -125,7 +130,7 @@ $(function() {
 			};
 		},
 		
-		urlRoot: "/play",
+		urlRoot: "/api/play",
 	});
 	
 	$.playbook.ArticleView = Backbone.View.extend({
@@ -195,15 +200,11 @@ $(function() {
 		},
 		
 		destroy: function() {
-			for (var index in this.shapes) {
-				var shape = this.shapes[index].shape;
-				var model = this.shapes[index].model;
+			for (var index in this.paths) {
+				var path = this.paths[index];
 				
 				// Potentially need to save parent here
-				shape.parent.remove(shape);
-				shape.parent.draw();
-				// DOESNT WORK YET
-				model.destroy();
+				path.destroy();
 			}
 			
 			this.model.destroy();
@@ -424,7 +425,7 @@ $(function() {
 			// Add info div
 			$("#set").append(view.render().el);
 			
-			$("#play .set-list").append(view.renderLi());
+			$("#play .set-list tbody").append(view.renderLi());
 			$("#" + item.get("_id")).on("click", function(e) {
 				view.show();
 			});
@@ -581,16 +582,6 @@ $(function() {
 	}
 	
 	$.playbook.bootstrap();
-	$("#start-button").on("click", function(event) {
-		
-// 		var a = new $.playbook.Play();
-// 		a.save({}, {success: function() {
-// 			var b = new $.playbook.Set({number : 1, playId : a.get("_id")});
-// 			b.save();
-// 		}});
-		
-		$.playbook.app.navigate('play/50189f152cb5a523bb000004', {trigger: true});
-	});
 });
 
 /* Util functions */

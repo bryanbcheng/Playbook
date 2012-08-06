@@ -29,15 +29,54 @@
 	display: block;
 }
 
-#play .set-list {
-	
+#play .set-list-container {
+	position: relative;
+	width: 200px;
+	padding-top: 20px;
 }
 
-#play .set-list li:hover {
+#play .set-list-area {
+	height: 120px;
+	overflow: auto;
+}
+
+#play .set-list {
+	border-collapse: collapse;
+}
+
+#play .set-list thead tr {
+	left: 0; top: 0;
+	position: absolute;
+}
+
+#play .set-list tbody {
+	display: block;
+	height: 100px;
+	overflow-x: auto;
+	overflow-y: scroll;
+}
+
+#play .set-list tr {
+	line-height: 20px;
+}
+
+#play .set-list td, #play .set-list th {
+	padding: 0 5px;
+}
+
+#play .set-list .num {
+	width: 35px;
+}
+
+#play .set-list .name {
+	width: 130px;
+}
+
+#play .set-list tr:hover {
 	background: #ffa;
 }
 
-#play .set-list li.selected {
+#play .set-list tr.selected {
 	background: yellow;
 }
 

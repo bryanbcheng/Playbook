@@ -184,9 +184,14 @@ function delete_path(req, res, next) {
 			return next(new Error("Could not find path with _id=" + req.params._id));
 		}
 		
-		var deletePath = play.sets.id(req.body.set).paths.id(req.params._id);
-		deletePath.remove();
-		res.send(deletePath);
+		for (var i = 0; i < play.sets.length; i++) {
+			var deletePath = play.sets[i].paths.id(req.params._id);
+			if (deletePath) {
+				deletePath.remove();
+				res.send(deletePath);
+				break;	
+			}
+		}
 	});
 }
 
@@ -250,29 +255,33 @@ function delete_article(req, res, next) {
 app.get('/', function(req, res) {
 	res.sendfile('public/index.html');
 });
+app.get('/play/:_id', function(req, res) {
+	res.sendfile('public/index.html');
+});
+
 
 // Play routes
-app.get('/play/:_id', get_play);
-app.post('/play', post_play);
-app.put('/play/:_id', put_play);
-app.delete('/play/:_id', delete_play);
+app.get('/api/play/:_id', get_play);
+app.post('/api/play', post_play);
+app.put('/api/play/:_id', put_play);
+app.delete('/api/play/:_id', delete_play);
 
 // Set routes
-//app.get('/set/:_id', get_set);
-app.post('/set', post_set);
-app.put('/set/:_id', put_set);
-app.delete('/set/:_id', delete_set);
+//app.get('/api/set/:_id', get_set);
+app.post('/api/set', post_set);
+app.put('/api/set/:_id', put_set);
+app.delete('/api/set/:_id', delete_set);
 
 // Path routes
-app.post('/path', post_path);
-app.put('/path/:_id', put_path);
-app.delete('/path/:_id', delete_path);
+app.post('/api/path', post_path);
+app.put('/api/path/:_id', put_path);
+app.delete('/api/path/:_id', delete_path);
 
 // Article routes
-//app.get('/article/:id', get_article);
-app.post('/article', post_article);
-app.put('/article/:_id', put_article);
-app.delete('/article/:_id', delete_article);
+//app.get('/api/article/:id', get_article);
+app.post('/api/article', post_article);
+app.put('/api/article/:_id', put_article);
+app.delete('/api/article/:_id', delete_article);
 
 app.listen(3000);
 
