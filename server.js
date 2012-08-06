@@ -189,6 +189,7 @@ function delete_path(req, res, next) {
 			if (deletePath) {
 				deletePath.remove();
 				res.send(deletePath);
+				play.save();
 				break;	
 			}
 		}
@@ -246,6 +247,8 @@ function delete_article(req, res, next) {
 		
 		var deleteArticle = play.articles.id(req.params._id);
 		deleteArticle.remove();
+		play.save();
+		
 		res.send(deleteArticle);
 	});
 }

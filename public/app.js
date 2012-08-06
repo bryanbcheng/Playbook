@@ -52,11 +52,6 @@ $(function() {
 				
 				nextPath.save({startX: x, startY: y});
 			}
-		},
-		
-		destroy: function() {
-			// remove drawing
-			this.destroy();
 		}
 	});
 	
@@ -204,10 +199,11 @@ $(function() {
 				var path = this.paths[index];
 				
 				// Potentially need to save parent here
-				path.destroy();
+				path.trigger("clear");
 			}
 			
 			this.model.destroy();
+			this.remove();
 		}
 	});
 	
@@ -224,6 +220,7 @@ $(function() {
 			this.line = null;
 			
 			this.model.on("change", this.render, this);
+			this.model.on("clear", this.clear, this);
 			
 			this.model.trigger("change");
 		},
@@ -280,6 +277,14 @@ $(function() {
 			this.layer.add(this.shape);
 			this.layer.draw();
 		},
+		
+		clear: function() {
+			if (this.line) this.layer.remove(this.line);
+			this.layer.remove(this.shape);
+			this.layer.draw();
+			
+			this.model.destroy();
+		}
 	});
 	
 	$.playbook.SetView = Backbone.View.extend({
