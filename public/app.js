@@ -239,7 +239,7 @@ $(function() {
 			
 			if (this.line) this.line.parent.remove(this.line);
 			
-			if (this.model.get("startX") && this.model.get("startY")) {
+			if (this.model.get("startX") != null && this.model.get("startY") != null) {
 				this.line = createLine({
 					points: [
 						view.model.get("startX"), view.model.get("startY"),
@@ -258,9 +258,10 @@ $(function() {
 				
 			this.shape.on('dragstart', function(e) {
 				view.article.trigger("show");
+				console.log(view.model);
 			});
 			
-			if (this.model.get("startX") && this.model.get("startY")) {
+			if (this.model.get("startX") != null && this.model.get("startY") != null) {
 				this.shape.on('dragmove', function(e) {
 					view.layer.remove(view.line);
 					view.line = createLine({points: [view.model.get("startX"), view.model.get("startY"), this.getX(), this.getY()]});
@@ -310,8 +311,7 @@ $(function() {
 			stage.add(this.layer);
 			
 			this.model.on('change', this.render, this);
-			//this.model.on('add', this.add, this);
-			this.model.on('add:paths', this.addPath, this);
+			this.model.on('addPath', this.addPath, this);
 			this.model.on('init', this.addAll, this);
 			
 			this.model.trigger('init');
@@ -333,7 +333,7 @@ $(function() {
 		addAll: function() {
 			var tempModel = this.model;
 			this.model.get("paths").each(function(item) {
-				tempModel.trigger('add:paths', item);
+				tempModel.trigger('addPath', item);
 			});
 		},
 		
@@ -405,7 +405,6 @@ $(function() {
 			stage.add(field);
 			
 			this.model.on('change', this.render, this);
-			//this.model.on('add:sets', this.addSet, this);
 			this.model.on('addSet', this.addSet, this);
 			this.model.on('addNewSet', this.addNewSet, this);
 			this.model.on('addArticle', this.addArticle, this);
@@ -420,7 +419,10 @@ $(function() {
 		},
 		
 		render: function() {
+			// Save the list and re-add after the render
+			var setList = this.$el.find('.set-list').detach();
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			if (setList[0]) this.$el.find('.set-list').replaceWith(setList);
 			return this;
 		},
 		
@@ -460,6 +462,7 @@ $(function() {
 					path = new $.playbook.Path({startX: 0, startY: 0, endX: 0, endY: 0, set: set, articleId: item.get("_id")});
 					
 				path.save();
+				set.trigger("addPath", path);
 			});
 		},
 		
