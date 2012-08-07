@@ -1,8 +1,3 @@
-/* CONSTANTS */
-var SCALE = 10;
-var START_X = 150;
-var START_Y = 50;
-
 /* GLOBALS */
 var stage;
 var testSet = [];
@@ -400,7 +395,12 @@ $(function() {
 			});
 		
 			// Depending on field
-			var field = ultimateField();
+			var field;
+			if ($("#fieldType")[0].value === "ultimate") {
+				field = ultimateField($("#fieldSize")[0].value);
+			} else if ($("#fieldType")[0].value === "soccer") {
+				field = soccerField($("#fieldSize")[0].value);
+			}
 			
 			stage.add(field);
 			
@@ -587,6 +587,9 @@ $(function() {
 	$.playbook.bootstrap = function() {
 		$.playbook.app = new $.playbook.Router();
 		Backbone.history.start({pushState: true});
+		
+		$("#fieldType").on("change", changeField);
+		$("#fieldSize").on("change", changeField);
 	}
 	
 	$.playbook.bootstrap();
@@ -594,7 +597,26 @@ $(function() {
 
 /* Util functions */
 
-function getCaretPosition (ctrl) {
+function changeField(e) {
+	var fieldLayer = stage.get(".fieldLayer")[0];
+	var currX = fieldLayer.getX();
+	var currY = fieldLayer.getY();
+	fieldLayer.clear();
+	stage.remove(fieldLayer);
+	$(fieldLayer.getCanvas().element).remove();
+	
+	if ($("#fieldType")[0].value === "ultimate") {
+		fieldLayer = ultimateField($("#fieldSize")[0].value, currX, currY);
+	} else if ($("#fieldType")[0].value === "soccer") {
+		fieldLayer = soccerField($("#fieldSize")[0].value, currX, currY);
+	}
+	
+	stage.add(fieldLayer);
+	fieldLayer.moveToBottom();
+	$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
+}
+
+function getCaretPosition(ctrl) {
 	var CaretPos = 0;	// IE Support
 	if (document.selection) {
 	ctrl.focus ();
