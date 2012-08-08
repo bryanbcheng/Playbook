@@ -19,6 +19,17 @@ var SOCCER_GOAL_BOX_WIDTH = 20;
 var SOCCER_GOAL_BOX_HEIGHT = 6;
 var SOCCER_CIRCLE_RADIUS = 10;
 
+/* FOOTBALL CONSTANTS */
+var FOOTBALL_WIDTH = 160 / 3;
+var FOOTBALL_HEIGHT = 120;
+var FOOTBALL_ENDZONE = 10;
+//var FOOTBALL_YARD_LINE = 5;
+var FOOTBALL_HASH_WIDTH = 1;
+var FOOTBALL_HASH = 20;
+var FOOTBALL_NUMBERS = 12;
+var FOOTBALL_NUMBERS_HEIGHT = 2;
+
+
 /* Fields */
 
 function ultimateField(size, startX, startY) {
@@ -478,6 +489,301 @@ function soccerFieldHalf(startX, startY) {
 	return fieldLayer;
 }
 
+function footballField(size, startX, startY) {
+	if (size === "full") return footballFieldFull(startX, startY);
+	else if (size === "half") return footballFieldHalf(startX, startY);
+}
+
+function footballFieldFull(startX, startY) {
+	var fieldLayer = new Kinetic.Layer({
+		x: startX ? startX : START_X,
+		y: startY ? startY : START_Y,
+		name: "fieldLayer",
+		draggable: true,
+		dragConstraint: "vertical",
+		dragBounds: {
+			top: -300,
+			bottom: 100
+		}
+	});
+	
+	var field = new Kinetic.Rect({
+		width: FOOTBALL_WIDTH * SCALE,
+		height: FOOTBALL_HEIGHT * SCALE,
+		fill: "green",
+		stroke: "black",
+		strokeWidth: 1,
+		x: 0,
+		y: 0,
+		name: "playingField"
+	});
+	
+	var endLine1 = new Kinetic.Line({
+		points: [0, 0, FOOTBALL_WIDTH * SCALE, 0],
+		stroke: "white",
+		strokeWidth: 1,
+		x: 0,
+		y: FOOTBALL_ENDZONE * SCALE,
+		name: "endLine1"
+	});
+	
+	var endLine2 = new Kinetic.Line({
+		points: [0, 0, FOOTBALL_WIDTH * SCALE, 0],
+		stroke: "white",
+		strokeWidth: 1,
+		x: 0,
+		y: (FOOTBALL_HEIGHT - FOOTBALL_ENDZONE) * SCALE,
+		name: "endLine2"
+	});
+	
+	fieldLayer.add(field);
+	fieldLayer.add(endLine1);
+	fieldLayer.add(endLine2);
+	
+	for (var i = 1; i < 100; i++) {
+		if (i % 5 == 0) {
+			var line = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: 0,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "line" + i
+			});
+			
+			fieldLayer.add(line);
+			
+			if (i % 10 == 0) {
+				// draw numbers
+				var num1 = new Kinetic.Text({
+					text: ("" + (50 - Math.abs(i - 50))).split('').join(' '),
+					fontSize: FOOTBALL_NUMBERS_HEIGHT * SCALE,
+					fontFamily: "Arial",
+					textFill: "white",
+					//align: "center",
+					x: FOOTBALL_NUMBERS * SCALE,
+					y: (FOOTBALL_ENDZONE + i) * SCALE,
+					alpha: 0.5,
+					rotation: Math.PI / 2
+				});
+				
+				num1.setOffset(num1.getTextWidth() / 2, num1.getTextHeight() / 2);
+				
+				var num2 = new Kinetic.Text({
+					text: ("" + (50 - Math.abs(i - 50))).split('').join(' '),
+					fontSize: FOOTBALL_NUMBERS_HEIGHT * SCALE,
+					fontFamily: "Arial",
+					textFill: "white",
+					//align: "center",
+					x: (FOOTBALL_WIDTH - FOOTBALL_NUMBERS) * SCALE,
+					y: (FOOTBALL_ENDZONE + i) * SCALE,
+					alpha: 0.5,
+					rotation: -Math.PI / 2
+				});
+				
+				num2.setOffset(num2.getTextWidth() / 2, num2.getTextHeight() / 2);
+				
+				fieldLayer.add(num1);
+				fieldLayer.add(num2);
+			}
+		} else {
+			//draw hashes
+			var sideline1 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: 0,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "sidelineLeft" + i
+			});
+			
+			var sideline2 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: (FOOTBALL_WIDTH - FOOTBALL_HASH_WIDTH) * SCALE,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "sidelineRight" + i
+			});
+			
+			var hash1 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: FOOTBALL_HASH * SCALE,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "hashLeft" + i
+			});
+			
+			var hash2 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: (FOOTBALL_WIDTH - FOOTBALL_HASH - FOOTBALL_HASH_WIDTH) * SCALE,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "hashRight" + i
+			});
+			
+			fieldLayer.add(sideline1);
+			fieldLayer.add(sideline2);
+			fieldLayer.add(hash1);
+			fieldLayer.add(hash2);
+		}
+	}
+	
+	fieldLayer.on('dragmove', function(e) {
+		var tempLayer = fieldLayer;
+		$.each(stage.getChildren(), function(index, value) {
+			if (value.getName() !== "fieldLayer") {
+				value.setPosition(fieldLayer.getPosition());
+				value.draw();
+			}
+		});
+	});
+	
+	return fieldLayer;
+}
+
+function footballFieldHalf(startX, startY) {
+	var fieldLayer = new Kinetic.Layer({
+		x: startX ? startX : START_X,
+		y: startY ? startY : START_Y,
+		name: "fieldLayer",
+		draggable: true,
+		dragConstraint: "vertical",
+		dragBounds: {
+			top: -300,
+			bottom: 100
+		}
+	});
+	
+	var field = new Kinetic.Rect({
+		width: FOOTBALL_WIDTH * SCALE,
+		height: FOOTBALL_HEIGHT / 2 * SCALE,
+		fill: "green",
+		stroke: "black",
+		strokeWidth: 1,
+		x: 0,
+		y: 0,
+		name: "playingField"
+	});
+	
+	var endLine1 = new Kinetic.Line({
+		points: [0, 0, FOOTBALL_WIDTH * SCALE, 0],
+		stroke: "white",
+		strokeWidth: 1,
+		x: 0,
+		y: FOOTBALL_ENDZONE * SCALE,
+		name: "endLine1"
+	});
+	
+	fieldLayer.add(field);
+	fieldLayer.add(endLine1);
+	
+	for (var i = 1; i <= 50; i++) {
+		if (i % 5 == 0) {
+			var line = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: 0,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "line" + i
+			});
+			
+			fieldLayer.add(line);
+			
+			if (i % 10 == 0) {
+				// draw numbers
+				var num1 = new Kinetic.Text({
+					text: ("" + (50 - Math.abs(i - 50))).split('').join(' '),
+					fontSize: FOOTBALL_NUMBERS_HEIGHT * SCALE,
+					fontFamily: "Arial",
+					textFill: "white",
+					//align: "center",
+					x: FOOTBALL_NUMBERS * SCALE,
+					y: (FOOTBALL_ENDZONE + i) * SCALE,
+					alpha: 0.5,
+					rotation: Math.PI / 2
+				});
+				
+				num1.setOffset(num1.getTextWidth() / 2, num1.getTextHeight() / 2);
+				
+				var num2 = new Kinetic.Text({
+					text: ("" + (50 - Math.abs(i - 50))).split('').join(' '),
+					fontSize: FOOTBALL_NUMBERS_HEIGHT * SCALE,
+					fontFamily: "Arial",
+					textFill: "white",
+					//align: "center",
+					x: (FOOTBALL_WIDTH - FOOTBALL_NUMBERS) * SCALE,
+					y: (FOOTBALL_ENDZONE + i) * SCALE,
+					alpha: 0.5,
+					rotation: -Math.PI / 2
+				});
+				
+				num2.setOffset(num2.getTextWidth() / 2, num2.getTextHeight() / 2);
+				
+				fieldLayer.add(num1);
+				fieldLayer.add(num2);
+			}
+		} else {
+			//draw hashes
+			var sideline1 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: 0,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "sidelineLeft" + i
+			});
+			
+			var sideline2 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: (FOOTBALL_WIDTH - FOOTBALL_HASH_WIDTH) * SCALE,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "sidelineRight" + i
+			});
+			
+			var hash1 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: FOOTBALL_HASH * SCALE,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "hashLeft" + i
+			});
+			
+			var hash2 = new Kinetic.Line({
+				points: [0, 0, FOOTBALL_HASH_WIDTH * SCALE, 0],
+				stroke: "white",
+				strokeWidth: 1,
+				x: (FOOTBALL_WIDTH - FOOTBALL_HASH - FOOTBALL_HASH_WIDTH) * SCALE,
+				y: (FOOTBALL_ENDZONE + i) * SCALE,
+				name: "hashRight" + i
+			});
+			
+			fieldLayer.add(sideline1);
+			fieldLayer.add(sideline2);
+			fieldLayer.add(hash1);
+			fieldLayer.add(hash2);
+		}
+	}
+	
+	fieldLayer.on('dragmove', function(e) {
+		var tempLayer = fieldLayer;
+		$.each(stage.getChildren(), function(index, value) {
+			if (value.getName() !== "fieldLayer") {
+				value.setPosition(fieldLayer.getPosition());
+				value.draw();
+			}
+		});
+	});
+	
+	return fieldLayer;
+}
+
 /* Articles */
 
 function createArticle(item) {
@@ -550,10 +856,43 @@ function createLabel(label) {
 
 function createLine(line) {
 	return new Kinetic.Line({
-			points: line.points,
+		points: line.points,
+		lineCap: "round",
+		dashArray: [20, 20],
+		//fill: "black",
+		stroke: "black"
+	});
+}
+
+function createArrow(arrow) {
+	var arrowGroup = new Kinetic.Group();
+
+	var arrowLine = new Kinetic.Line({
+			points: arrow.points,
 			lineCap: "round",
-			dashArray: [20, 20],
+			//dashArray: [20, 20],
 			//fill: "black",
 			stroke: "black"
 	});
+	
+	var arrowHead = new Kinetic.RegularPolygon({
+		sides: 3,
+		radius: 0.75 * SCALE,
+		fill: "black",
+		stroke: "black",
+		strokeWidth: 1,
+		x: arrow.points[2],
+		y: arrow.points[3],
+		rotation: rotationAngle(arrow.points)
+	});
+	
+	arrowGroup.add(arrowLine);
+	arrowGroup.add(arrowHead);
+	
+	return arrowGroup;
+}
+
+function rotationAngle(points) {
+	var rad = Math.atan2(points[1] - points[3], points[2] - points[0]);
+	return Math.PI / 2 - rad;
 }

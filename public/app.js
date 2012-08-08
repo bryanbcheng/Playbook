@@ -24,15 +24,29 @@ $(function() {
 		
 		defaults: function() {
 			return {
-				startX: null,
-				startY: null
+				prevX: null,
+				prevY: null,
+				nextX: null,
+				nextY: null
 			}
 		},
 		
 		urlRoot: "/api/path",
 		
 		moveTo: function(x, y) {
-			this.save({endX: x, endY: y});
+			var prevSetNum = this.get("set").get("number") - 1;
+			var prevSet = this.get("set").get("play").get("sets").find(function(set) {
+				return set.get("number") === prevSetNum;
+			});
+			
+			if (prevSet) {
+				var articleId = this.get("articleId");
+				var prevPath = prevSet.get("paths").find(function(path) {
+					return path.get("articleId") === articleId;
+				});
+				
+				prevPath.save({nextX: x, nextY: y});
+			}
 			
 			var nextSetNum = this.get("set").get("number") + 1;
 			var nextSet = this.get("set").get("play").get("sets").find(function(set) {
@@ -45,7 +59,14 @@ $(function() {
 					return path.get("articleId") === articleId;
 				});
 				
-				nextPath.save({startX: x, startY: y});
+				nextPath.save({prevX: x, prevY: y});
+			}
+			
+			if (nextSet) {
+				this.save({currX: x, currY: y});
+			} else {
+				// Next = curr for the last set
+				this.save({currX: x, currY: y, nextX: x, nextY: y});
 			}
 		}
 	});
@@ -213,6 +234,7 @@ $(function() {
 			this.article.trigger("addPathShape", this.model);
 			this.shape = null;
 			this.line = null;
+			this.arrow = null;
 			
 			this.model.on("change", this.render, this);
 			this.model.on("clear", this.clear, this);
@@ -222,53 +244,76 @@ $(function() {
 		
 		render: function() {
 			var view = this;
-		
+			
+			// Draw shape
 			if (this.shape) this.shape.parent.remove(this.shape);
 			this.shape = createArticle({
-				x: view.model.get("endX"),
-				y: view.model.get("endY"),
+				x: view.model.get("currX"),
+				y: view.model.get("currY"),
 				type: view.article.get("type"),
 				color: view.article.get("color"),
 				label: view.article.get("label")
 			});
 			
-			if (this.line) this.line.parent.remove(this.line);
-			
-			if (this.model.get("startX") != null && this.model.get("startY") != null) {
-				this.line = createLine({
-					points: [
-						view.model.get("startX"), view.model.get("startY"),
-						view.model.get("endX"), view.model.get("endY")
-					]
-				});
-				
-				this.layer.add(this.line);
-				this.line.moveToBottom();
-			}
-			
-			// event handlers
+			// Shape event handlers
 			this.shape.on('click', function(e) {
 				view.article.trigger("show");
 			});
 				
 			this.shape.on('dragstart', function(e) {
 				view.article.trigger("show");
-				console.log(view.model);
 			});
 			
-			if (this.model.get("startX") != null && this.model.get("startY") != null) {
+			this.shape.on('dragend', function(e) {
+				view.model.moveTo(this.getX(), this.getY());
+			});
+			
+			// Draw line to shape
+			if (this.line) this.line.parent.remove(this.line);
+			
+			if (this.model.get("prevX") != null && this.model.get("prevY") != null) {
+				this.line = createLine({
+					points: [
+						view.model.get("prevX"), view.model.get("prevY"),
+						view.model.get("currX"), view.model.get("currY")
+					]
+				});
+				
+				this.layer.add(this.line);
+				this.line.moveToBottom();
+				
 				this.shape.on('dragmove', function(e) {
 					view.layer.remove(view.line);
-					view.line = createLine({points: [view.model.get("startX"), view.model.get("startY"), this.getX(), this.getY()]});
+					view.line = createLine({points: [view.model.get("prevX"), view.model.get("prevY"), this.getX(), this.getY()]});
 					view.layer.add(view.line);
 					view.line.moveToBottom();
 					view.layer.draw();
 				});
 			}
 			
-			this.shape.on('dragend', function(e) {
-				view.model.moveTo(this.getX(), this.getY());
-			});
+			// Draw arrow from shape
+			if (this.arrow) this.arrow.parent.remove(this.arrow);
+			
+			if (this.model.get("nextX") !== this.model.get("currX") ||
+				this.model.get("nextY") !== this.model.get("currY")) {
+				this.arrow = createArrow({
+					points: [
+						view.model.get("currX"), view.model.get("currY"),
+						view.model.get("nextX"), view.model.get("nextY")
+					]
+				});
+				
+				this.layer.add(this.arrow);
+				this.arrow.moveToBottom();
+				
+				this.shape.on('dragmove', function(e) {
+					view.layer.remove(view.arrow);
+					view.arrow = createArrow({points: [this.getX(), this.getY(), view.model.get("nextX"), view.model.get("nextY")]});
+					view.layer.add(view.arrow);
+					view.arrow.moveToBottom();
+					view.layer.draw();
+				});
+			}
 			
 			this.layer.add(this.shape);
 			this.layer.draw();
@@ -400,6 +445,8 @@ $(function() {
 				field = ultimateField($("#fieldSize")[0].value);
 			} else if ($("#fieldType")[0].value === "soccer") {
 				field = soccerField($("#fieldSize")[0].value);
+			} else if ($("#fieldType")[0].value === "football") {
+				field = footballField($("#fieldSize")[0].value);
 			}
 			
 			stage.add(field);
@@ -457,9 +504,27 @@ $(function() {
 			this.model.get("sets").each(function(set) {
 				var path;
 				if (set.get("number") === 1)
-					path = new $.playbook.Path({startX: null, startY: null, endX: 0, endY: 0, set: set, articleId: item.get("_id")});
+					path = new $.playbook.Path({
+						prevX: null,
+						prevY: null,
+						currX: 0,
+						currY: 0,
+						nextX: 0,
+						nextY: 0,
+						set: set,
+						articleId: item.get("_id")
+					});
 				else
-					path = new $.playbook.Path({startX: 0, startY: 0, endX: 0, endY: 0, set: set, articleId: item.get("_id")});
+					path = new $.playbook.Path({
+						prevX: 0,
+						prevY: 0,
+						currX: 0,
+						currY: 0,
+						nextX: 0,
+						nextY: 0,
+						set: set,
+						articleId: item.get("_id")
+					});
 					
 				path.save();
 				set.trigger("addPath", path);
@@ -514,10 +579,12 @@ $(function() {
 					if (lastSet) {
 						lastSet.get("paths").each(function(path) {
 							var newPath = new $.playbook.Path({
-								startX: path.get("endX"),
-								startY: path.get("endY"),
-								endX: path.get("endX"),
-								endY: path.get("endY"),
+								prevX: path.get("currX"),
+								prevY: path.get("currY"),
+								currX: path.get("currX"),
+								currY: path.get("currY"),
+								nextX: path.get("currX"),
+								nextY: path.get("currY"),
 								set: model,
 								articleId: path.get("articleId")
 							});
@@ -588,6 +655,8 @@ $(function() {
 		$.playbook.app = new $.playbook.Router();
 		Backbone.history.start({pushState: true});
 		
+		$(window).keypress(changeSet);
+		
 		$("#fieldType").on("change", changeField);
 		$("#fieldSize").on("change", changeField);
 	}
@@ -596,6 +665,18 @@ $(function() {
 });
 
 /* Util functions */
+
+function changeSet(e) {
+	if (e.target.tagName === "BODY") {
+		if (e.keyCode === 37 || e.keyCode === 38) {
+			var prevSet = $('.set-list').find(".selected").prev();
+			if (prevSet.length !== 0) prevSet.click();
+		} else if (e.keyCode === 39 || e.keyCode === 40) {
+			var nextSet = $('.set-list').find(".selected").next();
+			if (nextSet.length !== 0) nextSet.click();
+		}
+	}
+}
 
 function changeField(e) {
 	var fieldLayer = stage.get(".fieldLayer")[0];
@@ -609,6 +690,8 @@ function changeField(e) {
 		fieldLayer = ultimateField($("#fieldSize")[0].value, currX, currY);
 	} else if ($("#fieldType")[0].value === "soccer") {
 		fieldLayer = soccerField($("#fieldSize")[0].value, currX, currY);
+	} else if ($("#fieldType")[0].value === "football") {
+		fieldLayer = footballField($("#fieldSize")[0].value, currX, currY);
 	}
 	
 	stage.add(fieldLayer);

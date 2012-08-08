@@ -142,10 +142,12 @@ function post_path(req, res, next) {
         }
         
         new_path = new Path({
-        	startX: req.body.startX,
-        	startY: req.body.startY,
-        	endX: req.body.endX,
-        	endY: req.body.endY,
+        	prevX: req.body.prevX,
+        	prevY: req.body.prevY,
+        	currX: req.body.currX,
+        	currY: req.body.currY,
+        	nextX: req.body.nextX,
+        	nextY: req.body.nextY,
         	articleId: req.body.articleId
         });
         

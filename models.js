@@ -21,10 +21,12 @@ Article.path('label').validate(function (v) {
 }, 'Label too long'); 
 
 var Path = new Schema({
-  	startX		: Number
-  , startY		: Number
-  , endX		: Number
-  , endY		: Number
+	prevX		: Number
+  , prevY		: Number
+  ,	currX		: Number
+  , currY		: Number
+  , nextX		: Number
+  , nextY		: Number
   , articleId	: { type: Schema.ObjectId, required: true }
 });
 
@@ -38,7 +40,7 @@ var Set = new Schema({
 var Play = new Schema({
 	name		: String
   , description	: String
-  , sport		: { type : String, enum: ['ultimate'] }
+  , sport		: { type : String, enum: ['ultimate', 'soccer'] }
   , size		: { type : String, enum: ['full', 'half'] }
   , articles	: [Article]
   , sets		: [Set]
