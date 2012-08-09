@@ -34,10 +34,7 @@ $(function() {
 		urlRoot: "/api/path",
 		
 		moveTo: function(x, y) {
-			var prevSetNum = this.get("set").get("number") - 1;
-			var prevSet = this.get("set").get("play").get("sets").find(function(set) {
-				return set.get("number") === prevSetNum;
-			});
+			var prevSet = this.get("set").prevSet();
 			
 			if (prevSet) {
 				var articleId = this.get("articleId");
@@ -48,10 +45,7 @@ $(function() {
 				prevPath.save({nextX: x, nextY: y});
 			}
 			
-			var nextSetNum = this.get("set").get("number") + 1;
-			var nextSet = this.get("set").get("play").get("sets").find(function(set) {
-				return set.get("number") === nextSetNum;
-			});
+			var nextSet = this.get("set").nextSet();
 			
 			if (nextSet) {
 				var articleId = this.get("articleId");
@@ -62,6 +56,7 @@ $(function() {
 				nextPath.save({prevX: x, prevY: y});
 			}
 			
+			// Saving current set
 			if (nextSet) {
 				this.save({currX: x, currY: y});
 			} else {
@@ -107,7 +102,21 @@ $(function() {
 			if (!this.get("name")) this.set("name", "Set_" + this.get("number"));
 		},
 		
-		urlRoot: "/api/set"
+		urlRoot: "/api/set",
+		
+		prevSet: function() {
+			var prevSetNum = this.get("number") - 1;
+			return this.get("play").get("sets").find(function(set) {
+				return set.get("number") === prevSetNum;
+			});
+		},
+		
+		nextSet: function() {
+			var nextSetNum = this.get("number") + 1;
+			return this.get("play").get("sets").find(function(set) {
+				return set.get("number") === nextSetNum;
+			});
+		}
 	});
 	
 	$.playbook.Play = Backbone.RelationalModel.extend({
@@ -138,8 +147,10 @@ $(function() {
 			return {
 				name: "untitled play",
 				description: "no description",
-				type: $("#fieldType").val(),
-				size: $("#fieldSize").val()
+				type: $("#fieldType").val() ? $("#fieldType").val() : "ultimate",
+				size: $("#fieldSize").val() ? $("#fieldSize").val() : "full",
+				teamColors: ["blue", "red"],
+				isAnimating: false
 			};
 		},
 		
@@ -241,6 +252,9 @@ $(function() {
 			this.model.on("change", this.render, this);
 			this.model.on("clear", this.clear, this);
 			
+      		this.model.on('animate', this.animate, this);
+			this.model.on('reset', this.reset, this);
+			
 			this.model.trigger("change");
 		},
 		
@@ -327,6 +341,23 @@ $(function() {
 			this.layer.draw();
 			
 			this.model.destroy();
+		},
+		
+		animate: function(cb) {
+			this.shape.transitionTo({
+				x: this.model.get("nextX"),
+				y: this.model.get("nextY"),
+				duration: 1,
+				callback: cb
+			});
+		},
+		
+		// Reset after animation
+		reset: function() {
+			this.shape.setPosition({
+				x: this.model.get("currX"),
+				y: this.model.get("currY")
+			});
 		}
 	});
 	
@@ -345,16 +376,23 @@ $(function() {
 		
 		initialize: function() {
 			this.layer = new Kinetic.Layer({
-				x: START_X,
-				y: START_Y,
+				x: stage.get(".fieldLayer")[0].getX(),
+				y: stage.get(".fieldLayer")[0].getY(),
 				visible: false,
 				name: "setLayer_" + this.model.get("number")
 			});
 			stage.add(this.layer);
 			
+			this.count = 0;
+			
 			this.model.on('change', this.render, this);
 			this.model.on('addPath', this.addPath, this);
+			this.model.on('show', this.show, this);
 			this.model.on('init', this.addAll, this);
+			
+			this.model.on('animate', this.animate, this);
+			this.model.on('wait', this.wait, this);
+			this.model.on('reset', this.reset, this);
 			
 			this.model.trigger('init');
 		},
@@ -413,11 +451,36 @@ $(function() {
 			
 			$("#" + this.model.get("_id")).siblings().removeClass("selected");
 			$("#" + this.model.get("_id")).addClass("selected");
+		},
+		
+		animate: function(cb) {
+			// call path to animate
+			var view = this;
+			this.model.get("paths").each(function(path) {
+				path.trigger("animate", function() {
+					view.model.trigger("wait", cb);
+				});
+			});
+		},
+		
+		wait: function(cb) {
+			this.count++;
+			
+			if(this.count == this.model.get("paths").length) {
+				this.count = 0;
+				cb();
+			}
+		},
+		
+		reset: function() {
+			this.model.get("paths").each(function(path) {
+				path.trigger("reset");
+			});
 		}
 	});
 	
 	$.playbook.PlayView = Backbone.View.extend({
-		el: $("#play"),
+		tagName: "div",
 		
 		template: $("#play-template").html(),
 		setListTemplate: $("#set-list-template").html(),
@@ -432,10 +495,15 @@ $(function() {
 			"click .add-set"	: "createSet",
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
-			"click .add-cone"	: "addCone"
+			"click .add-cone"	: "addCone",
+			"click .animate"	: "animateSets"
 		},
 		
 		initialize: function() {
+			// Remove previous stage if necessary
+			if (stage) {
+				$(stage.getDOM()).remove();
+			}
 			// create stage
 			stage = new Kinetic.Stage({
 				container: "canvas",
@@ -448,6 +516,7 @@ $(function() {
 			this.model.on('addNewSet', this.addNewSet, this);
 			this.model.on('addArticle', this.addArticle, this);
 			this.model.on('addNewArticle', this.addNewArticle, this);
+			this.model.on('animate', this.animate, this);
 			this.model.on('init', this.addAll, this);
 			
 			this.model.fetch({
@@ -476,9 +545,14 @@ $(function() {
 			// Hack to select correct field type and size
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
+			
+			
+			$(html).find(".select-color").ColorPicker({color: "0000ff"});
 			this.$el.html(html);
 			
 			if (setList[0]) this.$el.find('.set-list').replaceWith(setList);
+			
+			$("#play").append(this.el);
 			return this;
 		},
 		
@@ -490,7 +564,8 @@ $(function() {
 			
 			$("#play .set-list tbody").append(view.renderLi());
 			$("#" + item.get("_id")).on("click", function(e) {
-				view.show();
+				if (!view.model.get("play").get("isAnimating"))
+					view.show();
 			});
 			
 			if (show) view.show();
@@ -512,25 +587,29 @@ $(function() {
 		
 			this.model.get("sets").each(function(set) {
 				var path;
+				var midpoint = {
+					x: stage.get(".fieldLayer")[0].get(".playingField")[0].getWidth() / 2,
+					y: stage.get(".fieldLayer")[0].get(".playingField")[0].getHeight() / 2 - START_Y
+				};
 				if (set.get("number") === 1)
 					path = new $.playbook.Path({
 						prevX: null,
 						prevY: null,
-						currX: 0,
-						currY: 0,
-						nextX: 0,
-						nextY: 0,
+						currX: midpoint.x,
+						currY: midpoint.y,
+						nextX: midpoint.x,
+						nextY: midpoint.y,
 						set: set,
 						articleId: item.get("_id")
 					});
 				else
 					path = new $.playbook.Path({
-						prevX: 0,
-						prevY: 0,
-						currX: 0,
-						currY: 0,
-						nextX: 0,
-						nextY: 0,
+						prevX: midpoint.x,
+						prevY: midpoint.y,
+						currX: midpoint.x,
+						currY: midpoint.y,
+						nextX: midpoint.x,
+						nextY: midpoint.y,
 						set: set,
 						articleId: item.get("_id")
 					});
@@ -661,6 +740,37 @@ $(function() {
 					model.get("play").trigger("addNewArticle", model);
 				}
 			});
+		},
+		
+		// Animation recursion wrapper
+		animateSets: function(e) {
+			this.model.set("isAnimating", true);
+			
+			var currSetId = $(".set-list").find(".selected").attr("id");
+			var currSet = this.model.get("sets").find(function(set) {
+				return set.get("_id") === currSetId;
+			});
+			
+			this.model.trigger("animate", currSet);
+		},
+		
+		animate: function(set) {
+			var view = this;
+			set.trigger("animate", function() {
+				// Show next set
+				var nextSet = set.nextSet();
+				if (!nextSet) {
+					view.model.set("isAnimating", false);
+					return;
+				}
+				nextSet.trigger("show");
+				
+				// Reset animation
+				set.trigger("reset");
+				
+				// simulate animate press
+				view.model.trigger("animate", nextSet);
+			});
 		}
 	});
 	
@@ -671,7 +781,12 @@ $(function() {
 		},
 		
 		show_play : function(_id) {
+			// clear previous divs
+			clearDivs();
+		
 			var play = new $.playbook.Play({_id: _id});
+			// Temporary hack to fix set-list
+			$("#play").find('.set-list').detach();
 			var playView = new $.playbook.PlayView({model: play});
 		},
 		/*
@@ -689,7 +804,7 @@ $(function() {
 		
 		$("#new-play").click(function() {
 			var play = new $.playbook.Play({});
-			console.log(play);
+			
 			play.save({}, {
 				silent: true,
 				wait: true,
@@ -707,6 +822,14 @@ $(function() {
 
 /* Util functions */
 
+function print() {
+	console.log(stage);
+	var fl = stage.get(".fieldLayer")[0];
+	console.log(fl);
+	console.log(fl.getPosition());
+	console.log(stage.getDOM());
+}
+
 function changeSet(e) {
 	if (e.target.tagName === "BODY") {
 		if (e.keyCode === 37 || e.keyCode === 38) {
@@ -717,6 +840,12 @@ function changeSet(e) {
 			if (nextSet.length !== 0) nextSet.click();
 		}
 	}
+}
+
+function clearDivs() {
+	$("#play").html("");
+	$("#set").html("");
+	$("#article").html("");
 }
 
 function getCaretPosition(ctrl) {

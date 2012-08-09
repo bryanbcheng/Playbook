@@ -5,6 +5,7 @@
 	<meta charset="utf-8">
 	<title>Playbook</title>
 	<link rel="stylesheet" href="/css/styles.css"/>
+	<link rel="stylesheet" href="/css/colorpicker.css" />
 </head>
 
 <body>
@@ -14,7 +15,8 @@
 	<script src="/js/backbone-localStorage.js"></script>
 	<script src="/js/backbone-relational.js"></script>
 	<script src="/js/mustache.js"></script>
-	<script src="/js/kinetic-v3.10.4.min.js"></script>
+	<script src="/js/kinetic-v3.10.5.min.js"></script>
+	<script src="/js/colorpicker.js"></script>
 	<script src="/draw.js"></script>
 	<script src="/app.js"></script>
 	
@@ -27,6 +29,7 @@
 		<div id="play"></div>
 		<div id="set"></div>
 		<div id="article"></div>
+		<button onClick="print()">Print</button>
 	</div>
 	
 	<!-- Templates -->
@@ -67,8 +70,10 @@
 			</div>
 			<button class="add-set">Add Set</button>
 			<button class="add-player">Add Player</button>
+			<input class="select-color"></input>
 			<button class="add-ball">Add Ball</button>
 			<button class="add-cone">Add Cone</button>
+			<button class="animate">Animate!</button>
 		</div>
 	</script>
 	
