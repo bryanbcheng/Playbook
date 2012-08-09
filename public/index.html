@@ -22,15 +22,7 @@
 		<header>
 			<h1>Playbook</h1>
 		</header>
-		<select id="fieldType">
-			<option value="ultimate">Ultimate</option>
-			<option value="soccer">Soccer</option>
-			<option value="football">Football</option>
-		</select>
-		<select id="fieldSize">
-			<option value="full">Full</option>
-			<option value="half">Half</option>
-		</select>
+		<button id="new-play">New Play</button>
 		<div id="canvas"></div>
 		<div id="play"></div>
 		<div id="set"></div>
@@ -40,6 +32,15 @@
 	<!-- Templates -->
 	
 	<script type="text/template" id="play-template">
+		<select id="fieldType">
+			<option value="ultimate">Ultimate</option>
+			<option value="soccer">Soccer</option>
+			<option value="football">Football</option>
+		</select>
+		<select id="fieldSize">
+			<option value="full">Full</option>
+			<option value="half">Half</option>
+		</select>
 		<div>
 			<div class="name">
 				<h2>Name: {{name}}</h2>

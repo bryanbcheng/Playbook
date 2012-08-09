@@ -40,7 +40,7 @@ var Set = new Schema({
 var Play = new Schema({
 	name		: String
   , description	: String
-  , sport		: { type : String, enum: ['ultimate', 'soccer'] }
+  , type		: { type : String, enum: ['ultimate', 'soccer', 'football'] }
   , size		: { type : String, enum: ['full', 'half'] }
   , articles	: [Article]
   , sets		: [Set]

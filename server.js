@@ -46,12 +46,22 @@ function get_play(req, res, next) {
 }
 
 function post_play(req, res, next) {
-	new_play = new Play({name: req.body.name, description: req.body.description});
+	var new_play = new Play({
+		name: req.body.name, 
+		description: req.body.description,
+		type: req.body.type,
+		size: req.body.size
+	});
     new_play.save();
+    
+    var initial_set = new Set({name: "Set_1", number: 1, comments: ""});
+    new_play.sets.push(initial_set);
+    new_play.save();
+    
     res.send(new_play);
 }
 
-// Update name/description of play
+// Update properties of play
 function put_play(req, res, next) {
 	Play.findOne({'_id' :req.params._id}, function(err, play) {
 		if (err)
@@ -66,8 +76,6 @@ function put_play(req, res, next) {
 		}
 		
 		play.save();
-		
-		// propagate up
 		
 		res.send(play);
 	});

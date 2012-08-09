@@ -137,7 +137,9 @@ $(function() {
 		defaults: function() {
 			return {
 				name: "untitled play",
-				description: "no description"
+				description: "no description",
+				type: $("#fieldType").val(),
+				size: $("#fieldSize").val()
 			};
 		},
 		
@@ -425,6 +427,8 @@ $(function() {
 			"blur .name-edit"	: "updateName",
 			"dblclick .desc"	: "editDescription",
 			"blur .desc-edit"	: "updateDescription",
+			"change #fieldType"	: "changeField",
+			"change #fieldSize"	: "changeField",
 			"click .add-set"	: "createSet",
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
@@ -438,18 +442,6 @@ $(function() {
 				width: 1000,
 				height: 1000,
 			});
-		
-			// Depending on field
-			var field;
-			if ($("#fieldType")[0].value === "ultimate") {
-				field = ultimateField($("#fieldSize")[0].value);
-			} else if ($("#fieldType")[0].value === "soccer") {
-				field = soccerField($("#fieldSize")[0].value);
-			} else if ($("#fieldType")[0].value === "football") {
-				field = footballField($("#fieldSize")[0].value);
-			}
-			
-			stage.add(field);
 			
 			this.model.on('change', this.render, this);
 			this.model.on('addSet', this.addSet, this);
@@ -460,6 +452,17 @@ $(function() {
 			
 			this.model.fetch({
 				success: function(model, response) {
+					// Depending on field
+					var field;
+					if (model.get("type") === "ultimate") {
+						field = ultimateField(model.get("size"));
+					} else if (model.get("type") === "soccer") {
+						field = soccerField(model.get("size"));
+					} else if (model.get("type") === "football") {
+						field = footballField(model.get("size"));
+					}
+					stage.add(field);
+				
 					model.trigger('init');
 				}
 			});
@@ -468,7 +471,13 @@ $(function() {
 		render: function() {
 			// Save the list and re-add after the render
 			var setList = this.$el.find('.set-list').detach();
-			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			
+			var html = Mustache.render(this.template, this.model.toJSON());
+			// Hack to select correct field type and size
+			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
+			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
+			this.$el.html(html);
+			
 			if (setList[0]) this.$el.find('.set-list').replaceWith(setList);
 			return this;
 		},
@@ -563,6 +572,29 @@ $(function() {
 			this.model.save({description: e.currentTarget.value});
 		},
 		
+		changeField: function(e) {
+			var fieldLayer = stage.get(".fieldLayer")[0];
+			var currX = fieldLayer.getX();
+			var currY = fieldLayer.getY();
+			fieldLayer.clear();
+			stage.remove(fieldLayer);
+			$(fieldLayer.getCanvas().element).remove();
+			
+			if ($("#fieldType").val() === "ultimate") {
+				fieldLayer = ultimateField($("#fieldSize").val(), currX, currY);
+			} else if ($("#fieldType").val() === "soccer") {
+				fieldLayer = soccerField($("#fieldSize").val(), currX, currY);
+			} else if ($("#fieldType").val() === "football") {
+				fieldLayer = footballField($("#fieldSize").val(), currX, currY);
+			}
+			
+			this.model.save({type: $("#fieldType").val(), size: $("#fieldSize").val()});
+			
+			stage.add(fieldLayer);
+			fieldLayer.moveToBottom();
+			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
+		},
+		
 		createSet: function(e) {
 			// build off the last set
 			var lastSet = this.model.get("sets").max(function(set) {
@@ -655,10 +687,19 @@ $(function() {
 		$.playbook.app = new $.playbook.Router();
 		Backbone.history.start({pushState: true});
 		
-		$(window).keypress(changeSet);
+		$("#new-play").click(function() {
+			var play = new $.playbook.Play({});
+			console.log(play);
+			play.save({}, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
+				}
+			});
+		});
 		
-		$("#fieldType").on("change", changeField);
-		$("#fieldSize").on("change", changeField);
+		$(window).keypress(changeSet);
 	}
 	
 	$.playbook.bootstrap();
@@ -676,27 +717,6 @@ function changeSet(e) {
 			if (nextSet.length !== 0) nextSet.click();
 		}
 	}
-}
-
-function changeField(e) {
-	var fieldLayer = stage.get(".fieldLayer")[0];
-	var currX = fieldLayer.getX();
-	var currY = fieldLayer.getY();
-	fieldLayer.clear();
-	stage.remove(fieldLayer);
-	$(fieldLayer.getCanvas().element).remove();
-	
-	if ($("#fieldType")[0].value === "ultimate") {
-		fieldLayer = ultimateField($("#fieldSize")[0].value, currX, currY);
-	} else if ($("#fieldType")[0].value === "soccer") {
-		fieldLayer = soccerField($("#fieldSize")[0].value, currX, currY);
-	} else if ($("#fieldType")[0].value === "football") {
-		fieldLayer = footballField($("#fieldSize")[0].value, currX, currY);
-	}
-	
-	stage.add(fieldLayer);
-	fieldLayer.moveToBottom();
-	$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
 }
 
 function getCaretPosition(ctrl) {
