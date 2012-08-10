@@ -591,6 +591,7 @@ $(function() {
 			"change #fieldType"	: "changeField",
 			"change #fieldSize"	: "changeField",
 			"click .add-set"	: "createSet",
+			"click .set-list"	: "changeSet",
 			"click .remove-set"	: "deleteSet",
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
@@ -637,19 +638,13 @@ $(function() {
 		},
 		
 		render: function() {
-			// Save the list and re-add after the render
-			var setList = this.$el.find('.set-list').detach();
-			
 			var html = Mustache.render(this.template, this.model.toJSON());
 			// Hack to select correct field type and size
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
 			
-			
 			$(html).find(".select-color").ColorPicker({color: "0000ff"});
 			this.$el.html(html);
-			
-			if (setList[0]) this.$el.find('.set-list').replaceWith(setList);
 			
 			$("#play").append(this.el);
 			return this;
@@ -661,12 +656,7 @@ $(function() {
 			// Add info div
 			$("#set").append(view.render().el);
 			
-			$("#play .set-list tbody").append(view.renderLi());
-			$("#" + item.get("_id")).on("click", function(e) {
-				if (!view.model.get("play").get("isAnimating"))
-					view.show();
-			});
-			
+			console.log('asdf');
 			if (show) view.show();
 		},
 		
@@ -773,6 +763,13 @@ $(function() {
 			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
 		},
 		
+		currentSet: function() {
+			var currSetId = $(".set-list").find(".selected").attr("id");
+			return this.model.get("sets").find(function(set) {
+				return set.get("_id") === currSetId;
+			});
+		},
+		
 		createSet: function(e) {
 			// build off the last set
 			var lastSet = this.model.get("sets").max(function(set) {
@@ -802,17 +799,29 @@ $(function() {
 					}
 					
 					model.save({}, {success: function(model, response) {
+						model.get("play").trigger("change");
 						model.get("play").trigger("addNewSet", model);
 					}});
 				}
 			});
 		},
 		
+		changeSet: function(e) {
+			var setId = $(e.target).closest("tr").attr("id");
+			
+			var currSet = this.currentSet();
+			
+			if (setId != currSet.get("_id")) {
+				var displaySet = this.model.get("sets").find(function(set) {
+					return set.get("_id") === setId;
+				});
+				
+				displaySet.trigger("show");
+			}
+		},
+		
 		deleteSet: function(e) {
-			var currSetId = $(".set-list").find(".selected").attr("id");
-			var currSet = this.model.get("sets").find(function(set) {
-				return set.get("_id") === currSetId;
-			});
+			var currSet = this.currentSet();
 			
 			currSet.trigger("clear");
 		},
@@ -855,10 +864,7 @@ $(function() {
 			this.undelegateEvents();
 			this.model.set("isAnimating", true);
 			
-			var currSetId = $(".set-list").find(".selected").attr("id");
-			var currSet = this.model.get("sets").find(function(set) {
-				return set.get("_id") === currSetId;
-			});
+			var currSet = this.currentSet();
 			
 			this.model.trigger("animate", currSet);
 		},
@@ -894,8 +900,7 @@ $(function() {
 			clearDivs();
 		
 			var play = new $.playbook.Play({_id: _id});
-			// Temporary hack to fix set-list
-			$("#play").find('.set-list').detach();
+			
 			var playView = new $.playbook.PlayView({model: play});
 		},
 	});
