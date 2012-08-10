@@ -66,7 +66,13 @@ $(function() {
 		},
 		
 		link: function(path) {
+			if (!path) {
+				errorMessage("Could not find matching paths");
+				return;
+			}
 			
+			this.save({nextX: path.get("currX"), nextY: path.get("currY")});
+			path.save({prevX: this.get("currX"), prevY: this.get("currY")});
 		},
 		
 		linkFirst: function() {
@@ -131,7 +137,10 @@ $(function() {
 		
 		link: function(nextSet) {
 			this.get("paths").each(function(path) {
-				
+				// Could potentially use index as well
+				path.link(nextSet.get("paths").find(function(nextPath) {
+					return nextPath.get("articleId") == path.get("articleId");
+				}));
 			});
 		},
 		
@@ -322,9 +331,13 @@ $(function() {
 				view.model.moveTo(this.getX(), this.getY());
 			});
 			
+			if (this.line) {
+				this.line.parent.remove(this.line);
+				this.line = null; // Prevention for deleting sets
+			}
+			
 			// Draw line to shape
 			if (this.model.get("prevX") != null && this.model.get("prevY") != null) {
-				if (this.line) this.line.parent.remove(this.line);
 				
 				this.line = createLine({
 					points: [
@@ -346,7 +359,10 @@ $(function() {
 			}
 			
 			// Draw arrow from shape
-			if (this.arrow) this.arrow.parent.remove(this.arrow);
+			if (this.arrow) {
+				this.arrow.parent.remove(this.arrow);
+				this.arrow = null; // Prevention for deleting sets
+			}
 			
 			if (this.model.get("nextX") !== this.model.get("currX") ||
 				this.model.get("nextY") !== this.model.get("currY")) {
