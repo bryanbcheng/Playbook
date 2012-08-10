@@ -165,6 +165,15 @@ table {
 	background: #c3c3c3;
 }
 
+#play .team {
+	line-height: 28px;
+}
+
+#play .team span {
+	float: left;
+	width: 65px;
+}
+
 #set {
 	width: 200px;
 	float: left;

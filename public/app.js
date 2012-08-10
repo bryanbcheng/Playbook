@@ -12,7 +12,8 @@ $(function() {
 			return {
 				type: "player",
 				color: "blue",
-				label: ""
+				label: "",
+				team: ""
 			};
 		},
 		
@@ -196,8 +197,7 @@ $(function() {
 				description: "no description",
 				type: $("#fieldType").val() ? $("#fieldType").val() : "ultimate",
 				size: $("#fieldSize").val() ? $("#fieldSize").val() : "full",
-				teamColors: ["blue", "red"],
-				isAnimating: false
+				teamColors: ["#0000ff", "#ff0000"]
 			};
 		},
 		
@@ -315,7 +315,8 @@ $(function() {
 				y: view.model.get("currY"),
 				type: view.article.get("type"),
 				color: view.article.get("color"),
-				label: view.article.get("label")
+				label: view.article.get("label"),
+				//name: view.article.get("team")
 			});
 			
 			// Shape event handlers
@@ -643,7 +644,19 @@ $(function() {
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
 			
-			$(html).find(".select-color").ColorPicker({color: "0000ff"});
+			var view = this;
+			$(html).find(".select-color").colorPicker({onColorChange: function(id, newValue) {
+				// PREVENT CHOOSING THE SAME COLOR				
+				
+				view.model.save({teamColors: [$("#color0").val(), $("#color1").val()]});
+				
+				var teamPlayers = view.model.get("articles").filter(function(article) {
+					return article.get("team") == $("#" + id).parent().attr("id");
+				});
+				
+				// update each article with new color
+				console.log(teamPlayers);
+			}});
 			this.$el.html(html);
 			
 			$("#play").append(this.el);
@@ -827,7 +840,7 @@ $(function() {
 		},
 		
 		addPlayer: function(e) {
-			var player = new $.playbook.Article({type: "player", play: this.model.get("_id")});
+			var player = new $.playbook.Article({type: "player", team: $(e.target).parent().attr("id"), play: this.model.get("_id")});
 			player.save({}, {
 				silent: true,
 				wait: true,
@@ -862,7 +875,6 @@ $(function() {
 		// Animation recursion wrapper
 		animateSets: function(e) {
 			this.undelegateEvents();
-			this.model.set("isAnimating", true);
 			
 			var currSet = this.currentSet();
 			
@@ -875,7 +887,6 @@ $(function() {
 				// Show next set
 				var nextSet = set.nextSet();
 				if (!nextSet) {
-					view.model.set("isAnimating", false);
 					view.delegateEvents();
 					return;
 				}

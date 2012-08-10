@@ -14,6 +14,7 @@ var Article = new Schema({
     type		: { type: String, enum: ['player', 'ball', 'cone'] }
   , color		: String
   , label		: { type: String, uppercase: true }
+  , team		: String
 });
 
 Article.path('label').validate(function (v) {

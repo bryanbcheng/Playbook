@@ -50,7 +50,8 @@ function post_play(req, res, next) {
 		name: req.body.name, 
 		description: req.body.description,
 		type: req.body.type,
-		size: req.body.size
+		size: req.body.size,
+		teamColors: req.body.teamColors
 	});
     new_play.save();
     
@@ -219,7 +220,8 @@ function post_article(req, res, next) {
         new_article = new Article({
         	type: req.body.type,
         	color: req.body.color,
-        	label: req.body.label
+        	label: req.body.label,
+        	team: req.body.team
         });
         
         play.articles.push(new_article);

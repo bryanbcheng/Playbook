@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<title>Playbook</title>
 	<link rel="stylesheet" href="/css/styles.css"/>
-	<link rel="stylesheet" href="/css/colorpicker.css" />
+	<link rel="stylesheet" href="/css/colorPicker.css" />
 </head>
 
 <body>
@@ -16,7 +16,7 @@
 	<script src="/js/backbone-relational.js"></script>
 	<script src="/js/mustache.js"></script>
 	<script src="/js/kinetic-v3.10.5.js"></script>
-	<script src="/js/colorpicker.js"></script>
+	<script src="/js/jquery.colorPicker.min.js"></script>
 	<script src="/draw.js"></script>
 	<script src="/app.js"></script>
 	
@@ -80,9 +80,18 @@
 					<br class="clear"/>
 				</div>
 			</div>
-			<button class="add-set">Add Set</button>
-			<button class="add-player">Add Player</button>
-			<input class="select-color"></input>
+			<div id="team0" class="team">
+				<span>Team 1</span>
+				<button class="add-player">Add Player</button>
+				<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
+				<br class="clear"/>
+			</div>
+			<div id="team1" class="team">
+				<span>Team 2</span>
+				<button class="add-player">Add Player</button>
+				<input id="color1" class="select-color" value="{{teamColors.1}}" type="hidden" />
+ 				<br class="clear"/>
+			</div>
 			<button class="add-ball">Add Ball</button>
 			<button class="add-cone">Add Cone</button>
 			<button class="animate">Animate!</button>
