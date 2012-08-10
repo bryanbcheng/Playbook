@@ -63,6 +63,18 @@ $(function() {
 				// Next = curr for the last set
 				this.save({currX: x, currY: y, nextX: x, nextY: y});
 			}
+		},
+		
+		link: function(path) {
+			
+		},
+		
+		linkFirst: function() {
+			this.save({prevX: null, prevY: null});
+		},
+		
+		linkLast: function() {
+			this.save({nextX: this.get("currX"), nextY: this.get("currY")});
 		}
 	});
 	
@@ -78,7 +90,7 @@ $(function() {
 					key: 'set',
 					includeInJSON: '_id',
 				}
-			}/*,
+			},/*
 			{
 				type: Backbone.HasOne,
 				key: 'prevSet',
@@ -100,22 +112,48 @@ $(function() {
 		
 		initialize: function() {
 			if (!this.get("name")) this.set("name", "Set_" + this.get("number"));
+			
+			// LINK SETS??
 		},
 		
 		urlRoot: "/api/set",
 		
+		// Assume array is in order (sorting not an issue yet)
 		prevSet: function() {
-			var prevSetNum = this.get("number") - 1;
-			return this.get("play").get("sets").find(function(set) {
-				return set.get("number") === prevSetNum;
-			});
+			var prevIndex = this.get("play").get("sets").indexOf(this) - 1;
+			return this.get("play").get("sets").at(prevIndex);
 		},
 		
 		nextSet: function() {
-			var nextSetNum = this.get("number") + 1;
-			return this.get("play").get("sets").find(function(set) {
-				return set.get("number") === nextSetNum;
+			var nextIndex = this.get("play").get("sets").indexOf(this) + 1;
+			return this.get("play").get("sets").at(nextIndex);
+		},
+		
+		link: function(nextSet) {
+			this.get("paths").each(function(path) {
+				
 			});
+		},
+		
+		linkFirst: function() {
+			this.get("paths").each(function(path) {
+				path.linkFirst();
+			});
+		},
+		
+		linkLast: function() {
+			this.get("paths").each(function(path) {
+				path.linkLast();
+			});
+		},
+		
+		renumber: function(num) {
+			this.save({number: num});
+			
+			var nextSet = this.nextSet();
+			if (nextSet) {
+				nextSet.renumber(num + 1);
+			}
 		}
 	});
 	
@@ -174,7 +212,7 @@ $(function() {
 			this.model.on('addPathShape', this.addPathShape, this);
 			this.model.on('show', this.show, this);
 			this.model.on('change', this.render, this);
-      		this.model.on('destroy', this.remove, this);
+      		//this.model.on('destroy', this.remove, this);
 		},
 		
 		render: function() {
@@ -285,9 +323,9 @@ $(function() {
 			});
 			
 			// Draw line to shape
-			if (this.line) this.line.parent.remove(this.line);
-			
 			if (this.model.get("prevX") != null && this.model.get("prevY") != null) {
+				if (this.line) this.line.parent.remove(this.line);
+				
 				this.line = createLine({
 					points: [
 						view.model.get("prevX"), view.model.get("prevY"),
@@ -386,6 +424,7 @@ $(function() {
 			this.count = 0;
 			
 			this.model.on('change', this.render, this);
+			this.model.on('clear', this.clear, this);
 			this.model.on('addPath', this.addPath, this);
 			this.model.on('show', this.show, this);
 			this.model.on('init', this.addAll, this);
@@ -404,6 +443,49 @@ $(function() {
 		
 		renderLi: function() {
 			return Mustache.render(this.templateLi, this.model.toJSON());
+		},
+		
+		clear: function() {
+			var prevSet = this.model.prevSet();
+			var nextSet = this.model.nextSet();
+			
+			// Prevent deleting last set
+			if (!prevSet && !nextSet) {
+				errorMessage("Cannot delete last set!");
+				return;
+			}
+			
+			// Remove layer from canvas
+			this.layer.clear();
+			stage.remove(this.layer);
+			$(this.layer.getCanvas().element).remove();
+			
+			// Link prev set and next set
+			if (prevSet && nextSet) {
+				prevSet.link(nextSet);
+			} else if (prevSet) {
+				prevSet.linkLast();
+			} else if (nextSet) {
+				nextSet.linkFirst();
+			}
+			
+			// Renumber all succeeding sets
+			if (nextSet) {
+				nextSet.renumber(this.model.get("number"));
+			}
+			
+			// Remove set DOM
+			this.remove();
+			$("#" + this.model.get("_id")).remove();
+			
+			// Delete model
+			this.model.destroy();
+			
+			// Set current set to next set if exists, otherwise, to prev set
+			if (nextSet)
+				nextSet.trigger("show");
+			else
+				prevSet.trigger("show");
 		},
 		
 		addPath: function(item) {
@@ -493,6 +575,7 @@ $(function() {
 			"change #fieldType"	: "changeField",
 			"change #fieldSize"	: "changeField",
 			"click .add-set"	: "createSet",
+			"click .remove-set"	: "deleteSet",
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
 			"click .add-cone"	: "addCone",
@@ -709,6 +792,15 @@ $(function() {
 			});
 		},
 		
+		deleteSet: function(e) {
+			var currSetId = $(".set-list").find(".selected").attr("id");
+			var currSet = this.model.get("sets").find(function(set) {
+				return set.get("_id") === currSetId;
+			});
+			
+			currSet.trigger("clear");
+		},
+		
 		addPlayer: function(e) {
 			var player = new $.playbook.Article({type: "player", play: this.model.get("_id")});
 			player.save({}, {
@@ -744,6 +836,7 @@ $(function() {
 		
 		// Animation recursion wrapper
 		animateSets: function(e) {
+			this.undelegateEvents();
 			this.model.set("isAnimating", true);
 			
 			var currSetId = $(".set-list").find(".selected").attr("id");
@@ -761,6 +854,7 @@ $(function() {
 				var nextSet = set.nextSet();
 				if (!nextSet) {
 					view.model.set("isAnimating", false);
+					view.delegateEvents();
 					return;
 				}
 				nextSet.trigger("show");
@@ -777,7 +871,6 @@ $(function() {
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
 			"play/:_id":	"show_play",
-			//"set/:_id":		"show_set",
 		},
 		
 		show_play : function(_id) {
@@ -789,11 +882,6 @@ $(function() {
 			$("#play").find('.set-list').detach();
 			var playView = new $.playbook.PlayView({model: play});
 		},
-		/*
-		show_set : function(_id) {
-			var set = new $.playbook.Set({_id: _id});
-			var setView = new $.playbook.SetView({model: set});
-		},*/
 	});
 	
 	$.playbook.app = null;
@@ -846,6 +934,11 @@ function clearDivs() {
 	$("#play").html("");
 	$("#set").html("");
 	$("#article").html("");
+}
+
+function errorMessage(msg) {
+	// DO NOTHING NOW
+	// POP UP ERROR MESSAGE
 }
 
 function getCaretPosition(ctrl) {

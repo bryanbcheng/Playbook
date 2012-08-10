@@ -137,6 +137,8 @@ function delete_set(req, res, next) {
 		
 		var deleteSet = play.sets.id(req.params._id);
 		deleteSet.remove();
+		play.save();
+		
 		res.send(deleteSet);
 	});
 }
