@@ -644,6 +644,10 @@ $(function() {
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
 			
+			// Hack to keep current set selected
+			var currSetId = $(".set-list").find(".selected").attr("id");
+			$(html).find('#' + currSetId).addClass('selected');
+			
 			var view = this;
 			$(html).find(".select-color").colorPicker({onColorChange: function(id, newValue) {
 				// PREVENT CHOOSING THE SAME COLOR				
@@ -669,7 +673,6 @@ $(function() {
 			// Add info div
 			$("#set").append(view.render().el);
 			
-			console.log('asdf');
 			if (show) view.show();
 		},
 		
