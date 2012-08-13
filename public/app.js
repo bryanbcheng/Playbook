@@ -35,6 +35,7 @@ $(function() {
 		urlRoot: "/api/path",
 		
 		moveTo: function(x, y) {
+			// Saving previous set
 			var prevSet = this.get("set").prevSet();
 			
 			if (prevSet) {
@@ -46,6 +47,7 @@ $(function() {
 				prevPath.save({nextX: x, nextY: y});
 			}
 			
+			// Saving next set
 			var nextSet = this.get("set").nextSet();
 			
 			if (nextSet) {
@@ -57,18 +59,36 @@ $(function() {
 				// Check if article below is at same location
 				if (nextPath.get("currX") === this.get("currX") &&
 					nextPath.get("currY") === this.get("currY")) {
-					nextPath.moveTo(x, y);
+					this.save({currX: x, currY: y, nextX: x, nextY: y});
+					nextPath.moveStackTo(x, y);
+				} else {
+					this.save({currX: x, currY: y});
+					nextPath.save({prevX: x, prevY: y});
 				}
-				
-				nextPath.save({prevX: x, prevY: y});
-			}
-			
-			// Saving current set
-			if (nextSet) {
-				this.save({currX: x, currY: y});
 			} else {
-				// Next = curr for the last set
 				this.save({currX: x, currY: y, nextX: x, nextY: y});
+			}
+		},
+		
+		moveStackTo: function(x, y) {
+			var nextSet = this.get("set").nextSet();
+			
+			if (nextSet) {
+				var articleId = this.get("articleId");
+				var nextPath = nextSet.get("paths").find(function(path) {
+					return path.get("articleId") === articleId;
+				});
+				
+				if (nextPath.get("currX") === this.get("currX") &&
+					nextPath.get("currY") === this.get("currY")) {
+					this.save({prevX: x, prevY: y, currX: x, currY: y, nextX: x, nextY: y});
+					nextPath.moveStackTo(x, y);
+				} else {
+					this.save({prevX: x, prevY: y, currX: x, currY: y});
+					nextPath.save({prevX: x, prevY: y});
+				}
+			} else {
+				this.save({prevX: x, prevY: y, currX: x, currY: y, nextX: x, nextY: y});
 			}
 		},
 		
