@@ -54,6 +54,12 @@ $(function() {
 					return path.get("articleId") === articleId;
 				});
 				
+				// Check if article below is at same location
+				if (nextPath.get("currX") === this.get("currX") &&
+					nextPath.get("currY") === this.get("currY")) {
+					nextPath.moveTo(x, y);
+				}
+				
 				nextPath.save({prevX: x, prevY: y});
 			}
 			
@@ -212,7 +218,7 @@ $(function() {
 				description: "no description",
 				type: $("#fieldType").val() ? $("#fieldType").val() : "ultimate",
 				size: $("#fieldSize").val() ? $("#fieldSize").val() : "full",
-				teamColors: ["#0000ff", "#ff0000"]
+				teamColors: ["#0000ff", "#ff0000", ]
 			};
 		},
 		
@@ -227,7 +233,7 @@ $(function() {
 		events: {
 			"keyup .label"  : "updateLabel",
 			"change select" : "changeType",
-			"click .delete" : "destroy"
+			"click .delete" : "clear"
 		},
 		
 		initialize: function() {
@@ -237,7 +243,9 @@ $(function() {
 			this.model.on('show', this.show, this);
 			this.model.on('change', this.render, this);
 			this.model.on('changeColor', this.changeColor, this);
-      		//this.model.on('destroy', this.remove, this);
+			
+			this.model.on('replaceShape', this.replaceShape, this);
+      		this.model.on('clear', this.clear, this);
 		},
 		
 		render: function() {
@@ -261,18 +269,26 @@ $(function() {
 			if (e.target.value.toUpperCase() === this.model.get("label"))
 				return;
 		
+			var view = this;
 			var pos = getCaretPosition(this.$el.find(".label")[0]);
-			this.model.save({label: e.target.value.toUpperCase()});
-			this.$el.find(".label").focus();
-			setCaretPosition(this.$el.find(".label")[0], pos);
-			
-			this.replaceShape(this);
+			this.model.save({label: e.target.value.toUpperCase()}, {
+				wait: true,
+				success: function(model, response) {
+					view.$el.find(".label").focus();
+					setCaretPosition(view.$el.find(".label")[0], pos);
+					
+					model.trigger("replaceShape");
+				}
+			});
 		},
 		
 		changeColor: function(color) {
-			this.model.save({color: color});
-			
-			this.replaceShape(this);
+			this.model.save({color: color}, {
+				wait: true,
+				success: function(model, response) {
+					model.trigger("replaceShape");
+				}
+			});
 		},
 		
 		changeType: function(e) {
@@ -280,20 +296,23 @@ $(function() {
 			if (e.currentTarget.value === "player") articleColor = $("#" + this.model.get("team")).find("input").val();
 			else if (e.currentTarget.value === "ball") articleColor = "white";
 			else if (e.currentTarget.value === "cone") articleColor = "orange";
-			this.model.save({type: e.currentTarget.value, color: articleColor});
-			
-			this.replaceShape(this);
+			this.model.save({type: e.currentTarget.value, color: articleColor}, {
+				wait: true,
+				success: function(model, response) {
+					model.trigger("replaceShape");
+				}
+			});
 		},
 		
-		replaceShape: function(view) {
-			for (var index in view.paths) {
-				var path = view.paths[index];
+		replaceShape: function() {
+			for (var index in this.paths) {
+				var path = this.paths[index];
 				
 				path.trigger("change");
 			}
 		},
 		
-		destroy: function() {
+		clear: function() {
 			for (var index in this.paths) {
 				var path = this.paths[index];
 				
@@ -427,8 +446,13 @@ $(function() {
 			this.layer.draw();
 		},
 		
+		select: function() {
+			// if none exists, create a select object?
+		},
+		
 		clear: function() {
 			if (this.line) this.layer.remove(this.line);
+			if (this.arrow) this.layer.remove(this.arrow);
 			this.layer.remove(this.shape);
 			this.layer.draw();
 			
@@ -439,7 +463,7 @@ $(function() {
 			this.shape.transitionTo({
 				x: this.model.get("nextX"),
 				y: this.model.get("nextY"),
-				duration: 1,
+				duration: $(".animation-speed").slider("value"),
 				callback: cb
 			});
 		},
@@ -634,6 +658,7 @@ $(function() {
 			"click .add-set"	: "createSet",
 			"click .set-list"	: "changeSet",
 			"click .remove-set"	: "deleteSet",
+			"click .useForm"	: "useFormation",
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
 			"click .add-cone"	: "addCone",
@@ -688,6 +713,7 @@ $(function() {
 			var currSetId = $(".set-list").find(".selected").attr("id");
 			if (currSetId) $(html).find('#' + currSetId).addClass('selected');
 			
+			// JQuery UI Plugins
 			var view = this;
 			$(html).find(".select-color").colorPicker({onColorChange: function(id, newValue) {
 				// PREVENT CHOOSING THE SAME COLOR FOR BOTH TEAMS		
@@ -707,6 +733,18 @@ $(function() {
 					}
 				});
 			}});
+			
+			var currSpeed = $(".animation-speed").slider("value");
+			$(html).find(".animation-speed").slider({
+				value: currSpeed ? currSpeed : 1,
+				min: 0.5,
+				max: 2.5,
+				step: 0.5,
+				slide: function(event, ui) {
+					$(html).find(".animation-speed-display").html(ui.value);
+				}
+			});
+			$(html).find(".animation-speed-display").html($(html).find(".animation-speed").slider("value"));
 			
 			this.$el.html(html);
 			
@@ -734,34 +772,34 @@ $(function() {
 			$("#article").append(view.render().el);
 		},
 		
-		addNewArticle: function(item) {
+		addNewArticle: function(item, x, y) {
 			this.model.trigger("addArticle", item);
 		
 			this.model.get("sets").each(function(set) {
 				var path;
-				var midpoint = {
-					x: stage.get(".fieldLayer")[0].get(".playingField")[0].getWidth() / 2,
-					y: stage.get(".fieldLayer")[0].get(".playingField")[0].getHeight() / 2 - START_Y
+				var point = {
+					x: x != null ? x : stage.get(".fieldLayer")[0].get(".playingField")[0].getWidth() / 2,
+					y: y != null ? y : stage.get(".fieldLayer")[0].get(".playingField")[0].getHeight() / 2 - START_Y
 				};
 				if (set.get("number") === 1)
 					path = new $.playbook.Path({
 						prevX: null,
 						prevY: null,
-						currX: midpoint.x,
-						currY: midpoint.y,
-						nextX: midpoint.x,
-						nextY: midpoint.y,
+						currX: point.x,
+						currY: point.y,
+						nextX: point.x,
+						nextY: point.y,
 						set: set,
 						articleId: item.get("_id")
 					});
 				else
 					path = new $.playbook.Path({
-						prevX: midpoint.x,
-						prevY: midpoint.y,
-						currX: midpoint.x,
-						currY: midpoint.y,
-						nextX: midpoint.x,
-						nextY: midpoint.y,
+						prevX: point.x,
+						prevY: point.y,
+						currX: point.x,
+						currY: point.y,
+						nextX: point.x,
+						nextY: point.y,
 						set: set,
 						articleId: item.get("_id")
 					});
@@ -887,6 +925,48 @@ $(function() {
 			var currSet = this.currentSet();
 			
 			currSet.trigger("clear");
+		},
+		
+		useFormation: function() {
+			if (confirm("Selecting a formation removes all items currently in your play. Are you sure you want to continue?")) {
+				var articles = this.model.get("articles")
+				while (!articles.isEmpty()) {
+					articles.shift().trigger("clear");
+				}
+				
+				var formationType = $(".formationType").val();
+				
+				// Formation sport does not have to be same as field sport
+				var sportType = $(".formationType").find("option:selected").parent().attr("value");
+				
+				var formationData = formation(sportType, formationType);
+				for (var index in formationData) {
+					var data = formationData[index];
+					var color = data.team ? data.team === "team0" ? $("#color0").val() : $("#color1").val() : data.type === "ball" ? "white" : "orange";
+					var article = new $.playbook.Article({
+						type: data.type,
+						color: color,
+						label: data.label,
+						team: data.team,
+						play: this.model.get("_id"),
+						tempX: data.x,
+						tempY: data.y
+					});
+					
+					article.save({}, {
+						silent: true,
+						wait: true,
+						success: function(model, response) {
+							console.log(model);
+							model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
+							model.unset("tempX");
+							model.unset("tempY");
+						}
+					});
+				}
+			} else {
+				console.log("Cancelled formation selection");
+			}
 		},
 		
 		addPlayer: function(e) {

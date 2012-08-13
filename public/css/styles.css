@@ -42,6 +42,9 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+:focus {
+	outline: 0;
+}
 
 /***** PLAYBOOK STYLES *****/
 
@@ -89,7 +92,7 @@ table {
 	position: relative;
 	width: 200px;
 	padding-top: 20px;
-	margin-bottom: 20px;
+	margin: 20px 0;
 }
 
 #play .set-list-area {
@@ -174,9 +177,15 @@ table {
 	width: 65px;
 }
 
+#play .animation-speed {
+	width: 80px;
+	float: right;
+}
+
 #set {
 	width: 200px;
 	float: left;
+	margin: 0 0 20px 0;
 }
 
 #set div {
@@ -210,6 +219,7 @@ table {
 #article {
 	width: 200px;
 	float: left;
+	margin: 0 0 20px 0;
 }
 
 #article div {
