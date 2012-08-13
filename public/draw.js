@@ -130,15 +130,7 @@ function ultimateFieldFull(startX, startY) {
 	fieldLayer.add(brick1);
 	fieldLayer.add(brick2);
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
+	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -212,15 +204,7 @@ function ultimateFieldHalf(startX, startY) {
 	fieldLayer.add(endLine1);
 	fieldLayer.add(brick1);
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
+	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -376,15 +360,7 @@ function soccerFieldFull(startX, startY) {
 	fieldLayer.add(midfieldLine);
 	fieldLayer.add(centerCircle);
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
+	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -475,15 +451,7 @@ function soccerFieldHalf(startX, startY) {
 	fieldLayer.add(goalBox1);
 	fieldLayer.add(centerCircle);
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
+	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -630,15 +598,7 @@ function footballFieldFull(startX, startY) {
 		}
 	}
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
+	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -770,6 +730,12 @@ function footballFieldHalf(startX, startY) {
 		}
 	}
 	
+	addFieldEvents(fieldLayer);
+	
+	return fieldLayer;
+}
+
+function addFieldEvents(fieldLayer) {
 	fieldLayer.on('dragmove', function(e) {
 		var tempLayer = fieldLayer;
 		$.each(stage.getChildren(), function(index, value) {
@@ -780,7 +746,18 @@ function footballFieldHalf(startX, startY) {
 		});
 	});
 	
-	return fieldLayer;
+	// Deselect currently selected item
+	fieldLayer.on('click', function(e) {
+		$("#article").children().removeClass("selected");
+		
+		var tempLayer = fieldLayer;
+		$.each(stage.getChildren(), function(index, value) {
+			if (value.getName() !== "fieldLayer") {
+				value.get(".select").hide();
+				value.draw();
+			}
+		});
+	});
 }
 
 /* Articles */
@@ -851,6 +828,20 @@ function createLabel(label) {
 		},
 		draggable: true
 	});
+}
+
+function createSelect() {
+	return new Kinetic.RegularPolygon({
+		sides: 4,
+		radius: 1.5 * SCALE,
+		//fill: ,
+		stroke: "yellow",
+		strokeWidth: 1,
+		visible: false
+	});
+	// return new Kinetic.Shape({
+// 		drawFunc
+// 	});
 }
 
 function createLine(line) {

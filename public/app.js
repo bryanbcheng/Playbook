@@ -364,10 +364,16 @@ $(function() {
 			// Shape event handlers
 			this.shape.on('click', function(e) {
 				view.article.trigger("show");
+				
+				// Move select shape to selected article
+				view.model.get("set").trigger("selectPath", view.shape);
 			});
 				
 			this.shape.on('dragstart', function(e) {
 				view.article.trigger("show");
+				
+				// Move select shape to selected article
+				view.model.get("set").trigger("selectPath", view.shape);
 			});
 			
 			this.shape.on('dragend', function(e) {
@@ -499,6 +505,9 @@ $(function() {
 			});
 			stage.add(this.layer);
 			
+			this.select = createSelect();
+			this.layer.add(this.select);
+			
 			this.count = 0;
 			
 			this.model.on('change', this.render, this);
@@ -506,7 +515,9 @@ $(function() {
 			this.model.on('addPath', this.addPath, this);
 			this.model.on('show', this.show, this);
 			this.model.on('init', this.addAll, this);
+			this.model.on('selectPath', this.selectPath, this);
 			
+			// Animation events
 			this.model.on('animate', this.animate, this);
 			this.model.on('wait', this.wait, this);
 			this.model.on('reset', this.reset, this);
@@ -615,6 +626,12 @@ $(function() {
 			
 			$("#" + this.model.get("_id")).siblings().removeClass("selected");
 			$("#" + this.model.get("_id")).addClass("selected");
+		},
+		
+		selectPath: function(group) {
+			this.select.moveTo(group);
+			this.select.show();
+			this.layer.draw();
 		},
 		
 		animate: function(cb) {
