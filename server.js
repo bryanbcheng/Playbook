@@ -16,8 +16,28 @@ app.configure(function() {
 
 /* Database */
 
+if (!process.env.NODE_ENV) {
+  var mongo = {"hostname":"localhost", "port":27017, "db":"playbook"};
+} else {
+  var mongo = {"hostname":"ds037097.mongolab.com", "port":37097, "username":"bloodthirsty", "password":"smut", "name":"", "db":"playbook"};
+}
+
+var generate_mongo_url = function(obj) {
+  obj.hostname = (obj.hostname || 'localhost');
+  obj.port = (obj.port || 27017);
+  obj.db = (obj.db || 'kudoshare');
+
+  if (obj.username && obj.password) {
+    return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
+  } else {
+    return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
+  }
+}
+
+var mongourl = generate_mongo_url(mongo);
+
 var mongoose = require('mongoose')
-  , db = mongoose.connect('mongodb://localhost/playbook')
+  , db = mongoose.connect(mongourl)
   , Play = require('./models.js').Play(db)
   , Set = require('./models.js').Set(db)
   , Path = require('./models.js').Path(db)
