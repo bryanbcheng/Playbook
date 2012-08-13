@@ -871,7 +871,8 @@ function createArrow(arrow) {
 			lineCap: "round",
 			//dashArray: [20, 20],
 			//fill: "black",
-			stroke: "black"
+			stroke: "black",
+			name: "arrowLine"
 	});
 	
 	var arrowHead = new Kinetic.RegularPolygon({
@@ -882,7 +883,9 @@ function createArrow(arrow) {
 		strokeWidth: 1,
 		x: arrow.points[2],
 		y: arrow.points[3],
-		rotation: rotationAngle(arrow.points)
+		name: "arrowHead",
+		rotation: rotationAngle(arrow.points),
+		draggable: true
 	});
 	
 	arrowGroup.add(arrowLine);

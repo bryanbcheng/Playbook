@@ -66,6 +66,21 @@ $(function() {
 			}
 		},
 		
+		moveArrow: function(x, y) {
+			// Assume next set always there since arrow exists
+			var nextSet = this.get("set").nextSet();
+			
+			var articleId = this.get("articleId");
+			var nextPath = nextSet.get("paths").find(function(path) {
+				return path.get("articleId") === articleId;
+			});
+			
+			nextPath.save({currX: x, currY: y});
+			
+			// Saving current set
+			this.save({nextX: x, nextY: y});
+		},
+		
 		link: function(path) {
 			if (!path) {
 				errorMessage("Could not find matching paths");
@@ -391,6 +406,20 @@ $(function() {
 					view.layer.add(view.arrow);
 					view.arrow.moveToBottom();
 					view.layer.draw();
+				});
+				
+				var arrowHead = this.arrow.get(".arrowHead")[0];
+				
+				arrowHead.on('dragmove', function(e) {
+					view.layer.remove(view.arrow);
+					view.arrow = createArrow({points: [view.model.get("currX"), view.model.get("currY"), this.getX(), this.getY()]});
+					view.layer.add(view.arrow);
+					view.arrow.moveToBottom();
+					view.layer.draw();
+				});
+				
+				arrowHead.on('dragend', function(e) {
+					view.model.moveArrow(this.getX(), this.getY());
 				});
 			}
 			
