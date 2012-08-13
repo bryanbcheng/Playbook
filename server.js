@@ -1,10 +1,9 @@
 /* Imports */
 var express = require('express'),
-	$ = require('jquery'),
 	_ = require('underscore'),
 	util = require('util');
 
-var app = express.createServer();
+var app = express();
 
 /* Configuration */
 app.configure(function() {
