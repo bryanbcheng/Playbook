@@ -289,10 +289,10 @@ function delete_article(req, res, next) {
 /* Routes */
 
 app.get('/', function(req, res) {
-	res.sendfile('public/index.html');
+	res.sendfile('/public/index.html');
 });
 app.get('/play/:_id', function(req, res) {
-	res.sendfile('public/index.html');
+	res.sendfile('/public/index.html');
 });
 
 
