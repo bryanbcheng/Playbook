@@ -319,5 +319,5 @@ app.post('/api/article', post_article);
 app.put('/api/article/:_id', put_article);
 app.delete('/api/article/:_id', delete_article);
 
-app.listen(3000);
+app.listen(process.env['app_port'] || 3000);
 
