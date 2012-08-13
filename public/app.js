@@ -221,6 +221,7 @@ $(function() {
 			this.model.on('addPathShape', this.addPathShape, this);
 			this.model.on('show', this.show, this);
 			this.model.on('change', this.render, this);
+			this.model.on('changeColor', this.changeColor, this);
       		//this.model.on('destroy', this.remove, this);
 		},
 		
@@ -253,9 +254,16 @@ $(function() {
 			this.replaceShape(this);
 		},
 		
+		changeColor: function(color) {
+			this.model.save({color: color});
+			
+			this.replaceShape(this);
+		},
+		
 		changeType: function(e) {
-			var articleColor = "blue";
-			if (e.currentTarget.value === "ball") articleColor = "white";
+			var articleColor;
+			if (e.currentTarget.value === "player") articleColor = $("#" + this.model.get("team")).find("input").val();
+			else if (e.currentTarget.value === "ball") articleColor = "white";
 			else if (e.currentTarget.value === "cone") articleColor = "orange";
 			this.model.save({type: e.currentTarget.value, color: articleColor});
 			
@@ -455,6 +463,9 @@ $(function() {
 		
 		render: function() {
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			
+			this.model.get("play").trigger("change");
+			
 			return this;
 		},
 		
@@ -493,6 +504,7 @@ $(function() {
 			
 			// Remove set DOM
 			this.remove();
+			this.model.get("play").trigger("change");
 			$("#" + this.model.get("_id")).remove();
 			
 			// Delete model
@@ -582,7 +594,6 @@ $(function() {
 		tagName: "div",
 		
 		template: $("#play-template").html(),
-		setListTemplate: $("#set-list-template").html(),
 		
 		events: {
 			"dblclick .name"	: "editName",
@@ -646,21 +657,28 @@ $(function() {
 			
 			// Hack to keep current set selected
 			var currSetId = $(".set-list").find(".selected").attr("id");
-			$(html).find('#' + currSetId).addClass('selected');
+			if (currSetId) $(html).find('#' + currSetId).addClass('selected');
 			
 			var view = this;
 			$(html).find(".select-color").colorPicker({onColorChange: function(id, newValue) {
-				// PREVENT CHOOSING THE SAME COLOR				
+				// PREVENT CHOOSING THE SAME COLOR FOR BOTH TEAMS		
 				
-				view.model.save({teamColors: [$("#color0").val(), $("#color1").val()]});
-				
-				var teamPlayers = view.model.get("articles").filter(function(article) {
-					return article.get("team") == $("#" + id).parent().attr("id");
+				view.model.save({teamColors: [$("#color0").val(), $("#color1").val()]}, {
+					silent: true,
+					wait: true,
+					success: function(model, response) {
+						var teamPlayers = model.get("articles").filter(function(article) {
+							return article.get("team") == $("#" + id).parent().attr("id");
+						});
+						
+						// update each article with new color
+						_.each(teamPlayers, function(player) {
+							player.trigger("changeColor", newValue);
+						});
+					}
 				});
-				
-				// update each article with new color
-				console.log(teamPlayers);
 			}});
+			
 			this.$el.html(html);
 			
 			$("#play").append(this.el);
@@ -843,7 +861,12 @@ $(function() {
 		},
 		
 		addPlayer: function(e) {
-			var player = new $.playbook.Article({type: "player", team: $(e.target).parent().attr("id"), play: this.model.get("_id")});
+			var player = new $.playbook.Article({
+				type: "player",
+				color: $(e.target).siblings("input").val(),
+				team: $(e.target).parent().attr("id"),
+				play: this.model.get("_id")
+			});
 			player.save({}, {
 				silent: true,
 				wait: true,
