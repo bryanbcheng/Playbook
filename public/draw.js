@@ -781,12 +781,13 @@ function createCone(cone) {
 
 function createLabel(label) {
 	// Use custom shape to draw text, Kinetic.Text too limited options
+	var shrink = label.label && label.label.length === 3;
 	return new Kinetic.Shape({
 		drawFunc: function(context) {
 			context.beginPath();
 			context.closePath(); 			
  			context.fillStyle = "black";
- 			context.font = "15px Arial";
+ 			context.font = shrink ? "10px Arial" : "15px Arial";
  			context.textAlign = "center";
  			context.textBaseline = "middle";
  			context.fillText(label.label, 0, 0);

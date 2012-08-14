@@ -307,13 +307,13 @@ function fourFourTwo() {
 		x: (SOCCER_WIDTH / 2 - SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (SOCCER_HEIGHT - SOCCER_PENALTY_MARK - SOCCER_CIRCLE_RADIUS) * SCALE,
 		type: "player",
-		label: "CB",
+		label: "LCB",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 + SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (SOCCER_HEIGHT - SOCCER_PENALTY_MARK - SOCCER_CIRCLE_RADIUS) * SCALE,
 		type: "player",
-		label: "CB",
+		label: "RCB",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 - 2.5 * SOCCER_CIRCLE_RADIUS) * SCALE,
@@ -331,13 +331,13 @@ function fourFourTwo() {
 		x: (SOCCER_WIDTH / 2 - SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2) * SCALE,
 		type: "player",
-		label: "CM",
+		label: "LCM",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 + SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2) * SCALE,
 		type: "player",
-		label: "CM",
+		label: "RCM",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 - 2.5 * SOCCER_CIRCLE_RADIUS) * SCALE,
@@ -383,13 +383,13 @@ function fourThreeThree() {
 		x: (SOCCER_WIDTH / 2 - SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (SOCCER_HEIGHT - SOCCER_PENALTY_MARK - SOCCER_CIRCLE_RADIUS) * SCALE,
 		type: "player",
-		label: "CB",
+		label: "LCB",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 + SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (SOCCER_HEIGHT - SOCCER_PENALTY_MARK - SOCCER_CIRCLE_RADIUS) * SCALE,
 		type: "player",
-		label: "CB",
+		label: "RCB",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 - 2.5 * SOCCER_CIRCLE_RADIUS) * SCALE,
@@ -477,13 +477,13 @@ function threeFourThree() {
 		x: (SOCCER_WIDTH / 2 - SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2) * SCALE,
 		type: "player",
-		label: "CM",
+		label: "LCM",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 + SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2) * SCALE,
 		type: "player",
-		label: "CM",
+		label: "RCM",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 - 2.5 * SOCCER_CIRCLE_RADIUS) * SCALE,
@@ -559,13 +559,13 @@ function threeFiveTwo() {
 		x: (SOCCER_WIDTH / 2 - SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2 - 1) * SCALE,
 		type: "player",
-		label: "CM",
+		label: "LCM",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 + SOCCER_CIRCLE_RADIUS) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2 - 1) * SCALE,
 		type: "player",
-		label: "CM",
+		label: "RCM",
 		team: "team0"
 	}, {
 		x: (SOCCER_WIDTH / 2 - 2.5 * SOCCER_CIRCLE_RADIUS) * SCALE,
@@ -954,19 +954,19 @@ function fourThreeDefense() {
 		x: (FOOTBALL_WIDTH / 2) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 10) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "MLB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 - 5) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 9) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "OLB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 + 5) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 9) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "OLB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 - 20) * SCALE,
@@ -1024,25 +1024,25 @@ function threeFourDefense() {
 		x: (FOOTBALL_WIDTH / 2 - 2.5) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 10) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "ILB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 + 2.5) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 10) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "ILB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 - 8) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 9) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "OLB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 + 8) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 9) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "OLB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 - 20) * SCALE,
@@ -1176,7 +1176,7 @@ function threeFiveThreeNickelDefense() {
 		x: (FOOTBALL_WIDTH / 2) * SCALE,
 		y: (FOOTBALL_HEIGHT / 2 - 10) * SCALE,
 		type: "player",
-		label: "LB",
+		label: "MLB",
 		team: "team1"
 	}, {
 		x: (FOOTBALL_WIDTH / 2 - 10) * SCALE,
