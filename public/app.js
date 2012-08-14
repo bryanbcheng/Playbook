@@ -13,7 +13,8 @@ $(function() {
 				type: "player",
 				color: "blue",
 				label: "",
-				team: ""
+				team: "",
+				select: false
 			};
 		},
 		
@@ -59,14 +60,14 @@ $(function() {
 				// Check if article below is at same location
 				if (nextPath.get("currX") === this.get("currX") &&
 					nextPath.get("currY") === this.get("currY")) {
-					this.save({currX: x, currY: y, nextX: x, nextY: y});
+					this.save({currX: x, currY: y, nextX: x, nextY: y}, {silent: true});
 					nextPath.moveStackTo(x, y);
 				} else {
-					this.save({currX: x, currY: y});
+					this.save({currX: x, currY: y}, {silent: true});
 					nextPath.save({prevX: x, prevY: y});
 				}
 			} else {
-				this.save({currX: x, currY: y, nextX: x, nextY: y});
+				this.save({currX: x, currY: y, nextX: x, nextY: y}, {silent: true});
 			}
 		},
 		
@@ -265,6 +266,8 @@ $(function() {
 			this.model.on('changeColor', this.changeColor, this);
 			
 			this.model.on('replaceShape', this.replaceShape, this);
+			this.model.on('selectArticle', this.selectArticle, this);
+			this.model.on('unselectArticle', this.unselectArticle, this);
       		this.model.on('clear', this.clear, this);
 		},
 		
@@ -332,6 +335,33 @@ $(function() {
 			}
 		},
 		
+		selectArticle: function() {
+			var tempModel = this.model;
+			this.model.get("play").get("articles").each(function(article) {
+				if (article.get("select") && article.get("_id") !== tempModel.get("_id"))
+					article.trigger("unselectArticle");
+			});
+			
+			this.model.set("select", true);
+			for (var index in this.paths) {
+				var path = this.paths[index];
+				
+				path.trigger("selectPath");
+			}
+		},
+		
+		unselectArticle: function() {
+			if (this.model.get("select")) {
+				this.model.set("select", false);
+				
+				for (var index in this.paths) {
+					var path = this.paths[index];
+					
+					path.trigger("unselectPath");
+				}
+			}
+		},
+		
 		clear: function() {
 			for (var index in this.paths) {
 				var path = this.paths[index];
@@ -359,6 +389,8 @@ $(function() {
 			this.arrow = null;
 			
 			this.model.on("change", this.render, this);
+			this.model.on("selectPath", this.selectPath, this);
+			this.model.on("unselectPath", this.unselectPath, this);
 			this.model.on("clear", this.clear, this);
 			
       		this.model.on('animate', this.animate, this);
@@ -379,6 +411,7 @@ $(function() {
 				color: view.article.get("color"),
 				label: view.article.get("label"),
 				//name: view.article.get("team")
+				select: view.article.get("select")
 			});
 			
 			// Shape event handlers
@@ -386,14 +419,14 @@ $(function() {
 				view.article.trigger("show");
 				
 				// Move select shape to selected article
-				view.model.get("set").trigger("selectPath", view.shape);
+				view.article.trigger("selectArticle");
 			});
 				
 			this.shape.on('dragstart', function(e) {
 				view.article.trigger("show");
 				
 				// Move select shape to selected article
-				view.model.get("set").trigger("selectPath", view.shape);
+				view.article.trigger("selectArticle");
 			});
 			
 			this.shape.on('dragend', function(e) {
@@ -472,8 +505,14 @@ $(function() {
 			this.layer.draw();
 		},
 		
-		select: function() {
-			// if none exists, create a select object?
+		selectPath: function() {
+			this.shape.get(".select")[0].show();
+			this.layer.draw();
+		},
+		
+		unselectPath: function() {
+			this.shape.get(".select")[0].hide();
+			this.layer.draw();
 		},
 		
 		clear: function() {
@@ -483,7 +522,7 @@ $(function() {
 			this.layer.draw();
 			
 			this.model.destroy();
-		},
+		},  
 		
 		animate: function(cb) {
 			this.shape.transitionTo({
@@ -525,9 +564,6 @@ $(function() {
 			});
 			stage.add(this.layer);
 			
-			this.select = createSelect();
-			this.layer.add(this.select);
-			
 			this.count = 0;
 			
 			this.model.on('change', this.render, this);
@@ -535,7 +571,6 @@ $(function() {
 			this.model.on('addPath', this.addPath, this);
 			this.model.on('show', this.show, this);
 			this.model.on('init', this.addAll, this);
-			this.model.on('selectPath', this.selectPath, this);
 			
 			// Animation events
 			this.model.on('animate', this.animate, this);
@@ -648,12 +683,6 @@ $(function() {
 			$("#" + this.model.get("_id")).addClass("selected");
 		},
 		
-		selectPath: function(group) {
-			this.select.moveTo(group);
-			this.select.show();
-			this.layer.draw();
-		},
-		
 		animate: function(cb) {
 			// call path to animate
 			var view = this;
@@ -722,6 +751,7 @@ $(function() {
 			this.model.on('animate', this.animate, this);
 			this.model.on('init', this.addAll, this);
 			
+			var view = this;
 			this.model.fetch({
 				success: function(model, response) {
 					// Depending on field
@@ -733,6 +763,7 @@ $(function() {
 					} else if (model.get("type") === "football") {
 						field = footballField(model.get("size"));
 					}
+					view.addFieldEvents(field);
 					stage.add(field);
 				
 					model.trigger('init');
@@ -787,6 +818,29 @@ $(function() {
 			
 			$("#play").append(this.el);
 			return this;
+		},
+		
+		addFieldEvents: function(fieldLayer) {
+			var view = this;
+			
+			fieldLayer.on('dragmove', function(e) {
+				var tempLayer = fieldLayer;
+				$.each(stage.getChildren(), function(index, value) {
+					if (value.getName() !== "fieldLayer") {
+						value.setPosition(fieldLayer.getPosition());
+						value.draw();
+					}
+				});
+			});
+			
+			// Deselect currently selected item
+			fieldLayer.on('click', function(e) {
+				$("#article").children().removeClass("selected");
+				
+				view.model.get("articles").each(function(article) {
+					article.trigger("unselectArticle");
+				});
+			});
 		},
 		
 		addSet: function(item, show) {
@@ -893,9 +947,9 @@ $(function() {
 			} else if ($("#fieldType").val() === "football") {
 				fieldLayer = footballField($("#fieldSize").val(), currX, currY);
 			}
-			
 			this.model.save({type: $("#fieldType").val(), size: $("#fieldSize").val()});
 			
+			this.addFieldEvents(field);
 			stage.add(fieldLayer);
 			fieldLayer.moveToBottom();
 			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
@@ -1115,11 +1169,12 @@ $(function() {
 /* Util functions */
 
 function print() {
-	console.log(stage);
-	var fl = stage.get(".fieldLayer")[0];
-	console.log(fl);
-	console.log(fl.getPosition());
-	console.log(stage.getDOM());
+// 	console.log(stage);
+// 	var fl = stage.get(".fieldLayer")[0];
+// 	console.log(fl);
+// 	console.log(fl.getPosition());
+// 	console.log(stage.getDOM());
+	console.log(stage.current);
 }
 
 function changeSet(e) {

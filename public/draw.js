@@ -130,8 +130,6 @@ function ultimateFieldFull(startX, startY) {
 	fieldLayer.add(brick1);
 	fieldLayer.add(brick2);
 	
-	addFieldEvents(fieldLayer);
-	
 	return fieldLayer;
 }
 
@@ -203,8 +201,6 @@ function ultimateFieldHalf(startX, startY) {
 	fieldLayer.add(field);
 	fieldLayer.add(endLine1);
 	fieldLayer.add(brick1);
-	
-	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -360,8 +356,6 @@ function soccerFieldFull(startX, startY) {
 	fieldLayer.add(midfieldLine);
 	fieldLayer.add(centerCircle);
 	
-	addFieldEvents(fieldLayer);
-	
 	return fieldLayer;
 }
 
@@ -450,8 +444,6 @@ function soccerFieldHalf(startX, startY) {
 	fieldLayer.add(penaltyCircle1);
 	fieldLayer.add(goalBox1);
 	fieldLayer.add(centerCircle);
-	
-	addFieldEvents(fieldLayer);
 	
 	return fieldLayer;
 }
@@ -598,8 +590,6 @@ function footballFieldFull(startX, startY) {
 		}
 	}
 	
-	addFieldEvents(fieldLayer);
-	
 	return fieldLayer;
 }
 
@@ -730,34 +720,7 @@ function footballFieldHalf(startX, startY) {
 		}
 	}
 	
-	addFieldEvents(fieldLayer);
-	
 	return fieldLayer;
-}
-
-function addFieldEvents(fieldLayer) {
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
-	
-	// Deselect currently selected item
-	fieldLayer.on('click', function(e) {
-		$("#article").children().removeClass("selected");
-		
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.get(".select").hide();
-				value.draw();
-			}
-		});
-	});
 }
 
 /* Articles */
@@ -779,7 +742,9 @@ function createArticle(item) {
 	
 	if (item.label)
 		group.add(createLabel(item));
-		
+	
+	group.add(createSelect(item));
+	
 	return group;
 }
 
@@ -830,14 +795,15 @@ function createLabel(label) {
 	});
 }
 
-function createSelect() {
+function createSelect(select) {
 	return new Kinetic.RegularPolygon({
 		sides: 4,
 		radius: 1.5 * SCALE,
 		//fill: ,
 		stroke: "yellow",
 		strokeWidth: 1,
-		visible: false
+		visible: select.select,
+		name: "select"
 	});
 	// return new Kinetic.Shape({
 // 		drawFunc
