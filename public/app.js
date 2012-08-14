@@ -949,7 +949,7 @@ $(function() {
 			}
 			this.model.save({type: $("#fieldType").val(), size: $("#fieldSize").val()});
 			
-			this.addFieldEvents(field);
+			this.addFieldEvents(fieldLayer);
 			stage.add(fieldLayer);
 			fieldLayer.moveToBottom();
 			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
