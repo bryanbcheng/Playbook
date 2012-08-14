@@ -130,16 +130,6 @@ function ultimateFieldFull(startX, startY) {
 	fieldLayer.add(brick1);
 	fieldLayer.add(brick2);
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
-	
 	return fieldLayer;
 }
 
@@ -211,16 +201,6 @@ function ultimateFieldHalf(startX, startY) {
 	fieldLayer.add(field);
 	fieldLayer.add(endLine1);
 	fieldLayer.add(brick1);
-	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
 	
 	return fieldLayer;
 }
@@ -376,16 +356,6 @@ function soccerFieldFull(startX, startY) {
 	fieldLayer.add(midfieldLine);
 	fieldLayer.add(centerCircle);
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
-	
 	return fieldLayer;
 }
 
@@ -474,16 +444,6 @@ function soccerFieldHalf(startX, startY) {
 	fieldLayer.add(penaltyCircle1);
 	fieldLayer.add(goalBox1);
 	fieldLayer.add(centerCircle);
-	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
 	
 	return fieldLayer;
 }
@@ -630,16 +590,6 @@ function footballFieldFull(startX, startY) {
 		}
 	}
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
-	
 	return fieldLayer;
 }
 
@@ -770,16 +720,6 @@ function footballFieldHalf(startX, startY) {
 		}
 	}
 	
-	fieldLayer.on('dragmove', function(e) {
-		var tempLayer = fieldLayer;
-		$.each(stage.getChildren(), function(index, value) {
-			if (value.getName() !== "fieldLayer") {
-				value.setPosition(fieldLayer.getPosition());
-				value.draw();
-			}
-		});
-	});
-	
 	return fieldLayer;
 }
 
@@ -802,7 +742,9 @@ function createArticle(item) {
 	
 	if (item.label)
 		group.add(createLabel(item));
-		
+	
+	group.add(createSelect(item));
+	
 	return group;
 }
 
@@ -839,18 +781,34 @@ function createCone(cone) {
 
 function createLabel(label) {
 	// Use custom shape to draw text, Kinetic.Text too limited options
+	var shrink = label.label && label.label.length === 3;
 	return new Kinetic.Shape({
 		drawFunc: function(context) {
 			context.beginPath();
 			context.closePath(); 			
  			context.fillStyle = "black";
- 			context.font = "15px Arial";
+ 			context.font = shrink ? "10px Arial" : "15px Arial";
  			context.textAlign = "center";
  			context.textBaseline = "middle";
  			context.fillText(label.label, 0, 0);
 		},
 		draggable: true
 	});
+}
+
+function createSelect(select) {
+	return new Kinetic.RegularPolygon({
+		sides: 4,
+		radius: 1.5 * SCALE,
+		//fill: ,
+		stroke: "yellow",
+		strokeWidth: 1,
+		visible: select.select,
+		name: "select"
+	});
+	// return new Kinetic.Shape({
+// 		drawFunc
+// 	});
 }
 
 function createLine(line) {

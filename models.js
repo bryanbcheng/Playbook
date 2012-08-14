@@ -18,7 +18,7 @@ var Article = new Schema({
 });
 
 Article.path('label').validate(function (v) {
-  return v.length <= 2;
+  return v.length <= 3;
 }, 'Label too long'); 
 
 var Path = new Schema({

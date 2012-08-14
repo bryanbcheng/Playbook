@@ -89,11 +89,25 @@
 					<optgroup label="Ultimate" value="ultimate">
 						<option value="vertical">Vertical Stack</option>
 						<option value="horizontal">Horizontal Stack</option>
-						<!-- <option value="side">Side Stack</option> -->
+						<option value="side">Side Stack</option>
+						<option value="split">Split Stack</option>
+						<option value="l">L Stack</option>
 					</optgroup>
 					<optgroup label="Soccer" value="soccer">
+						<option value="4-4-2">4-4-2 Formation</option>
+						<option value="4-3-3">4-3-3 Formation</option>
+						<option value="3-4-3">3-4-3 Formation</option>
+						<option value="3-5-2">3-5-2 Formation</option>
 					</optgroup>
 					<optgroup label="Football" value="football">
+						<option value="i">I Formation</option>
+						<option value="pro">Pro Set Formation</option>
+						<option value="shotgun">Shotgun</option>
+						<option value="spread">Spread Formation</option>
+						<option value="4-3">4-3 Defense</option>
+						<option value="3-4">3-4 Defense</option>
+						<option value="4-2-5">4-2-5 Nickel</option>
+						<option value="3-5-3">3-5-3 Nickel</option>
 					</optgroup>
 				</select>
 				<button class="useForm">Apply</button>
@@ -139,7 +153,7 @@
 	
 	<script type="text/template" id="article-template">
 		<div id="{{_id}}" class="article-view">
-			<span>Label: </span><input class="label" value="{{label}}" maxlength=2></input>
+			<span>Label: </span><input class="label" value="{{label}}" maxlength=3></input>
 			<select>
 				<option value="player">Player</option>
 				<option value="ball">Ball</option>
