@@ -528,7 +528,8 @@ $(function() {
 			this.shape.transitionTo({
 				x: this.model.get("nextX"),
 				y: this.model.get("nextY"),
-				duration: $(".animation-speed").slider("value"),
+				// 1 - slow, 5 - fast
+				duration: 3 - $(".animation-speed").slider("value") / 2,
 				callback: cb
 			});
 		},
@@ -804,10 +805,10 @@ $(function() {
 			
 			var currSpeed = $(".animation-speed").slider("value");
 			$(html).find(".animation-speed").slider({
-				value: currSpeed ? currSpeed : 1,
-				min: 0.5,
-				max: 2.5,
-				step: 0.5,
+				value: currSpeed ? currSpeed : 3,
+				min: 1,
+				max: 5,
+				step: 1,
 				slide: function(event, ui) {
 					$(html).find(".animation-speed-display").html(ui.value);
 				}
@@ -835,6 +836,14 @@ $(function() {
 			
 			// Deselect currently selected item
 			fieldLayer.on('click', function(e) {
+				$("#article").children().removeClass("selected");
+				
+				view.model.get("articles").each(function(article) {
+					article.trigger("unselectArticle");
+				});
+			});
+			
+			fieldLayer.on('dragstart', function(e) {
 				$("#article").children().removeClass("selected");
 				
 				view.model.get("articles").each(function(article) {

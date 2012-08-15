@@ -797,15 +797,51 @@ function createLabel(label) {
 }
 
 function createSelect(select) {
-	return new Kinetic.RegularPolygon({
-		sides: 4,
-		radius: 1.5 * SCALE,
-		//fill: ,
-		stroke: "yellow",
-		strokeWidth: 1,
+	var selectGroup = new Kinetic.Group({
 		visible: select.select,
 		name: "select"
 	});
+	
+	for (var i = -1; i <= 1; i+=2) {
+		for (var j = -1; j <= 1; j+=2) {
+			var corner = new Kinetic.Rect({
+				width: 4,
+				height: 4,
+				fill: "#e4f084",
+				x: i * 1.5 * SCALE,
+				y: j * 1.5 * SCALE,
+				offset: {
+					x: 2,
+					y: 2
+				}
+			});
+			selectGroup.add(corner);
+		}
+	}
+	
+	var box = new Kinetic.Rect({
+		width: 3 * SCALE,
+		height: 3 * SCALE,
+		stroke: "#e4f084",
+		strokeWidth: 1,
+		offset: {
+			x: 1.5 * SCALE,
+			y: 1.5 * SCALE
+		}
+	});
+	
+	selectGroup.add(box);
+	
+	return selectGroup;
+	// return new Kinetic.RegularPolygon({
+// 		sides: 4,
+// 		radius: 1.5 * SCALE,
+// 		//fill: ,
+// 		stroke: "yellow",
+// 		strokeWidth: 1,
+// 		visible: select.select,
+// 		name: "select"
+// 	});
 	// return new Kinetic.Shape({
 // 		drawFunc
 // 	});
