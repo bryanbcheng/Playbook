@@ -654,6 +654,7 @@ $(function() {
 			
 			this.shape.on('mouseout', function(e) {
 				view.shape.get(".annotationX")[0].hide();
+				view.shape.get(".annotationXHover")[0].hide();
 				view.layer.draw();
 			});
  			
@@ -664,8 +665,8 @@ $(function() {
 			this.layer.add(this.shape);
  			
  			this.shape.get(".annotationX")[0].on('mouseover', function(e) {
- 				this.hide();
- 				this.parent.get(".annotationXHover")[0].show();
+ 				view.shape.get(".annotationX")[0].hide();
+ 				view.shape.get(".annotationXHover")[0].show();
  				view.layer.draw();
  				
  				e.cancelBubble = true;
@@ -676,8 +677,8 @@ $(function() {
  			});
  			
  			this.shape.get(".annotationXHover")[0].on('mouseout', function(e) {
- 				this.hide();
- 				this.parent.get(".annotationX")[0].show();
+ 				view.shape.get(".annotationXHover")[0].hide();
+ 				view.shape.get(".annotationX")[0].show();
  				view.layer.draw();
  			});
 			

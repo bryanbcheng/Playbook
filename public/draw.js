@@ -942,10 +942,13 @@ function createX(cross) {
 	
 	var xCircle = new Kinetic.Circle({
 		radius: Math.sqrt(2) / 2 * SCALE,
- 		fill: cross.hover ? "white" : "#585858",
- 		stroke: cross.hover ? "#333" : "#CCC",
+ 		//fill: cross.hover ? "white" : "#585858",
+ 		fill: cross.hover ? "#585858" : "white",
+ 		//stroke: cross.hover ? "#333" : "#CCC",
+ 		stroke: cross.hover ? "#CCC" : "#333",
  		strokeWidth: 1,
- 		alpha: cross.hover ? 0.1 : 0.65
+ 		//alpha: cross.hover ? 0.1 : 0.65
+ 		alpha: cross.hover ? 0.65 : 0.1
 	});
 	
 	var xCross = new Kinetic.Shape({	
@@ -959,7 +962,8 @@ function createX(cross) {
 			this.fill(context);
             this.stroke(context);
 		},
-        stroke: cross.hover ? "#333" : "#DDD",
+        //stroke: cross.hover ? "#333" : "#DDD",
+        stroke: cross.hover ? "#DDD" : "#333",
         strokeWidth: 2,
         //alpha: 0.75,
     });
