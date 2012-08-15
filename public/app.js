@@ -556,6 +556,9 @@ $(function() {
 			this.layer.remove(this.shape);
 			this.layer.draw();
 			
+			// Remove article DOM
+			this.remove();
+			
 			this.model.destroy();
 		},  
 		
@@ -644,11 +647,26 @@ $(function() {
 				view.$el.find(".annotation-edit").focus();
 			});
 			
+			this.shape.on('mouseover', function(e) {
+				view.shape.get(".annotationX")[0].show();
+				view.layer.draw();
+			});
+			
+			this.shape.on('mouseout', function(e) {
+				view.shape.get(".annotationX")[0].hide();
+				view.layer.draw();
+			});
+ 			
 			this.shape.on('dragend', function(e) {
 				view.model.save({x: this.getX(), y: this.getY()});
 			});
 			
 			this.layer.add(this.shape);
+			
+			this.shape.get(".annotationX")[0].on('click', function(e) {
+ 				view.model.trigger("clear");
+ 			});
+			
 			this.layer.draw();
 			
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
@@ -672,10 +690,13 @@ $(function() {
 		},
 		
 		clear: function() {
-			if (this.line) this.layer.remove(this.line);
-			if (this.arrow) this.layer.remove(this.arrow);
+			// Remove to prevent triggering after shape is deleted
+			this.shape.off('mouseout');
+		
 			this.layer.remove(this.shape);
 			this.layer.draw();
+			
+			this.remove();
 			
 			this.model.destroy();
 		}
@@ -779,6 +800,7 @@ $(function() {
 		
 		addAnnotation: function(item) {
 			var annotationView = new $.playbook.AnnotationView({model: item, layer: this.layer});
+			console.log(annotationView);
 		},
 		
 		addNewAnnotation: function(item) {

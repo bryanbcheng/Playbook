@@ -912,8 +912,58 @@ function createAnnotation(annotation) {
 		}
 	});
 	
+	var annotationX = createX({
+		x: annotation.width + 1,
+		y: 0
+	});
+	
 	annotationGroup.add(annotationBox);
 	annotationGroup.add(annotationText);
+	annotationGroup.add(annotationX);
 	
 	return annotationGroup;
+}
+
+function createX(cross) {
+	var xGroup = new Kinetic.Group({
+        x: cross.x * SCALE,
+        y: cross.y * SCALE,
+		visible: false,
+		name: "annotationX"
+	});
+	
+	var xCircle = new Kinetic.Circle({
+		radius: Math.sqrt(2) / 2 * SCALE,
+		fill: "#585858",
+		stroke: "#CCC",
+		strokeWidth: 1,
+		alpha: 0.65
+	});
+	
+	var xCross = new Kinetic.Shape({	
+		drawFunc:function(context) {
+			context.beginPath();
+			//context.arc(0, 0, Math.sqrt(2) / 2 * SCALE, 0, 2 * Math.PI);
+			context.moveTo(-0.35 * SCALE, -0.35 * SCALE);
+			context.lineTo(0.35 * SCALE, 0.35 * SCALE);
+			context.moveTo(-0.35 * SCALE, 0.35 * SCALE);
+			context.lineTo(0.35 * SCALE, -0.35 * SCALE);
+			context.closePath();
+			this.fill(context);
+            this.stroke(context);
+		},
+		//fill: "black",
+        stroke: "#DDD",
+        strokeWidth: 2,
+        //alpha: 0.75,
+//         offset: {
+//         	x: 1 * SCALE,
+//         	y: 1 * SCALE
+//         }
+    });
+    
+    xGroup.add(xCircle);
+    xGroup.add(xCross);
+    
+    return xGroup;
 }
