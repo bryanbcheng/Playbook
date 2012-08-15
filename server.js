@@ -40,6 +40,7 @@ var mongoose = require('mongoose')
   , Play = require('./models.js').Play(db)
   , Set = require('./models.js').Set(db)
   , Path = require('./models.js').Path(db)
+  , Annotation = require('./models.js').Annotation(db)
   , Article = require('./models.js').Article(db);
 
 /* Views */
@@ -230,6 +231,69 @@ function delete_path(req, res, next) {
 	});
 }
 
+function post_annotation(req, res, next) {
+	Play.findOne({'sets._id': req.body.set}, function(err, play) {
+        if (err) {
+            return next(err);
+        } else if(!play) {
+            return next(new Error("Could not find set with _id=" + req.body.set));
+        }
+        
+        new_annotation = new Annotation({
+        	text: req.body.text,
+        	x: req.body.x,
+        	y: req.body.y,
+        	width: req.body.width,
+        	height: req.body.height
+        });
+        
+        play.sets.id(req.body.set).annotations.push(new_annotation);
+        play.save();
+        
+        res.send(new_annotation);
+    });
+}
+
+function put_annotation(req, res, next) {
+	Play.findOne({'sets.annotations._id': req.params._id}, function(err, play) {
+		if (err)
+			return next(err);
+		else if (!play) {
+			return next(new Error("Could not find annotation with _id=" + req.params._id));
+		}
+		
+		var updateAnnotation = play.sets.id(req.body.set).annotations.id(req.params._id);
+		for (var attr in req.body) {
+			if (attr !== 'set' && attr !== '_id')
+				updateAnnotation[attr] = req.body[attr];
+		}
+		
+		play.save();
+		
+		res.send(updateAnnotation);
+	});
+}
+
+function delete_annotation(req, res, next) {
+	Play.findOne({'sets.annotations._id': req.params._id}, function(err, play) {
+		if (err)
+			return next(err);
+		else if (!play) {
+			return next(new Error("Could not find annotation with _id=" + req.params._id));
+		}
+		
+		for (var i = 0; i < play.sets.length; i++) {
+			var deleteAnnotation = play.sets[i].annotations.id(req.params._id);
+			if (deleteAnnotation) {
+				deleteAnnotation.remove();
+				res.send(deleteAnnotation);
+				play.save();
+				break;	
+			}
+		}
+	});
+}
+
 function post_article(req, res, next) {
 	Play.findOne({_id: req.body.play}, function(err, play) {
         if (err) {
@@ -314,6 +378,11 @@ app.delete('/api/set/:_id', delete_set);
 app.post('/api/path', post_path);
 app.put('/api/path/:_id', put_path);
 app.delete('/api/path/:_id', delete_path);
+
+// Annotation routes
+app.post('/api/annotation', post_annotation);
+app.put('/api/annotation/:_id', put_annotation);
+app.delete('/api/annotation/:_id', delete_annotation);
 
 // Article routes
 //app.get('/api/article/:id', get_article);

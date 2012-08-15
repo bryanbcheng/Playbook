@@ -1,6 +1,6 @@
 /***** CSS RESET *****/
 html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+h1, h2, h3, h4, h5, h6, input, textarea, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
@@ -188,7 +188,7 @@ table {
 	margin: 0 0 20px 0;
 }
 
-#set div {
+#set div.set-view {
 	display: none;
 }
 
@@ -214,7 +214,55 @@ table {
 
 #set .edit input, #set .edit textarea {
 	display: block;
-} 
+}
+
+#set .annotation-view {
+	display: none;
+	position: absolute;
+}
+
+#set .editing {
+	display: block;
+}
+
+#set .annotation-view div {
+	float: left;
+}
+
+#set .annotation-view textarea {
+	position: relative;
+	background: transparent;
+	font-family: Helvetica;
+	font-size: 12;
+	padding: 3px 4px;
+}
+
+#set .annotation-controls {
+	position: relative;
+	width: 20px;
+}
+
+#set .annotation-controls a {
+	display: block;
+	width: 16px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+}
+
+#set .annotation-controls div:hover {
+	background-color: rgba(255,255,255,0.1);
+}
+
+#set a.annotation-save:hover {
+	color: green;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+#set a.annotation-cancel:hover {
+	color: red;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
 
 #article {
 	width: 200px;

@@ -31,11 +31,20 @@ var Path = new Schema({
   , articleId	: { type: Schema.ObjectId, required: true }
 });
 
+var Annotation = new Schema({
+	text		: String
+  ,	x			: Number
+  ,	y			: Number
+  , width		: Number
+  , height		: Number
+});
+
 var Set = new Schema({
     name		: String
   ,	number		: { type: Number, required: true }
   , comments	: String
   , paths		: [Path]
+  , annotations	: [Annotation]
 });
 
 var Play = new Schema({
@@ -59,12 +68,17 @@ exports.Play = function(db) {
 
 mongoose.model('Set', Set);
 exports.Set = function(db) {
-  return db.model('Set');
+	return db.model('Set');
 };
 
 mongoose.model('Path', Path);
 exports.Path = function(db) {
 	return db.model('Path');
+};
+
+mongoose.model('Annotation', Annotation);
+exports.Annotation = function(db) {
+	return db.model('Annotation');
 };
 
 mongoose.model('Article', Article);

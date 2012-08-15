@@ -127,6 +127,22 @@ $(function() {
 		}
 	});
 	
+	$.playbook.Annotation = Backbone.RelationalModel.extend({
+		idAttribute: "_id",
+		
+		defaults: function() {
+			return {
+				text: "text",
+				x: 0,
+				y: 0,
+				width: 15,
+				height: 3,
+			}
+		},
+		
+		urlRoot: "/api/annotation",
+	});
+	
 	$.playbook.Set = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
@@ -139,7 +155,16 @@ $(function() {
 					key: 'set',
 					includeInJSON: '_id',
 				}
-			},/*
+			},
+			{
+				type: Backbone.HasMany,
+				key: 'annotations',
+				relatedModel: '$.playbook.Annotation',
+				reverseRelation: {
+					key: 'set',
+					includeInJSON: '_id',
+				}
+			}/*
 			{
 				type: Backbone.HasOne,
 				key: 'prevSet',
@@ -262,6 +287,7 @@ $(function() {
 		
 			this.model.on('addPathShape', this.addPathShape, this);
 			this.model.on('show', this.show, this);
+			this.model.on('editLabel', this.editLabel, this);
 			this.model.on('change', this.render, this);
 			this.model.on('changeColor', this.changeColor, this);
 			
@@ -286,6 +312,11 @@ $(function() {
 		show: function() {
 			this.$el.siblings().removeClass("selected");
 			this.$el.addClass("selected");
+		},
+		
+		editLabel: function(e) {
+			this.$el.find(".label").focus();
+			setCaretPosition(this.$el.find(".label")[0], 3); // 3 will ensure always at end
 		},
 		
 		updateLabel: function(e) {
@@ -421,6 +452,10 @@ $(function() {
 				// Move select shape to selected article
 				view.article.trigger("selectArticle");
 			});
+			
+			this.shape.on('dblclick', function(e) {
+				view.article.trigger("editLabel");
+			});
 				
 			this.shape.on('dragstart', function(e) {
 				view.article.trigger("show");
@@ -543,11 +578,135 @@ $(function() {
 		}
 	});
 	
+	// (Mostly) Hidden view, used to control annotation model
+	$.playbook.AnnotationView = Backbone.View.extend({
+		tagName: "div",
+		className: "annotation-view",
+		
+		template: $("#annotation-template").html(),
+		
+		events: {
+			"click .annotation-save"	: "saveAnnotation",
+			"click .annotation-cancel"	: "closeEdit",
+		},
+		
+		initialize: function(options) {
+			this.layer = options.layer;
+			
+			this.shape = null;
+			
+			this.model.on("change", this.render, this);
+			//this.model.on("selectPath", this.selectPath, this);
+			//this.model.on("unselectPath", this.unselectPath, this);
+			this.model.on("clear", this.clear, this);
+			
+			this.model.trigger("change");
+		},
+		
+		render: function() {
+			var view = this;
+			
+			// Draw shape
+			if (this.shape) this.shape.parent.remove(this.shape);
+			this.shape = createAnnotation({
+				text: this.model.get("text"),
+				x: this.model.get("x"),
+				y: this.model.get("y"),
+				width: this.model.get("width"),
+				height: this.model.get("height")
+			});
+			
+			// Shape event handlers
+// 			this.shape.on('click', function(e) {
+// 				view.article.trigger("show");
+// 				
+// 				// Move select shape to selected article
+// 				view.article.trigger("selectArticle");
+// 			});
+// 				
+// 			this.shape.on('dragstart', function(e) {
+// 				view.article.trigger("show");
+// 				
+// 				// Move select shape to selected article
+// 				view.article.trigger("selectArticle");
+// 			});
+			
+			this.shape.on('dblclick', function(e) {
+				// Deselect other annotations
+				$(".annotation-cancel").click();
+			
+				// Hide current text
+				this.get(".annotationText")[0].hide();
+				this.parent.draw();
+			
+				// Append to set, move over canvas dom
+				if (!view.$el.parent().length)
+					$("#set").append(view.el);
+				view.$el.addClass("editing");
+				
+				// Calculate offset (canvas DOM + layer offset + item location)
+				view.$el.css({
+					left: $("#canvas").position().left + stage.current.getX() + view.model.get("x"),
+					top: $("#canvas").position().top + stage.current.getY() + view.model.get("y"),
+				});
+				// Calculate size (item size - padding size)
+				view.$el.find(".annotation-edit").css({
+					width: (view.model.get("width") + 1) * SCALE - 8,
+					height: (view.model.get("height") + 1) * SCALE - 6
+				});
+				
+				view.$el.find(".annotation-edit").focus();
+			});
+			
+			this.shape.on('dragend', function(e) {
+				view.model.save({x: this.getX(), y: this.getY()});
+			});
+			
+			this.layer.add(this.shape);
+			this.layer.draw();
+			
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+		},
+		
+// 		selectPath: function() {
+// 			this.shape.get(".select")[0].show();
+// 			this.layer.draw();
+// 		},
+// 		
+// 		unselectPath: function() {
+// 			this.shape.get(".select")[0].hide();
+// 			this.layer.draw();
+// 		},
+
+		saveAnnotation: function() {
+			this.model.save({text: this.$el.find(".annotation-edit").val()});
+			
+			this.$el.detach();
+		},
+		
+		closeEdit: function() {
+			// Hide text
+			this.shape.get(".annotationText")[0].show();
+			this.layer.draw();
+		
+			this.$el.detach();
+		},
+		
+		clear: function() {
+			if (this.line) this.layer.remove(this.line);
+			if (this.arrow) this.layer.remove(this.arrow);
+			this.layer.remove(this.shape);
+			this.layer.draw();
+			
+			this.model.destroy();
+		}
+	});
+	
 	$.playbook.SetView = Backbone.View.extend({
 		tagName: "div",
+		className: "set-view",
 		
 		template: $("#set-template").html(),
-		templateLi: $("#set-list-template").html(),
 		
 		events: {
 			"dblclick .name"      : "editName",
@@ -570,6 +729,8 @@ $(function() {
 			this.model.on('change', this.render, this);
 			this.model.on('clear', this.clear, this);
 			this.model.on('addPath', this.addPath, this);
+			this.model.on('addAnnotation', this.addAnnotation, this);
+			this.model.on('addNewAnnotation', this.addNewAnnotation, this);
 			this.model.on('show', this.show, this);
 			this.model.on('init', this.addAll, this);
 			
@@ -587,10 +748,6 @@ $(function() {
 			this.model.get("play").trigger("change");
 			
 			return this;
-		},
-		
-		renderLi: function() {
-			return Mustache.render(this.templateLi, this.model.toJSON());
 		},
 		
 		clear: function() {
@@ -641,10 +798,22 @@ $(function() {
 			var pathView = new $.playbook.PathView({model: item, layer: this.layer});
 		},
 		
+		addAnnotation: function(item) {
+			var annotationView = new $.playbook.AnnotationView({model: item, layer: this.layer});
+		},
+		
+		addNewAnnotation: function(item) {
+			this.model.trigger("addAnnotation", item);
+		},
+		
 		addAll: function() {
 			var tempModel = this.model;
-			this.model.get("paths").each(function(item) {
-				tempModel.trigger('addPath', item);
+			this.model.get("paths").each(function(path) {
+				tempModel.trigger('addPath', path);
+			});
+			
+			this.model.get("annotations").each(function(annotation) {
+				tempModel.trigger('addAnnotation', annotation);
 			});
 		},
 		
@@ -734,6 +903,7 @@ $(function() {
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
 			"click .add-cone"	: "addCone",
+			"click .add-ann"	: "addAnnotation",
 			"click .animate"	: "animateSets"
 		},
 		
@@ -846,6 +1016,8 @@ $(function() {
 				view.model.get("articles").each(function(article) {
 					article.trigger("unselectArticle");
 				});
+				
+				$(".annotation-cancel").click();
 			});
 			
 			fieldLayer.on('dragstart', function(e) {
@@ -854,6 +1026,8 @@ $(function() {
 				view.model.get("articles").each(function(article) {
 					article.trigger("unselectArticle");
 				});
+				
+				$(".annotation-cancel").click();
 			});
 		},
 		
@@ -1107,6 +1281,17 @@ $(function() {
 				wait: true,
 				success: function(model, response) {
 					model.get("play").trigger("addNewArticle", model);
+				}
+			});
+		},
+		
+		addAnnotation: function(e) {
+			var annotation = new $.playbook.Annotation({set: this.currentSet()});
+			annotation.save({}, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					model.get("set").trigger("addNewAnnotation", model);
 				}
 			});
 		},

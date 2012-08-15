@@ -126,6 +126,7 @@
 			</div>
 			<button class="add-ball">Add Ball</button>
 			<button class="add-cone">Add Cone</button>
+			<button class="add-ann">Add Annotation</button>
 			<div class="animation">
 				<button class="animate">Animate!</button>
 				<br class="clear"/>
@@ -148,6 +149,16 @@
 				</p>
 				<textarea class="comments-edit">{{comments}}</textarea>
 			</div>
+		</div>
+	</script>
+	
+	<script type="text/template" id="annotation-template">
+		<div>
+			<textarea class="annotation-edit">{{text}}</textarea>
+		</div>
+		<div class="annotation-controls">
+			<div><a class="annotation-save">&#10004;</a></div>
+			<div><a class="annotation-cancel">&#10008;</a></div>
 		</div>
 	</script>
 	

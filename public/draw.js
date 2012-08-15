@@ -833,18 +833,6 @@ function createSelect(select) {
 	selectGroup.add(box);
 	
 	return selectGroup;
-	// return new Kinetic.RegularPolygon({
-// 		sides: 4,
-// 		radius: 1.5 * SCALE,
-// 		//fill: ,
-// 		stroke: "yellow",
-// 		strokeWidth: 1,
-// 		visible: select.select,
-// 		name: "select"
-// 	});
-	// return new Kinetic.Shape({
-// 		drawFunc
-// 	});
 }
 
 function createLine(line) {
@@ -891,4 +879,40 @@ function createArrow(arrow) {
 function rotationAngle(points) {
 	var rad = Math.atan2(points[1] - points[3], points[2] - points[0]);
 	return Math.PI / 2 - rad;
+}
+
+function createAnnotation(annotation) {
+	var annotationGroup = new Kinetic.Group({
+		x: annotation.x,
+		y: annotation.y,
+		draggable: true
+	});
+	
+	var annotationBox = new Kinetic.Rect({
+		width: (annotation.width + 1) * SCALE,
+		height: (annotation.height + 1) * SCALE,
+		fill: "white",
+		name: "annotationBox",
+		alpha: 0.1,
+	});
+	
+	var annotationText = new Kinetic.Text({
+		text: annotation.text,
+		//fontSize: 12,
+		fontFamily: "Helvetica",
+		textFill: "black",
+		//textStrokeWidth: 1,
+		width: annotation.width * SCALE,
+		height: annotation.height * SCALE,
+		name: "annotationText",
+		offset: {
+			x: -0.5 * SCALE,
+			y: -0.5 * SCALE
+		}
+	});
+	
+	annotationGroup.add(annotationBox);
+	annotationGroup.add(annotationText);
+	
+	return annotationGroup;
 }
