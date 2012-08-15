@@ -58,97 +58,97 @@
 				</p>
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
-			<div class="set-list-container">
-				<div class="set-list-area">
-					<table class="set-list">
-						<thead>
-							<tr>
-								<th><div class="num">#</div></th>
-								<th><div class="name">Set Name</div></th>
-							</tr>
-						</thead>
-						<tbody>
-						{{#sets}}
-							<tr class="set-row" id="{{_id}}">
-								<td><div class="num">{{number}}</div></td>
-								<td><div class="name">{{name}}</div></td>
-							</tr>
-						{{/sets}}
-						</tbody>
-					</table>
-				</div>
-				<div class="set-action-container">
-					<div class="set-action"><a class="add-set">+</a></div>
-					<div class="set-action"><a class="remove-set">-</a></div>
-					<br class="clear"/>
-				</div>
+		</div>
+		<div class="set-list-container">
+			<div class="set-list-area">
+				<table class="set-list">
+					<thead>
+						<tr>
+							<th><div class="num">#</div></th>
+							<th><div class="name">Set Name</div></th>
+						</tr>
+					</thead>
+					<tbody>
+					{{#sets}}
+						<tr class="set-row" id="{{_id}}">
+							<td><div class="num">{{number}}</div></td>
+							<td><div class="name">{{name}}</div></td>
+						</tr>
+					{{/sets}}
+					</tbody>
+				</table>
 			</div>
-			<div class="formations">
-				Use preset formation: 
-				<select class="formationType">
-					<optgroup label="Ultimate" value="ultimate">
-						<option value="vertical">Vertical Stack</option>
-						<option value="horizontal">Horizontal Stack</option>
-						<option value="side">Side Stack</option>
-						<option value="split">Split Stack</option>
-						<option value="l">L Stack</option>
-					</optgroup>
-					<optgroup label="Soccer" value="soccer">
-						<option value="4-4-2">4-4-2 Formation</option>
-						<option value="4-3-3">4-3-3 Formation</option>
-						<option value="3-4-3">3-4-3 Formation</option>
-						<option value="3-5-2">3-5-2 Formation</option>
-					</optgroup>
-					<optgroup label="Football" value="football">
-						<option value="i">I Formation</option>
-						<option value="pro">Pro Set Formation</option>
-						<option value="shotgun">Shotgun</option>
-						<option value="spread">Spread Formation</option>
-						<option value="4-3">4-3 Defense</option>
-						<option value="3-4">3-4 Defense</option>
-						<option value="4-2-5">4-2-5 Nickel</option>
-						<option value="3-5-3">3-5-3 Nickel</option>
-					</optgroup>
-				</select>
-				<button class="useForm">Apply</button>
-			</div>
-			<div id="team0" class="team">
-				<span>Team 1</span>
-				<button class="add-player">Add Player</button>
-				<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
+			<div class="set-action-container">
+				<div class="set-action"><a class="add-set">+</a></div>
+				<div class="set-action"><a class="remove-set">-</a></div>
 				<br class="clear"/>
 			</div>
-			<div id="team1" class="team">
-				<span>Team 2</span>
-				<button class="add-player">Add Player</button>
-				<input id="color1" class="select-color" value="{{teamColors.1}}" type="hidden" />
- 				<br class="clear"/>
-			</div>
-			<button class="add-ball">Add Ball</button>
-			<button class="add-cone">Add Cone</button>
-			<button class="add-ann">Add Annotation</button>
-			<div class="animation">
-				<button class="animate">Animate!</button>
-				<br class="clear"/>
-				Speed: <label class="animation-speed-display"></label>
-				<div class="animation-speed"></div>
-				<br class="clear"/>
-			</div>
+		</div>
+		<div class="formations">
+			Use preset formation: 
+			<select class="formationType">
+				<optgroup label="Ultimate" value="ultimate">
+					<option value="vertical">Vertical Stack</option>
+					<option value="horizontal">Horizontal Stack</option>
+					<option value="side">Side Stack</option>
+					<option value="split">Split Stack</option>
+					<option value="l">L Stack</option>
+				</optgroup>
+				<optgroup label="Soccer" value="soccer">
+					<option value="4-4-2">4-4-2 Formation</option>
+					<option value="4-3-3">4-3-3 Formation</option>
+					<option value="3-4-3">3-4-3 Formation</option>
+					<option value="3-5-2">3-5-2 Formation</option>
+				</optgroup>
+				<optgroup label="Football" value="football">
+					<option value="i">I Formation</option>
+					<option value="pro">Pro Set Formation</option>
+					<option value="shotgun">Shotgun</option>
+					<option value="spread">Spread Formation</option>
+					<option value="4-3">4-3 Defense</option>
+					<option value="3-4">3-4 Defense</option>
+					<option value="4-2-5">4-2-5 Nickel</option>
+					<option value="3-5-3">3-5-3 Nickel</option>
+				</optgroup>
+			</select>
+			<button class="useForm">Apply</button>
+		</div>
+		<div id="team0" class="team">
+			<span>Team 1</span>
+			<button class="add-player">Add Player</button>
+			<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
+			<br class="clear"/>
+		</div>
+		<div id="team1" class="team">
+			<span>Team 2</span>
+			<button class="add-player">Add Player</button>
+			<input id="color1" class="select-color" value="{{teamColors.1}}" type="hidden" />
+			<br class="clear"/>
+		</div>
+		<button class="add-ball">Add Ball</button>
+		<button class="add-cone">Add Cone</button>
+		<button class="add-ann">Add Annotation</button>
+		<div class="animation">
+			<button class="animate">Animate!</button>
+			<br class="clear"/>
+			Speed: <label class="animation-speed-display"></label>
+			<div class="animation-speed"></div>
+			<br class="clear"/>
+		</div>
+		<button class="reset-play">Reset Play</button>
 		</div>
 	</script>
 	
 	<script type="text/template" id="set-template">
-		<div class="set-view">
-			<div class="name">
-				<h2>Name: {{name}}</h2>
-				<input class="name-edit" value="{{name}}"></input>
-			</div>
-			<div class="comments">
-				<p>
-					Comments: {{comments}}
-				</p>
-				<textarea class="comments-edit">{{comments}}</textarea>
-			</div>
+		<div class="name">
+			<h2>Name: {{name}}</h2>
+			<input class="name-edit" value="{{name}}"></input>
+		</div>
+		<div class="comments">
+			<p>
+				Comments: {{comments}}
+			</p>
+			<textarea class="comments-edit">{{comments}}</textarea>
 		</div>
 	</script>
 	
@@ -166,15 +166,13 @@
 	</script>
 	
 	<script type="text/template" id="article-template">
-		<div id="{{_id}}" class="article-view">
-			<span>Label: </span><input class="label" value="{{label}}" maxlength=3></input>
-			<select>
-				<option value="player">Player</option>
-				<option value="ball">Ball</option>
-				<option value="cone">Cone</option>
-			</select>
-			<button class="delete">Delete</button>
-		</div>
+		<span>Label: </span><input class="label" value="{{label}}" maxlength=3></input>
+		<select>
+			<option value="player">Player</option>
+			<option value="ball">Ball</option>
+			<option value="cone">Cone</option>
+		</select>
+		<button class="delete">Delete</button>
 	</script>
 </body>
 </html>

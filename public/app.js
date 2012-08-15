@@ -273,6 +273,7 @@ $(function() {
 	
 	$.playbook.ArticleView = Backbone.View.extend({
 		tagName: "div",
+		className: "article-view",
 		
 		template: $("#article-template").html(),
 		
@@ -744,6 +745,7 @@ $(function() {
 			
 			this.model.on('change', this.render, this);
 			this.model.on('clear', this.clear, this);
+			this.model.on('clearAll', this.clearAll, this);
 			this.model.on('addPath', this.addPath, this);
 			this.model.on('addAnnotation', this.addAnnotation, this);
 			this.model.on('addNewAnnotation', this.addNewAnnotation, this);
@@ -798,7 +800,7 @@ $(function() {
 			// Remove set DOM
 			this.remove();
 			this.model.get("play").trigger("change");
-			$("#" + this.model.get("_id")).remove();
+			//$("#" + this.model.get("_id")).remove();
 			
 			// Delete model
 			this.model.destroy();
@@ -808,6 +810,21 @@ $(function() {
 				nextSet.trigger("show");
 			else
 				prevSet.trigger("show");
+		},
+		
+		// Only called from reset all
+		clearAll: function() {
+			// Remove layer from canvas
+			this.layer.clear();
+			stage.remove(this.layer);
+			$(this.layer.getCanvas().element).remove();
+			
+			// Remove set DOM
+			this.remove();
+			$("#" + this.model.get("_id")).remove();
+			
+			// Delete model
+			this.model.destroy();
 		},
 		
 		addPath: function(item) {
@@ -904,6 +921,7 @@ $(function() {
 	
 	$.playbook.PlayView = Backbone.View.extend({
 		tagName: "div",
+		className: "play-view",
 		
 		template: $("#play-template").html(),
 		
@@ -922,7 +940,8 @@ $(function() {
 			"click .add-ball"	: "addBall",
 			"click .add-cone"	: "addCone",
 			"click .add-ann"	: "addAnnotation",
-			"click .animate"	: "animateSets"
+			"click .animate"	: "animateSets",
+			"click .reset-play"	: "resetPlay",
 		},
 		
 		initialize: function() {
@@ -1342,6 +1361,42 @@ $(function() {
 				// simulate animate press
 				view.model.trigger("animate", nextSet, initialSet);
 			});
+		},
+		
+		resetPlay: function() {
+			if (confirm("Resetting this play will remove all work done so far on this play. Are you sure you want to continue?")) {				
+				// Remove all articles
+				var articles = this.model.get("articles")
+				while (!articles.isEmpty()) {
+					articles.shift().trigger("clear");
+				}
+				
+				// Remove all sets
+				var sets = this.model.get("sets")
+				while (!sets.isEmpty()) {
+					sets.pop().trigger("clearAll");
+				}
+				
+				// Add three new sets
+				var newSet1 = new $.playbook.Set({number: 1,  play: this.model});
+				var newSet2 = new $.playbook.Set({number: 2,  play: this.model});
+				var newSet3 = new $.playbook.Set({number: 3,  play: this.model});
+				
+				newSet1.save({}, {success: function(model, response) {
+					model.get("play").trigger("change");
+					model.get("play").trigger("addNewSet", model);
+				}});
+				newSet2.save({}, {success: function(model, response) {
+					model.get("play").trigger("change");
+					model.get("play").trigger("addNewSet", model);
+				}});
+				newSet3.save({}, {success: function(model, response) {
+					model.get("play").trigger("change");
+					model.get("play").trigger("addNewSet", model);
+				}});
+			} else {
+				console.log("Cancelled formation selection");
+			}
 		}
 	});
 	
