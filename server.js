@@ -1,10 +1,9 @@
 /* Imports */
 var express = require('express'),
-	$ = require('jquery'),
 	_ = require('underscore'),
 	util = require('util');
 
-var app = express.createServer();
+var app = express();
 
 /* Configuration */
 app.configure(function() {
@@ -290,10 +289,10 @@ function delete_article(req, res, next) {
 /* Routes */
 
 app.get('/', function(req, res) {
-	res.sendfile('public/index.html');
+	res.sendfile(__dirname + '/public/index.html');
 });
 app.get('/play/:_id', function(req, res) {
-	res.sendfile('public/index.html');
+	res.sendfile(__dirname + '/public/index.html');
 });
 
 
@@ -320,5 +319,5 @@ app.post('/api/article', post_article);
 app.put('/api/article/:_id', put_article);
 app.delete('/api/article/:_id', delete_article);
 
-app.listen(3000);
+app.listen(process.env['app_port'] || 3000);
 
