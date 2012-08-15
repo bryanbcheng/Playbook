@@ -529,7 +529,7 @@ $(function() {
 				x: this.model.get("nextX"),
 				y: this.model.get("nextY"),
 				// 1 - slow, 5 - fast
-				duration: 3 - $(".animation-speed").slider("value") / 2,
+				duration: 3 - $(".animation-speed").slider("value"),
 				callback: cb
 			});
 		},
@@ -687,17 +687,22 @@ $(function() {
 		animate: function(cb) {
 			// call path to animate
 			var view = this;
-			this.model.get("paths").each(function(path) {
-				path.trigger("animate", function() {
-					view.model.trigger("wait", cb);
+			if (this.model.get("paths").length ===  0) {
+				errorMessage("Cannot animate without any objects in the play.");
+				this.model.trigger("wait", cb);
+			} else {			
+				this.model.get("paths").each(function(path) {
+					path.trigger("animate", function() {
+						view.model.trigger("wait", cb);
+					});
 				});
-			});
+			}
 		},
 		
 		wait: function(cb) {
 			this.count++;
 			
-			if(this.count == this.model.get("paths").length) {
+			if(this.count >= this.model.get("paths").length) {
 				this.count = 0;
 				cb();
 			}
@@ -805,15 +810,15 @@ $(function() {
 			
 			var currSpeed = $(".animation-speed").slider("value");
 			$(html).find(".animation-speed").slider({
-				value: currSpeed ? currSpeed : 3,
-				min: 1,
-				max: 5,
-				step: 1,
+				value: currSpeed ? currSpeed : 1.5,
+				min: 0.5,
+				max: 2.5,
+				step: 0.5,
 				slide: function(event, ui) {
-					$(html).find(".animation-speed-display").html(ui.value);
+					$(html).find(".animation-speed-display").html(ui.value + "x");
 				}
 			});
-			$(html).find(".animation-speed-display").html($(html).find(".animation-speed").slider("value"));
+			$(html).find(".animation-speed-display").html($(html).find(".animation-speed").slider("value") + "x");
 			
 			this.$el.html(html);
 			
@@ -1012,7 +1017,7 @@ $(function() {
 			
 			var currSet = this.currentSet();
 			
-			if (setId != currSet.get("_id")) {
+			if (setId && setId != currSet.get("_id")) {
 				var displaySet = this.model.get("sets").find(function(set) {
 					return set.get("_id") === setId;
 				});
@@ -1057,7 +1062,6 @@ $(function() {
 						silent: true,
 						wait: true,
 						success: function(model, response) {
-							console.log(model);
 							model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
 							model.unset("tempX");
 							model.unset("tempY");
@@ -1113,15 +1117,17 @@ $(function() {
 			
 			var currSet = this.currentSet();
 			
-			this.model.trigger("animate", currSet);
+			this.model.trigger("animate", currSet, currSet);
 		},
 		
-		animate: function(set) {
+		animate: function(set, initialSet) {
 			var view = this;
 			set.trigger("animate", function() {
 				// Show next set
 				var nextSet = set.nextSet();
 				if (!nextSet) {
+					initialSet.trigger("show");
+					
 					view.delegateEvents();
 					return;
 				}
@@ -1131,7 +1137,7 @@ $(function() {
 				set.trigger("reset");
 				
 				// simulate animate press
-				view.model.trigger("animate", nextSet);
+				view.model.trigger("animate", nextSet, initialSet);
 			});
 		}
 	});
