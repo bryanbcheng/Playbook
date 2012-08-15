@@ -1,6 +1,6 @@
 /***** CSS RESET *****/
 html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, input, textarea, p, blockquote, pre,
+h1, h2, h3, h4, h5, h6, textarea, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
@@ -229,12 +229,17 @@ table {
 	float: left;
 }
 
-#set .annotation-view textarea {
-	position: relative;
+#set .annotation-edit {
 	background: transparent;
 	font-family: Helvetica;
 	font-size: 12;
-	padding: 3px 4px;
+	line-height: 16px;
+	overflow: hidden;
+	padding: 3px 5px;
+	position: relative;
+	resize: vertical;
+/* 	white-space: pre; */
+	word-wrap: break-word;
 }
 
 #set .annotation-controls {

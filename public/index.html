@@ -153,9 +153,12 @@
 	</script>
 	
 	<script type="text/template" id="annotation-template">
-		<div>
+		<!-- 
+<div>
 			<textarea class="annotation-edit">{{text}}</textarea>
 		</div>
+ -->
+ 		<div class="annotation-edit" contenteditable="true">{{text}}</div>
 		<div class="annotation-controls">
 			<div><a class="annotation-save">&#10004;</a></div>
 			<div><a class="annotation-cancel">&#10008;</a></div>

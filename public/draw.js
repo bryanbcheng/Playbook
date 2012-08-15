@@ -904,6 +904,7 @@ function createAnnotation(annotation) {
 		//textStrokeWidth: 1,
 		width: annotation.width * SCALE,
 		height: annotation.height * SCALE,
+		//lineHeight: 1.2,
 		name: "annotationText",
 		offset: {
 			x: -0.5 * SCALE,

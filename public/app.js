@@ -135,7 +135,7 @@ $(function() {
 				text: "text",
 				x: 0,
 				y: 0,
-				width: 15,
+				width: 20,
 				height: 3,
 			}
 		},
@@ -617,20 +617,6 @@ $(function() {
 			});
 			
 			// Shape event handlers
-// 			this.shape.on('click', function(e) {
-// 				view.article.trigger("show");
-// 				
-// 				// Move select shape to selected article
-// 				view.article.trigger("selectArticle");
-// 			});
-// 				
-// 			this.shape.on('dragstart', function(e) {
-// 				view.article.trigger("show");
-// 				
-// 				// Move select shape to selected article
-// 				view.article.trigger("selectArticle");
-// 			});
-			
 			this.shape.on('dblclick', function(e) {
 				// Deselect other annotations
 				$(".annotation-cancel").click();
@@ -651,7 +637,7 @@ $(function() {
 				});
 				// Calculate size (item size - padding size)
 				view.$el.find(".annotation-edit").css({
-					width: (view.model.get("width") + 1) * SCALE - 8,
+					width: (view.model.get("width") + 1) * SCALE - 10,
 					height: (view.model.get("height") + 1) * SCALE - 6
 				});
 				
@@ -667,19 +653,9 @@ $(function() {
 			
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 		},
-		
-// 		selectPath: function() {
-// 			this.shape.get(".select")[0].show();
-// 			this.layer.draw();
-// 		},
-// 		
-// 		unselectPath: function() {
-// 			this.shape.get(".select")[0].hide();
-// 			this.layer.draw();
-// 		},
 
 		saveAnnotation: function() {
-			this.model.save({text: this.$el.find(".annotation-edit").val()});
+			this.model.save({text: this.$el.find(".annotation-edit").text()});
 			
 			this.$el.detach();
 		},
@@ -688,6 +664,9 @@ $(function() {
 			// Hide text
 			this.shape.get(".annotationText")[0].show();
 			this.layer.draw();
+		
+			//Reset textarea's data
+			this.$el.find(".annotation-edit").html(this.model.get("text"));
 		
 			this.$el.detach();
 		},
@@ -841,6 +820,8 @@ $(function() {
 			if (stage.current) {
 				stage.current.hide();
 				stage.current.draw();
+				
+				$(".annotation-cancel").click();
 			}
 			stage.current = this.layer;
 			this.layer.show();
