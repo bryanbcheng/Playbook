@@ -74,8 +74,10 @@ function post_play(req, res, next) {
 	});
     new_play.save();
     
-    var initial_set = new Set({name: "Set_1", number: 1, comments: ""});
-    new_play.sets.push(initial_set);
+    var set_1 = new Set({name: "Set_1", number: 1, comments: ""});
+    var set_2 = new Set({name: "Set_2", number: 2, comments: ""});
+    var set_3 = new Set({name: "Set_3", number: 3, comments: ""});
+    new_play.sets.push(set_1, set_2, set_3);
     new_play.save();
     
     res.send(new_play);

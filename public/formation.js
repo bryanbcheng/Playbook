@@ -38,31 +38,31 @@ function verticalStack() {
 		label: "H",
 		team: "team0"
 	}, {
-		x: (ULTIMATE_WIDTH / 2 - 5) * SCALE,
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2 + 5) * SCALE,
 		type: "player",
 		label: "C",
 		team: "team0"
 	}, {
-		x: (ULTIMATE_WIDTH / 2 - 5) * SCALE,
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2) * SCALE,
 		type: "player",
 		label: "C",
 		team: "team0"
 	}, {
-		x: (ULTIMATE_WIDTH / 2 - 5) * SCALE,
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2 - 5) * SCALE,
 		type: "player",
 		label: "C",
 		team: "team0"
 	}, {
-		x: (ULTIMATE_WIDTH / 2 - 5) * SCALE,
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2 - 10) * SCALE,
 		type: "player",
 		label: "C",
 		team: "team0"
 	}, {
-		x: (ULTIMATE_WIDTH / 2 - 5) * SCALE,
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
 		y: (ULTIMATE_HEIGHT / 2 - 15) * SCALE,
 		type: "player",
 		label: "C",
