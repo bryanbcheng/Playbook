@@ -662,9 +662,23 @@ $(function() {
 			});
 			
 			this.layer.add(this.shape);
-			
-			this.shape.get(".annotationX")[0].on('click', function(e) {
+ 			
+ 			this.shape.get(".annotationX")[0].on('mouseover', function(e) {
+ 				this.hide();
+ 				this.parent.get(".annotationXHover")[0].show();
+ 				view.layer.draw();
+ 				
+ 				e.cancelBubble = true;
+ 			});
+ 			
+ 			this.shape.get(".annotationXHover")[0].on('click', function(e) {
  				view.model.trigger("clear");
+ 			});
+ 			
+ 			this.shape.get(".annotationXHover")[0].on('mouseout', function(e) {
+ 				this.hide();
+ 				this.parent.get(".annotationX")[0].show();
+ 				view.layer.draw();
  			});
 			
 			this.layer.draw();
@@ -692,6 +706,7 @@ $(function() {
 		clear: function() {
 			// Remove to prevent triggering after shape is deleted
 			this.shape.off('mouseout');
+			this.shape.get(".annotationXHover")[0].off('mouseout');
 		
 			this.layer.remove(this.shape);
 			this.layer.draw();
@@ -800,7 +815,6 @@ $(function() {
 		
 		addAnnotation: function(item) {
 			var annotationView = new $.playbook.AnnotationView({model: item, layer: this.layer});
-			console.log(annotationView);
 		},
 		
 		addNewAnnotation: function(item) {

@@ -914,12 +914,20 @@ function createAnnotation(annotation) {
 	
 	var annotationX = createX({
 		x: annotation.width + 1,
-		y: 0
+		y: 0,
+		hover: false
+	});
+	
+	var annotationXHover = createX({
+		x: annotation.width + 1,
+		y: 0,
+		hover: true
 	});
 	
 	annotationGroup.add(annotationBox);
 	annotationGroup.add(annotationText);
 	annotationGroup.add(annotationX);
+	annotationGroup.add(annotationXHover);
 	
 	return annotationGroup;
 }
@@ -929,21 +937,20 @@ function createX(cross) {
         x: cross.x * SCALE,
         y: cross.y * SCALE,
 		visible: false,
-		name: "annotationX"
+		name: cross.hover ? "annotationXHover" : "annotationX"
 	});
 	
 	var xCircle = new Kinetic.Circle({
 		radius: Math.sqrt(2) / 2 * SCALE,
-		fill: "#585858",
-		stroke: "#CCC",
-		strokeWidth: 1,
-		alpha: 0.65
+ 		fill: cross.hover ? "white" : "#585858",
+ 		stroke: cross.hover ? "#333" : "#CCC",
+ 		strokeWidth: 1,
+ 		alpha: cross.hover ? 0.1 : 0.65
 	});
 	
 	var xCross = new Kinetic.Shape({	
 		drawFunc:function(context) {
 			context.beginPath();
-			//context.arc(0, 0, Math.sqrt(2) / 2 * SCALE, 0, 2 * Math.PI);
 			context.moveTo(-0.35 * SCALE, -0.35 * SCALE);
 			context.lineTo(0.35 * SCALE, 0.35 * SCALE);
 			context.moveTo(-0.35 * SCALE, 0.35 * SCALE);
@@ -952,18 +959,12 @@ function createX(cross) {
 			this.fill(context);
             this.stroke(context);
 		},
-		//fill: "black",
-        stroke: "#DDD",
+        stroke: cross.hover ? "#333" : "#DDD",
         strokeWidth: 2,
         //alpha: 0.75,
-//         offset: {
-//         	x: 1 * SCALE,
-//         	y: 1 * SCALE
-//         }
     });
     
     xGroup.add(xCircle);
     xGroup.add(xCross);
-    
     return xGroup;
 }
