@@ -20,7 +20,10 @@ $(function() {
 			};
 		},
 		
-		urlRoot: "/api/article"
+		//urlRoot: "/api/article"
+		urlRoot: "article",
+		
+		socket: window.socket,
 	});
 	
 	$.playbook.Path = Backbone.RelationalModel.extend({
@@ -35,7 +38,10 @@ $(function() {
 			}
 		},
 		
-		urlRoot: "/api/path",
+		//urlRoot: "/api/path",
+		urlRoot: "path",
+		
+		socket: window.socket,
 		
 		moveTo: function(x, y) {
 			// Saving previous set
@@ -142,7 +148,10 @@ $(function() {
 			}
 		},
 		
-		urlRoot: "/api/annotation",
+		//urlRoot: "/api/annotation",
+		urlRoot: "annotation",
+		
+		socket: window.socket,
 	});
 	
 	$.playbook.Set = Backbone.RelationalModel.extend({
@@ -182,7 +191,9 @@ $(function() {
 		defaults: function() {
 			return {
 				name: "" ,
-				comments: ""
+				comments: "",
+				paths: [],
+				annotations: [],
 			};
 		},
 		
@@ -192,7 +203,10 @@ $(function() {
 			// LINK SETS??
 		},
 		
-		urlRoot: "/api/set",
+		//urlRoot: "/api/set",
+		urlRoot: "set",
+		
+		socket: window.socket,
 		
 		// Assume array is in order (sorting not an issue yet)
 		prevSet: function() {

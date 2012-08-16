@@ -47,392 +47,365 @@ var mongoose = require('mongoose')
 
 /* Socket.io Connections */
 
-io.sockets.on('connection', function (socket) {
+io.sockets.on('connection', function(socket) {
 
-  socket.on('play:create', function (data, callback) {
-    var new_play = new Play({
-		name: req.body.name, 
-		description: req.body.description,
-		type: req.body.type,
-		size: req.body.size,
-		teamColors: req.body.teamColors
-	});
-    new_play.save();
-    
-    var set_1 = new Set({name: "Set_1", number: 1, comments: ""});
-    var set_2 = new Set({name: "Set_2", number: 2, comments: ""});
-    var set_3 = new Set({name: "Set_3", number: 3, comments: ""});
-    new_play.sets.push(set_1, set_2, set_3);
-    new_play.save();
-    
-    res.send(new_play);
-
-    socket.emit('play:create', json);
-    socket.broadcast.emit('play:create', json);
-    callback(null, json);
-  });
-
-  /**
-   * todos:read
-   *
-   * called when we .fetch() our collection
-   * in the client-side router
-   */
-
-  socket.on('todos:read', function (data, callback) {
-    var list = [];
-
-    db.each('todo', function (todo) {
-      list.push(todo._attributes);
-    });
-
-    callback(null, list);
-  });
-
-  /**
-   * todos:update
-   *
-   * called when we .save() our model
-   * after toggling its completed status
-   */
-
-  socket.on('todos:update', function (data, callback) {
-    var todo = db.get('/todo/' + data.id);
-    todo.set(data);
-
-    var json = todo._attributes;
-
-    socket.emit('todos/' + data.id + ':update', json);
-    socket.broadcast.emit('todos/' + data.id + ':update', json);
-    callback(null, json);
-  });
-
-  /**
-   * todos:delete
-   *
-   * called when we .destroy() our model
-   */
-
-  socket.on('todos:delete', function (data, callback) {
-    var json = db.get('/todo/' + data.id)._attributes;
-
-    db.del('/todo/' + data.id);
-
-    socket.emit('todos/' + data.id + ':delete', json);
-    socket.broadcast.emit('todos/' + data.id + ':delete', json);
-    callback(null, json);
-  });
-
-});
-
-/* Views */
-
-function get_play(req, res, next) {
-	var send_result = function(err, play) {
-        if (err) {
-            return next(err);
-        }
-        
-        if(play) {
-            res.send(play);
-        } else {
-            return next(new Error("Could not find play"));
-        }
-    };
-    
-    if('_id' in req.params) {
-        Play.findOne({'_id': req.params._id}, send_result);
-    } else {
-        Play.find({}, send_result);        
-    }
-}
-
-function post_play(req, res, next) {
-	var new_play = new Play({
-		name: req.body.name, 
-		description: req.body.description,
-		type: req.body.type,
-		size: req.body.size,
-		teamColors: req.body.teamColors
-	});
-    new_play.save();
-    
-    var set_1 = new Set({name: "Set_1", number: 1, comments: ""});
-    var set_2 = new Set({name: "Set_2", number: 2, comments: ""});
-    var set_3 = new Set({name: "Set_3", number: 3, comments: ""});
-    new_play.sets.push(set_1, set_2, set_3);
-    new_play.save();
-    
-    res.send(new_play);
-}
-
-// Update properties of play
-function put_play(req, res, next) {
-	Play.findOne({'_id' :req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find play with _id=" + req.params._id));
-		}
-		
-		for (var attr in req.body) {
-			if (attr !== '_id')
-				play[attr] = req.body[attr];
-		}
-		
-		play.save();
-		
-		res.send(play);
-	});
-}
-
-function delete_play(req, res, next) {
-	// no implemented yet
-}
-
-function post_set(req, res, next) {
-	Play.findOne({_id: req.body.play}, function(err, play) {
-        if (err) {
-            return next(err);
-        } else if(!play) {
-            return next(new Error("Could not find play with _id=" + req.body.play));
-        }
-        
-        new_set = new Set({
-			name : req.body.name,
-			number : req.body.number,
-			comments : req.body.comments
+	// play:create
+	socket.on('play:create', function(data, callback) {
+		var newPlay = new Play({
+			name: data.name, 
+			description: data.description,
+			type: data.type,
+			size: data.size,
+			teamColors: data.teamColors
 		});
-       	
-        play.sets.push(new_set);
-        play.save();
-        
-        res.send(new_set);
-    });
-}
-
-// Update name/comments of set
-function put_set(req, res, next) {
-	Play.findOne({'sets._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find set with _id=" + req.params._id));
-		}
+		newPlay.save();
 		
-		var updateSet = play.sets.id(req.params._id);
-		for (var attr in req.body) {
-			if (attr !== 'play' && attr !== '_id')
-				updateSet[attr] = req.body[attr];
-		}
+		var set_1 = new Set({name: "Set_1", number: 1, comments: ""});
+		var set_2 = new Set({name: "Set_2", number: 2, comments: ""});
+		var set_3 = new Set({name: "Set_3", number: 3, comments: ""});
+		newPlay.sets.push(set_1, set_2, set_3);
+		newPlay.save();
 		
-		play.save();
-		
-		res.send(updateSet);
+		socket.emit('play:create', newPlay);
+		socket.broadcast.emit('play:create', newPlay);
+		callback(null, newPlay);
 	});
-}
-
-function delete_set(req, res, next) {
-	Play.findOne({'sets._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find set with _id=" + req.params._id));
-		}
-		
-		var deleteSet = play.sets.id(req.params._id);
-		deleteSet.remove();
-		play.save();
-		
-		res.send(deleteSet);
-	});
-}
-
-function post_path(req, res, next) {
-	Play.findOne({'sets._id': req.body.set}, function(err, play) {
-        if (err) {
-            return next(err);
-        } else if(!play) {
-            return next(new Error("Could not find set with _id=" + req.body.set));
-        }
-        
-        new_path = new Path({
-        	prevX: req.body.prevX,
-        	prevY: req.body.prevY,
-        	currX: req.body.currX,
-        	currY: req.body.currY,
-        	nextX: req.body.nextX,
-        	nextY: req.body.nextY,
-        	articleId: req.body.articleId
-        });
-        
-        play.sets.id(req.body.set).paths.push(new_path);
-        play.save();
-        
-        res.send(new_path);
-    });
-}
-
-function put_path(req, res, next) {
-	Play.findOne({'sets.paths._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find path with _id=" + req.params._id));
-		}
-		
-		var updatePath = play.sets.id(req.body.set).paths.id(req.params._id);
-		for (var attr in req.body) {
-			if (attr !== 'set' && attr !== '_id')
-				updatePath[attr] = req.body[attr];
-		}
-		
-		play.save();
-		
-		res.send(updatePath);
-	});
-}
-
-function delete_path(req, res, next) {
-	Play.findOne({'sets.paths._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find path with _id=" + req.params._id));
-		}
-		
-		for (var i = 0; i < play.sets.length; i++) {
-			var deletePath = play.sets[i].paths.id(req.params._id);
-			if (deletePath) {
-				deletePath.remove();
-				res.send(deletePath);
-				play.save();
-				break;	
+	
+	// play:read
+	socket.on('play:read', function(data, callback) {
+		var send_result = function(err, play) {
+			if (err) {
+				return callback(err);
 			}
-		}
-	});
-}
-
-function post_annotation(req, res, next) {
-	Play.findOne({'sets._id': req.body.set}, function(err, play) {
-        if (err) {
-            return next(err);
-        } else if(!play) {
-            return next(new Error("Could not find set with _id=" + req.body.set));
-        }
-        
-        new_annotation = new Annotation({
-        	text: req.body.text,
-        	x: req.body.x,
-        	y: req.body.y,
-        	width: req.body.width,
-        	height: req.body.height
-        });
-        
-        play.sets.id(req.body.set).annotations.push(new_annotation);
-        play.save();
-        
-        res.send(new_annotation);
-    });
-}
-
-function put_annotation(req, res, next) {
-	Play.findOne({'sets.annotations._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find annotation with _id=" + req.params._id));
-		}
-		
-		var updateAnnotation = play.sets.id(req.body.set).annotations.id(req.params._id);
-		for (var attr in req.body) {
-			if (attr !== 'set' && attr !== '_id')
-				updateAnnotation[attr] = req.body[attr];
-		}
-		
-		play.save();
-		
-		res.send(updateAnnotation);
-	});
-}
-
-function delete_annotation(req, res, next) {
-	Play.findOne({'sets.annotations._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find annotation with _id=" + req.params._id));
-		}
-		
-		for (var i = 0; i < play.sets.length; i++) {
-			var deleteAnnotation = play.sets[i].annotations.id(req.params._id);
-			if (deleteAnnotation) {
-				deleteAnnotation.remove();
-				res.send(deleteAnnotation);
-				play.save();
-				break;	
+			
+			if(play) {
+				callback(null, play);
+			} else {
+				return next(new Error("Could not find play"));
 			}
+		};
+		
+		if(data._id) {
+			Play.findOne({'_id': data._id}, send_result);
+		} else {
+			Play.find({}, send_result);        
 		}
 	});
-}
-
-function post_article(req, res, next) {
-	Play.findOne({_id: req.body.play}, function(err, play) {
-        if (err) {
-            return next(err);
-        } else if(!play) {
-            return next(new Error("Could not find play with _id=" + req.body.play));
-        }
-        
-        new_article = new Article({
-        	type: req.body.type,
-        	color: req.body.color,
-        	label: req.body.label,
-        	team: req.body.team
-        });
-        
-        play.articles.push(new_article);
-        play.save();
-        
-        res.send(new_article);
-    });
-}
-
-function put_article(req, res, next) {
-	Play.findOne({'articles._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find article with _id=" + req.params._id));
-		}
-		
-		var updateArticle = play.articles.id(req.params._id);
-		for (var attr in req.body) {
-			if (attr !== 'play' && attr !== '_id')
-				updateArticle[attr] = req.body[attr];
-		}
-		
-		play.save();
-		
-		res.send(updateArticle);
+	
+	// play:update
+	socket.on('play:update', function(data, callback) {
+		Play.findOne({'_id' :data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find play with _id=" + data._id));
+			}
+			
+			for (var attr in data) {
+				if (attr !== '_id')
+					play[attr] = data[attr];
+			}
+			
+			play.save();
+			
+			socket.emit('play/' + data._id + ':update', play);
+			socket.broadcast.emit('play/' + data._id + ':update', play);
+			callback(null, play);
+		});
 	});
-}
-
-function delete_article(req, res, next) {
-	Play.findOne({'articles._id': req.params._id}, function(err, play) {
-		if (err)
-			return next(err);
-		else if (!play) {
-			return next(new Error("Could not find article with _id=" + req.params._id));
-		}
+	
+	// play:delete
+	socket.on('play:delete', function(data, callback) {
+		// not implemented yet
 		
-		var deleteArticle = play.articles.id(req.params._id);
-		deleteArticle.remove();
-		play.save();
-		
-		res.send(deleteArticle);
+		socket.emit('play/' + data._id + ':delete', json);
+		socket.broadcast.emit('play/' + data._id + ':delete', json);
+		callback(null, json);
 	});
-}
+	
+	// set:create
+	socket.on('set:create', function(data, callback) {
+		Play.findOne({_id: data.play}, function(err, play) {
+			if (err) {
+				return next(err);
+			} else if(!play) {
+				return next(new Error("Could not find play with _id=" + data.play));
+			}
+			
+			var newSet = new Set({
+				name : data.name,
+				number : data.number,
+				comments : data.comments,
+				paths: data.paths,
+				annotations: data.annotations
+			});
+			
+			play.sets.push(newSet);
+			play.save();
+			
+			socket.emit('set:create', newSet);
+			socket.broadcast.emit('set:create', newSet);
+			callback(null, newSet);	
+		});			
+	});
+	
+	// set:update
+	socket.on('set:update', function(data, callback) {
+		Play.findOne({'sets._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find set with _id=" + data._id));
+			}
+			
+			var updateSet = play.sets.id(data._id);
+			for (var attr in data) {
+				if (attr !== 'play' && attr !== '_id')
+					updateSet[attr] = data[attr];
+			}
+			
+			play.save();
+			
+			socket.emit('set:update', updateSet);
+			socket.broadcast.emit('set:update', updateSet);
+			callback(null, updateSet);	
+		});	
+	});
+	
+	// set:delete
+	socket.on('set:delete', function(data, callback) {
+		Play.findOne({'sets._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find set with _id=" + data._id));
+			}
+			
+			var deleteSet = play.sets.id(data._id);
+			deleteSet.remove();
+			play.save();
+			
+			socket.emit('set:delete', deleteSet);
+			socket.broadcast.emit('set:delete', deleteSet);
+			callback(null, deleteSet);	
+		});
+	});
+	
+	// path:create
+	socket.on('path:create', function(data, callback) {
+		Play.findOne({'sets._id': data.set}, function(err, play) {
+			if (err) {
+				return next(err);
+			} else if(!play) {
+				return next(new Error("Could not find set with _id=" + data.set));
+			}
+			
+			var newPath = new Path({
+				prevX: data.prevX,
+				prevY: data.prevY,
+				currX: data.currX,
+				currY: data.currY,
+				nextX: data.nextX,
+				nextY: data.nextY,
+				articleId: data.articleId
+			});
+			
+			play.sets.id(data.set).paths.push(newPath);
+			play.save();
+			
+			socket.emit('path:create', newPath);
+			socket.broadcast.emit('path:create', newPath);
+			callback(null, newPath);
+		});
+	});
+	
+	// path:update
+	socket.on('path:update', function(data, callback) {
+		Play.findOne({'sets.paths._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find path with _id=" + data._id));
+			}
+			
+			var updatePath = play.sets.id(data.set).paths.id(data._id);
+			for (var attr in data) {
+				if (attr !== 'set' && attr !== '_id')
+					updatePath[attr] = data[attr];
+			}
+			
+			play.save();
+			
+			socket.emit('path:update', updatePath);
+			socket.broadcast.emit('path:update', updatePath);
+			callback(null, updatePath);
+		});
+	});
+	
+	// path:delete
+	socket.on('path:delete', function(data, callback) {
+		Play.findOne({'sets.paths._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find path with _id=" + data._id));
+			}
+			
+			for (var i = 0; i < play.sets.length; i++) {
+				var deletePath = play.sets[i].paths.id(data._id);
+				if (deletePath) {
+					deletePath.remove();
+					play.save();
+					
+					socket.emit('path:delete', deletePath);
+					socket.broadcast.emit('path:delete', deletePath);
+					callback(null, deletePath);
+					break;	
+				}
+			}
+		});
+	});
+	
+	// annotation:create
+	socket.on('annotation:create', function(data, callback) {
+		Play.findOne({'sets._id': data.set}, function(err, play) {
+			if (err) {
+				return next(err);
+			} else if(!play) {
+				return next(new Error("Could not find set with _id=" + data.set));
+			}
+			
+			var newAnnotation = new Annotation({
+				text: data.text,
+				x: data.x,
+				y: data.y,
+				width: data.width,
+				height: data.height
+			});
+			
+			play.sets.id(data.set).annotations.push(newAnnotation);
+			play.save();
+			
+			socket.emit('annotation:create', newAnnotation);
+			socket.broadcast.emit('annotation:create', newAnnotation);
+			callback(null, newAnnotation);
+		});
+	});
+	
+	// annotation:update
+	socket.on('annotation:update', function(data, callback) {
+		Play.findOne({'sets.annotations._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find annotation with _id=" + data._id));
+			}
+			
+			var updateAnnotation = play.sets.id(data.set).annotations.id(data._id);
+			for (var attr in data) {
+				if (attr !== 'set' && attr !== '_id')
+					updateAnnotation[attr] = data[attr];
+			}
+			
+			play.save();
+			
+			socket.emit('annotation:update', updateAnnotation);
+			socket.broadcast.emit('annotation:update', updateAnnotation);
+			callback(null, updateAnnotation);
+		});
+	});
+	
+	// annotation:delete
+	socket.on('annotation:delete', function(data, callback) {
+		Play.findOne({'sets.annotations._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find annotation with _id=" + data._id));
+			}
+			
+			for (var i = 0; i < play.sets.length; i++) {
+				var deleteAnnotation = play.sets[i].annotations.id(data._id);
+				if (deleteAnnotation) {
+					deleteAnnotation.remove();
+					play.save();
+					
+					socket.emit('annotation:delete', deleteAnnotation);
+					socket.broadcast.emit('annotation:delete', deleteAnnotation);
+					callback(null, deleteAnnotation);
+					break;	
+				}
+			}
+		});
+	});
+	
+	// article:create
+	socket.on('article:create', function(data, callback) {
+		Play.findOne({_id: data.play}, function(err, play) {
+			if (err) {
+				return next(err);
+			} else if(!play) {
+				return next(new Error("Could not find play with _id=" + data.play));
+			}
+			
+			var newArticle = new Article({
+				type: data.type,
+				color: data.color,
+				label: data.label,
+				team: data.team
+			});
+			
+			play.articles.push(newArticle);
+			play.save();
+			
+			socket.emit('article:create', newArticle);
+			socket.broadcast.emit('article:create', newArticle);
+			callback(null, newArticle);	
+		});
+	});
+	
+	// article:update
+	socket.on('article:update', function(data, callback) {
+		Play.findOne({'articles._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find article with _id=" + data._id));
+			}
+			
+			var updateArticle = play.articles.id(data._id);
+			for (var attr in data) {
+				if (attr !== 'play' && attr !== '_id')
+					updateArticle[attr] = data[attr];
+			}
+			
+			play.save();
+			
+			socket.emit('article:update', updateArticle);
+			socket.broadcast.emit('article:update', updateArticle);
+			callback(null, updateArticle);	
+		});
+	});
+	
+	// article:delete
+	socket.on('article:delete', function(data, callback) {
+		Play.findOne({'articles._id': data._id}, function(err, play) {
+			if (err)
+				return next(err);
+			else if (!play) {
+				return next(new Error("Could not find article with _id=" + data._id));
+			}
+			
+			var deleteArticle = play.articles.id(data._id);
+			deleteArticle.remove();
+			play.save();
+			
+			socket.emit('article:delete', deleteArticle);
+			socket.broadcast.emit('article:delete', deleteArticle);
+			callback(null, deleteArticle);	
+		});
+	});
+});
 
 /* Routes */
 
@@ -442,33 +415,4 @@ app.get('/', function(req, res) {
 app.get('/play/:_id', function(req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 });
-
-
-// Play routes
-app.get('/api/play/:_id', get_play);
-app.post('/api/play', post_play);
-app.put('/api/play/:_id', put_play);
-app.delete('/api/play/:_id', delete_play);
-
-// Set routes
-//app.get('/api/set/:_id', get_set);
-app.post('/api/set', post_set);
-app.put('/api/set/:_id', put_set);
-app.delete('/api/set/:_id', delete_set);
-
-// Path routes
-app.post('/api/path', post_path);
-app.put('/api/path/:_id', put_path);
-app.delete('/api/path/:_id', delete_path);
-
-// Annotation routes
-app.post('/api/annotation', post_annotation);
-app.put('/api/annotation/:_id', put_annotation);
-app.delete('/api/annotation/:_id', delete_annotation);
-
-// Article routes
-//app.get('/api/article/:id', get_article);
-app.post('/api/article', post_article);
-app.put('/api/article/:_id', put_article);
-app.delete('/api/article/:_id', delete_article);
 
