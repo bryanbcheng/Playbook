@@ -320,7 +320,7 @@ $(function() {
 		render: function() {
 			var html = Mustache.render(this.template, this.model.toJSON());
 			// Hack to select correct item in list
-			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end().html();
+			$(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected');
 			this.$el.html(html);
 			return this;
 		},
