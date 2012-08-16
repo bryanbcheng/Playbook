@@ -397,6 +397,8 @@ $(function() {
 			if (!this.isNew()) {
 				this.ioBind('update', this.serverChange, this);
 				this.ioBind('delete', this.serverDelete, this);
+				
+				this.ioBind('createSet', this.serverCreateSet, this);
 			}
 		},
 		
@@ -415,6 +417,13 @@ $(function() {
 		
 		serverDelete: function(data) {
 			//this.trigger("clear");
+		},
+		
+		serverCreateSet: function(data) {
+			// Add newly created set
+			var newSet = new $.playbook.Set($.extend(data, {play: this}));
+			
+			this.trigger("addNewSet", newSet);
 		},
 	});
 	
@@ -1351,35 +1360,30 @@ $(function() {
 		
 			var newSet = new $.playbook.Set({number: this.model.get("sets").length + 1,  play: this.model});
 			
+			// Copy the article locations from the last set
+			if (lastSet) {
+				lastSet.get("paths").each(function(path) {
+					var newPath = new $.playbook.Path({
+						prevX: path.get("currX"),
+						prevY: path.get("currY"),
+						currX: path.get("currX"),
+						currY: path.get("currY"),
+						nextX: path.get("currX"),
+						nextY: path.get("currY"),
+						set: newSet,
+						articleId: path.get("articleId")
+					});
+					// Added automatically to newSet by setting set prop to set
+				});
+			}
+			
 			newSet.save({}, {
 				silent: true,
 				wait: true,
 				success: function(model, response) {
-					// Copy the article locations from the last set
-					if (lastSet) {
-						lastSet.get("paths").each(function(path) {
-							var newPath = new $.playbook.Path({
-								prevX: path.get("currX"),
-								prevY: path.get("currY"),
-								currX: path.get("currX"),
-								currY: path.get("currY"),
-								nextX: path.get("currX"),
-								nextY: path.get("currY"),
-								set: model,
-								articleId: path.get("articleId")
-							});
-							// Added automatically to newSet by setting set prop to set
-						});
-					}
-					
-					model.save({}, {
-						wait: true,
-						success: function(model, response) {
-							model.trigger("addIoBind");
-							model.get("play").trigger("change");
-							model.get("play").trigger("addNewSet", model);
-						}
-					});
+					model.trigger("addIoBind");
+					model.get("play").trigger("change");
+					model.get("play").trigger("addNewSet", model);
 				}
 			});
 		},

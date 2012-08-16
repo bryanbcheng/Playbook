@@ -144,7 +144,8 @@ io.sockets.on('connection', function(socket) {
 			play.save();
 			
 			//socket.emit('set/' + data._id + ':create', newSet);
-			socket.broadcast.emit('set/' + data._id + ':create', newSet);
+			//socket.broadcast.emit('set/' + data._id + ':create', newSet);
+			socket.broadcast.emit('play/' + data.play + ':createSet', newSet);
 			callback(null, newSet);	
 		});			
 	});
