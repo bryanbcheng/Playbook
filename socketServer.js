@@ -108,6 +108,7 @@ io.sockets.on('connection', function(socket) {
 			
 			play.save();
 			
+			// TODO: only send partial data since play is very large
 			//socket.emit('play/' + data._id + ':update', play);
 			socket.broadcast.emit('play/' + data._id + ':update', play);
 			callback(null, play);

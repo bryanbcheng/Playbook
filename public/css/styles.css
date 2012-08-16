@@ -177,6 +177,57 @@ table {
 	width: 65px;
 }
 
+#play .select-shape {
+/* 	display: inline; */
+	float: left;
+	height: 28px;
+	width: 28px;
+}
+
+#play .select-shape-palette {
+	display: none;
+	position: absolute;
+}
+
+#play .select-shape-palette div {
+	background-image: url("/images/imageSelect.png");
+	float: left;
+	height: 28px;
+	width: 28px;
+}
+
+#play .palette-circle {
+	background-position: 0px 0px;
+}
+
+#play .palette-circle:hover {
+	background-position: 0px -28px;
+}
+
+#play .palette-square {
+	background-position: -28px 0px;
+}
+
+#play .palette-square:hover {
+	background-position: -28px -28px;
+}
+
+#play .palette-triangle {
+	background-position: -56px 0px;
+}
+
+#play .palette-triangle:hover {
+	background-position: -56px -28px;
+}
+
+#play .palette-x {
+	background-position: -84px 0px;
+}
+
+#play .palette-x:hover {
+	background-position: -84px -28px;
+}
+
 #play .animation-speed {
 	width: 80px;
 	float: right;

@@ -1,10 +1,8 @@
 /* GLOBALS */
 var stage;
-var testSet = [];
+window.socket = io.connect('http://localhost');
 
 $(function() {
-	window.socket = io.connect('http://localhost');
-
 	$.playbook = {}
 	
 	$.playbook.Article = Backbone.RelationalModel.extend({
@@ -1204,6 +1202,8 @@ $(function() {
 				});
 			}});
 			
+			$(html).find(".select-shape").click(togglePalette);
+			
 			var currSpeed = $(".animation-speed").slider("value");
 			$(html).find(".animation-speed").slider({
 				value: currSpeed ? currSpeed : 1.5,
@@ -1223,6 +1223,7 @@ $(function() {
 		},
 		
 		addField: function(fieldType, fieldSize) {
+			// TODO: draw only when changed
 			var fieldLayer = stage.get(".fieldLayer")[0];
 			var currX, currY;
 			
@@ -1680,6 +1681,43 @@ function changeSet(e) {
 		}
 	}
 }
+
+// Shape palette functions
+var checkMouse = function(e) {
+	if ($(e.target).parents(".select-shape-palette").length > 0 || $(e.target).hasClass("select-shape")) return;
+	
+	// Hide palette
+	$(document).off("mousedown", checkMouse);
+
+	$(".select-shape-palette").hide();
+}
+
+var showPalette = function(palette) {
+	palette.show();
+		
+	$(document).on("mousedown", checkMouse);
+}
+
+var hidePalette = function(palette) {
+	$(document).off("mousedown", checkMouse);
+
+	$(".select-shape-palette").hide();
+}
+
+var togglePalette = function() {
+	var palette = $(this).siblings(".select-shape-palette");
+	
+	palette.css({
+		left: $(this).offset().left,
+		top: $(this).offset().top + $(this).height(),
+	});
+	
+	if (!palette.is(':visible')) {
+		showPalette(palette);
+	} else {
+		hidePalette(palette);
+	}
+};
 
 function clearDivs() {
 	$("#play").html("");
