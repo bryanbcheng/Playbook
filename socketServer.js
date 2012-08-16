@@ -66,7 +66,7 @@ io.sockets.on('connection', function(socket) {
 		newPlay.sets.push(set_1, set_2, set_3);
 		newPlay.save();
 		
-		socket.emit('play:create', newPlay);
+		//socket.emit('play:create', newPlay);
 		socket.broadcast.emit('play:create', newPlay);
 		callback(null, newPlay);
 	});
@@ -81,7 +81,7 @@ io.sockets.on('connection', function(socket) {
 			if(play) {
 				callback(null, play);
 			} else {
-				return next(new Error("Could not find play"));
+				return callback(new Error("Could not find play"));
 			}
 		};
 		
@@ -96,9 +96,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('play:update', function(data, callback) {
 		Play.findOne({'_id' :data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find play with _id=" + data._id));
+				return callback(new Error("Could not find play with _id=" + data._id));
 			}
 			
 			for (var attr in data) {
@@ -108,7 +108,7 @@ io.sockets.on('connection', function(socket) {
 			
 			play.save();
 			
-			socket.emit('play/' + data._id + ':update', play);
+			//socket.emit('play/' + data._id + ':update', play);
 			socket.broadcast.emit('play/' + data._id + ':update', play);
 			callback(null, play);
 		});
@@ -118,7 +118,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('play:delete', function(data, callback) {
 		// not implemented yet
 		
-		socket.emit('play/' + data._id + ':delete', json);
+		//socket.emit('play/' + data._id + ':delete', json);
 		socket.broadcast.emit('play/' + data._id + ':delete', json);
 		callback(null, json);
 	});
@@ -127,9 +127,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('set:create', function(data, callback) {
 		Play.findOne({_id: data.play}, function(err, play) {
 			if (err) {
-				return next(err);
+				return callback(err);
 			} else if(!play) {
-				return next(new Error("Could not find play with _id=" + data.play));
+				return callback(new Error("Could not find play with _id=" + data.play));
 			}
 			
 			var newSet = new Set({
@@ -143,8 +143,8 @@ io.sockets.on('connection', function(socket) {
 			play.sets.push(newSet);
 			play.save();
 			
-			socket.emit('set:create', newSet);
-			socket.broadcast.emit('set:create', newSet);
+			//socket.emit('set/' + data._id + ':create', newSet);
+			socket.broadcast.emit('set/' + data._id + ':create', newSet);
 			callback(null, newSet);	
 		});			
 	});
@@ -153,9 +153,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('set:update', function(data, callback) {
 		Play.findOne({'sets._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find set with _id=" + data._id));
+				return callback(new Error("Could not find set with _id=" + data._id));
 			}
 			
 			var updateSet = play.sets.id(data._id);
@@ -166,8 +166,8 @@ io.sockets.on('connection', function(socket) {
 			
 			play.save();
 			
-			socket.emit('set:update', updateSet);
-			socket.broadcast.emit('set:update', updateSet);
+			//socket.emit('set/' + data._id + ':update', updateSet);
+			socket.broadcast.emit('set/' + data._id + ':update', updateSet);
 			callback(null, updateSet);	
 		});	
 	});
@@ -176,17 +176,17 @@ io.sockets.on('connection', function(socket) {
 	socket.on('set:delete', function(data, callback) {
 		Play.findOne({'sets._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find set with _id=" + data._id));
+				return callback(new Error("Could not find set with _id=" + data._id));
 			}
 			
 			var deleteSet = play.sets.id(data._id);
 			deleteSet.remove();
 			play.save();
 			
-			socket.emit('set:delete', deleteSet);
-			socket.broadcast.emit('set:delete', deleteSet);
+			//socket.emit('set/' + data._id + ':delete', deleteSet);
+			socket.broadcast.emit('set/' + data._id + ':delete', deleteSet);
 			callback(null, deleteSet);	
 		});
 	});
@@ -195,9 +195,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('path:create', function(data, callback) {
 		Play.findOne({'sets._id': data.set}, function(err, play) {
 			if (err) {
-				return next(err);
+				return callback(err);
 			} else if(!play) {
-				return next(new Error("Could not find set with _id=" + data.set));
+				return callback(new Error("Could not find set with _id=" + data.set));
 			}
 			
 			var newPath = new Path({
@@ -213,8 +213,8 @@ io.sockets.on('connection', function(socket) {
 			play.sets.id(data.set).paths.push(newPath);
 			play.save();
 			
-			socket.emit('path:create', newPath);
-			socket.broadcast.emit('path:create', newPath);
+			//socket.emit('path/' + data._id + ':create', newPath);
+			socket.broadcast.emit('path/' + data._id + ':create', newPath);
 			callback(null, newPath);
 		});
 	});
@@ -223,9 +223,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('path:update', function(data, callback) {
 		Play.findOne({'sets.paths._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find path with _id=" + data._id));
+				return callback(new Error("Could not find path with _id=" + data._id));
 			}
 			
 			var updatePath = play.sets.id(data.set).paths.id(data._id);
@@ -236,8 +236,8 @@ io.sockets.on('connection', function(socket) {
 			
 			play.save();
 			
-			socket.emit('path:update', updatePath);
-			socket.broadcast.emit('path:update', updatePath);
+			//socket.emit('path/' + data._id + ':update', updatePath);
+			socket.broadcast.emit('path/' + data._id + ':update', updatePath);
 			callback(null, updatePath);
 		});
 	});
@@ -246,9 +246,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('path:delete', function(data, callback) {
 		Play.findOne({'sets.paths._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find path with _id=" + data._id));
+				return callback(new Error("Could not find path with _id=" + data._id));
 			}
 			
 			for (var i = 0; i < play.sets.length; i++) {
@@ -257,8 +257,8 @@ io.sockets.on('connection', function(socket) {
 					deletePath.remove();
 					play.save();
 					
-					socket.emit('path:delete', deletePath);
-					socket.broadcast.emit('path:delete', deletePath);
+					//socket.emit('path/' + data._id + ':delete', deletePath);
+					socket.broadcast.emit('path/' + data._id + ':delete', deletePath);
 					callback(null, deletePath);
 					break;	
 				}
@@ -270,9 +270,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('annotation:create', function(data, callback) {
 		Play.findOne({'sets._id': data.set}, function(err, play) {
 			if (err) {
-				return next(err);
+				return callback(err);
 			} else if(!play) {
-				return next(new Error("Could not find set with _id=" + data.set));
+				return callback(new Error("Could not find set with _id=" + data.set));
 			}
 			
 			var newAnnotation = new Annotation({
@@ -286,8 +286,8 @@ io.sockets.on('connection', function(socket) {
 			play.sets.id(data.set).annotations.push(newAnnotation);
 			play.save();
 			
-			socket.emit('annotation:create', newAnnotation);
-			socket.broadcast.emit('annotation:create', newAnnotation);
+			//socket.emit('annotation:create', newAnnotation);
+			socket.broadcast.emit('annotation/' + data._id + ':create', newAnnotation);
 			callback(null, newAnnotation);
 		});
 	});
@@ -296,9 +296,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('annotation:update', function(data, callback) {
 		Play.findOne({'sets.annotations._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find annotation with _id=" + data._id));
+				return callback(new Error("Could not find annotation with _id=" + data._id));
 			}
 			
 			var updateAnnotation = play.sets.id(data.set).annotations.id(data._id);
@@ -309,8 +309,8 @@ io.sockets.on('connection', function(socket) {
 			
 			play.save();
 			
-			socket.emit('annotation:update', updateAnnotation);
-			socket.broadcast.emit('annotation:update', updateAnnotation);
+			//socket.emit('annotation/' + data._id + ':update', updateAnnotation);
+			socket.broadcast.emit('annotation/' + data._id + ':update', updateAnnotation);
 			callback(null, updateAnnotation);
 		});
 	});
@@ -319,9 +319,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('annotation:delete', function(data, callback) {
 		Play.findOne({'sets.annotations._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find annotation with _id=" + data._id));
+				return callback(new Error("Could not find annotation with _id=" + data._id));
 			}
 			
 			for (var i = 0; i < play.sets.length; i++) {
@@ -330,8 +330,8 @@ io.sockets.on('connection', function(socket) {
 					deleteAnnotation.remove();
 					play.save();
 					
-					socket.emit('annotation:delete', deleteAnnotation);
-					socket.broadcast.emit('annotation:delete', deleteAnnotation);
+					//socket.emit('annotation/' + data._id + ':delete', deleteAnnotation);
+					socket.broadcast.emit('annotation/' + data._id + ':delete', deleteAnnotation);
 					callback(null, deleteAnnotation);
 					break;	
 				}
@@ -343,9 +343,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('article:create', function(data, callback) {
 		Play.findOne({_id: data.play}, function(err, play) {
 			if (err) {
-				return next(err);
+				return callback(err);
 			} else if(!play) {
-				return next(new Error("Could not find play with _id=" + data.play));
+				return callback(new Error("Could not find play with _id=" + data.play));
 			}
 			
 			var newArticle = new Article({
@@ -358,8 +358,8 @@ io.sockets.on('connection', function(socket) {
 			play.articles.push(newArticle);
 			play.save();
 			
-			socket.emit('article:create', newArticle);
-			socket.broadcast.emit('article:create', newArticle);
+			//socket.emit('article/' + data._id + ':create', newArticle);
+			socket.broadcast.emit('article/' + data._id + ':create', newArticle);
 			callback(null, newArticle);	
 		});
 	});
@@ -368,9 +368,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('article:update', function(data, callback) {
 		Play.findOne({'articles._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find article with _id=" + data._id));
+				return callback(new Error("Could not find article with _id=" + data._id));
 			}
 			
 			var updateArticle = play.articles.id(data._id);
@@ -381,8 +381,8 @@ io.sockets.on('connection', function(socket) {
 			
 			play.save();
 			
-			socket.emit('article:update', updateArticle);
-			socket.broadcast.emit('article:update', updateArticle);
+			//socket.emit('article/' + data._id + ':update', updateArticle);
+			socket.broadcast.emit('article/' + data._id + ':update', updateArticle);
 			callback(null, updateArticle);	
 		});
 	});
@@ -391,17 +391,17 @@ io.sockets.on('connection', function(socket) {
 	socket.on('article:delete', function(data, callback) {
 		Play.findOne({'articles._id': data._id}, function(err, play) {
 			if (err)
-				return next(err);
+				return callback(err);
 			else if (!play) {
-				return next(new Error("Could not find article with _id=" + data._id));
+				return callback(new Error("Could not find article with _id=" + data._id));
 			}
 			
 			var deleteArticle = play.articles.id(data._id);
 			deleteArticle.remove();
 			play.save();
 			
-			socket.emit('article:delete', deleteArticle);
-			socket.broadcast.emit('article:delete', deleteArticle);
+			//socket.emit('article/' + data._id + ':delete', deleteArticle);
+			socket.broadcast.emit('article/' + data._id + ':delete', deleteArticle);
 			callback(null, deleteArticle);	
 		});
 	});

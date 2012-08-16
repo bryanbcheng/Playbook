@@ -20,10 +20,37 @@ $(function() {
 			};
 		},
 		
+		initialize: function() {
+			_.bindAll(this, 'serverChange', 'serverDelete');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+				this.ioBind('delete', this.serverDelete, this);
+			}
+			
+			this.on("addIoBind", this.addIoBind, this);
+		},
+		
 		//urlRoot: "/api/article"
 		urlRoot: "article",
 		
 		socket: window.socket,
+		
+		addIoBind: function() {
+			this.ioBind('update', this.serverChange, this);
+			this.ioBind('delete', this.serverDelete, this);
+		},
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+			
+			this.trigger("replaceShape");
+		},
+		
+		serverDelete: function(data) {
+			this.trigger("clear");
+		},
 	});
 	
 	$.playbook.Path = Backbone.RelationalModel.extend({
@@ -38,10 +65,35 @@ $(function() {
 			}
 		},
 		
+		initialize: function() {
+			_.bindAll(this, 'serverChange', 'serverDelete');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+				this.ioBind('delete', this.serverDelete, this);
+			}
+			
+			this.on("addIoBind", this.addIoBind, this);
+		},
+		
 		//urlRoot: "/api/path",
 		urlRoot: "path",
 		
 		socket: window.socket,
+		
+		addIoBind: function() {
+			this.ioBind('update', this.serverChange, this);
+			this.ioBind('delete', this.serverDelete, this);
+		},
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+		},
+		
+		serverDelete: function(data) {
+			this.trigger("clear");
+		},
 		
 		moveTo: function(x, y) {
 			// Saving previous set
@@ -148,10 +200,35 @@ $(function() {
 			}
 		},
 		
+		initialize: function() {
+			_.bindAll(this, 'serverChange', 'serverDelete');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+				this.ioBind('delete', this.serverDelete, this);
+			}
+			
+			this.on("addIoBind", this.addIoBind, this);
+		},
+		
 		//urlRoot: "/api/annotation",
 		urlRoot: "annotation",
 		
 		socket: window.socket,
+		
+		addIoBind: function() {
+			this.ioBind('update', this.serverChange, this);
+			this.ioBind('delete', this.serverDelete, this);
+		},
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+		},
+		
+		serverDelete: function(data) {
+			this.trigger("clear");
+		},
 	});
 	
 	$.playbook.Set = Backbone.RelationalModel.extend({
@@ -200,6 +277,14 @@ $(function() {
 		initialize: function() {
 			if (!this.get("name")) this.set("name", "Set_" + this.get("number"));
 			
+			_.bindAll(this, 'serverChange', 'serverDelete');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+				this.ioBind('delete', this.serverDelete, this);
+			}
+			
+			this.on("addIoBind", this.addIoBind, this);
+			
 			// LINK SETS??
 		},
 		
@@ -207,6 +292,29 @@ $(function() {
 		urlRoot: "set",
 		
 		socket: window.socket,
+		
+		addIoBind: function() {
+			this.ioBind('update', this.serverChange, this);
+			this.ioBind('delete', this.serverDelete, this);
+			
+			this.get("paths").each(function(path) {
+				path.ioBind('update', path.serverChange, path);
+				path.ioBind('delete', path.serverDelete, path);
+			});
+		},
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+		},
+		
+		serverDelete: function(data) {
+			console.log('zap');
+			this.trigger("clear");
+			
+			// BUG: NOT DELETING SET CORRECTLY
+		},
 		
 		// Assume array is in order (sorting not an issue yet)
 		prevSet: function() {
@@ -284,10 +392,30 @@ $(function() {
 			};
 		},
 		
+		initialize: function() {
+			_.bindAll(this, 'serverChange', 'serverDelete');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+				this.ioBind('delete', this.serverDelete, this);
+			}
+		},
+		
 		//urlRoot: "/api/play",
 		urlRoot: "play",
 		
 		socket: window.socket,
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+			
+			// BUG: NEED TO REFRESH FIELD LAYER MAYBE
+		},
+		
+		serverDelete: function(data) {
+			//this.trigger("clear");
+		},
 	});
 	
 	$.playbook.ArticleView = Backbone.View.extend({
@@ -320,7 +448,7 @@ $(function() {
 		render: function() {
 			var html = Mustache.render(this.template, this.model.toJSON());
 			// Hack to select correct item in list
-			$(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected');
+			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			this.$el.html(html);
 			return this;
 		},
@@ -818,8 +946,8 @@ $(function() {
 			
 			// Remove set DOM
 			this.remove();
-			this.model.get("play").trigger("change");
-			//$("#" + this.model.get("_id")).remove();
+			this.model.get("play").trigger("change"); // refreshes # for other sets
+			$("#" + this.model.get("_id")).remove(); // removes this set from set list, it is there because set not yet removed from play
 			
 			// Delete model
 			this.model.destroy();
@@ -854,6 +982,7 @@ $(function() {
 			var annotationView = new $.playbook.AnnotationView({model: item, layer: this.layer});
 		},
 		
+		// Potentially may not even need this
 		addNewAnnotation: function(item) {
 			this.model.trigger("addAnnotation", item);
 		},
@@ -1108,6 +1237,8 @@ $(function() {
 		},
 		
 		addNewArticle: function(item, x, y) {
+			this.model.trigger("addIoBind");
+			
 			this.model.trigger("addArticle", item);
 		
 			this.model.get("sets").each(function(set) {
@@ -1139,8 +1270,14 @@ $(function() {
 						articleId: item.get("_id")
 					});
 					
-				path.save();
-				set.trigger("addPath", path);
+				path.save({}, {
+					wait: true,
+					success: function() {
+						model.trigger("addIoBind");
+						set.trigger("addPath", path);
+					}
+				});
+				
 			});
 		},
 		
@@ -1231,13 +1368,18 @@ $(function() {
 								set: model,
 								articleId: path.get("articleId")
 							});
+							// Added automatically to newSet by setting set prop to set
 						});
 					}
 					
-					model.save({}, {success: function(model, response) {
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-					}});
+					model.save({}, {
+						wait: true,
+						success: function(model, response) {
+							model.trigger("addIoBind");
+							model.get("play").trigger("change");
+							model.get("play").trigger("addNewSet", model);
+						}
+					});
 				}
 			});
 		},
@@ -1292,6 +1434,7 @@ $(function() {
 						silent: true,
 						wait: true,
 						success: function(model, response) {
+							model.trigger("addIoBind");
 							model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
 							model.unset("tempX");
 							model.unset("tempY");
@@ -1347,6 +1490,7 @@ $(function() {
 				silent: true,
 				wait: true,
 				success: function(model, response) {
+					model.trigger("addIoBind");
 					model.get("set").trigger("addNewAnnotation", model);
 				}
 			});
@@ -1401,18 +1545,30 @@ $(function() {
 				var newSet2 = new $.playbook.Set({number: 2,  play: this.model});
 				var newSet3 = new $.playbook.Set({number: 3,  play: this.model});
 				
-				newSet1.save({}, {success: function(model, response) {
-					model.get("play").trigger("change");
-					model.get("play").trigger("addNewSet", model);
-				}});
-				newSet2.save({}, {success: function(model, response) {
-					model.get("play").trigger("change");
-					model.get("play").trigger("addNewSet", model);
-				}});
-				newSet3.save({}, {success: function(model, response) {
-					model.get("play").trigger("change");
-					model.get("play").trigger("addNewSet", model);
-				}});
+				newSet1.save({}, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("addIoBind");
+						model.get("play").trigger("change");
+						model.get("play").trigger("addNewSet", model);
+					}
+				});
+				newSet2.save({}, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("addIoBind");
+						model.get("play").trigger("change");
+						model.get("play").trigger("addNewSet", model);
+					}
+				});
+				newSet3.save({}, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("addIoBind");
+						model.get("play").trigger("change");
+						model.get("play").trigger("addNewSet", model);
+					}
+				});
 			} else {
 				console.log("Cancelled formation selection");
 			}
