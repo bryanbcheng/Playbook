@@ -184,7 +184,7 @@ $(function() {
 		
 		linkLast: function() {
 			this.save({nextX: this.get("currX"), nextY: this.get("currY")});
-		}
+		},
 	});
 	
 	$.playbook.Annotation = Backbone.RelationalModel.extend({
@@ -277,10 +277,13 @@ $(function() {
 		initialize: function() {
 			if (!this.get("name")) this.set("name", "Set_" + this.get("number"));
 			
-			_.bindAll(this, 'serverChange', 'serverDelete');
+			_.bindAll(this, 'serverChange', 'serverDelete', 'serverCreatePath', 'serverCreateAnnotation');
 			if (!this.isNew()) {
 				this.ioBind('update', this.serverChange, this);
 				this.ioBind('delete', this.serverDelete, this);
+				
+				this.ioBind('createPath', this.serverCreatePath, this);
+				this.ioBind('createAnnotation', this.serverCreateAnnotation, this);
 			}
 			
 			this.on("addIoBind", this.addIoBind, this);
@@ -297,6 +300,9 @@ $(function() {
 			this.ioBind('update', this.serverChange, this);
 			this.ioBind('delete', this.serverDelete, this);
 			
+			this.ioBind('createPath', this.serverCreatePath, this);
+			this.ioBind('createAnnotation', this.serverCreateAnnotation, this);
+			
 			this.get("paths").each(function(path) {
 				path.ioBind('update', path.serverChange, path);
 				path.ioBind('delete', path.serverDelete, path);
@@ -310,12 +316,23 @@ $(function() {
 		},
 		
 		serverDelete: function(data) {
-			console.log('zap');
 			this.trigger("clear");
-			
-			// BUG: NOT DELETING SET CORRECTLY
 		},
 		
+		serverCreatePath: function(data) {
+			// Add newly created path
+			var newPath = new $.playbook.Path($.extend(data, {set: this}));
+			
+			this.trigger("addPath", newPath);
+		},
+		
+		serverCreateAnnotation: function(data) {
+			// Add newly created annotation
+			var newAnnotation = new $.playbook.Annotation($.extend(data, {set: this}));
+			
+			this.trigger("addNewAnnotation", newAnnotation);
+		},
+				
 		// Assume array is in order (sorting not an issue yet)
 		prevSet: function() {
 			var prevIndex = this.get("play").get("sets").indexOf(this) - 1;
@@ -393,12 +410,13 @@ $(function() {
 		},
 		
 		initialize: function() {
-			_.bindAll(this, 'serverChange', 'serverDelete');
+			_.bindAll(this, 'serverChange', 'serverDelete', 'serverCreateSet', 'serverCreateArticle');
 			if (!this.isNew()) {
 				this.ioBind('update', this.serverChange, this);
 				this.ioBind('delete', this.serverDelete, this);
 				
 				this.ioBind('createSet', this.serverCreateSet, this);
+				this.ioBind('createArticle', this.serverCreateArticle, this);
 			}
 		},
 		
@@ -411,7 +429,6 @@ $(function() {
 			// Useful to prevent loops when dealing with client-side updates (ie: forms).
 			data.fromServer = true;
 			this.set(data);
-			
 			// BUG: NEED TO REFRESH FIELD LAYER MAYBE
 		},
 		
@@ -424,6 +441,13 @@ $(function() {
 			var newSet = new $.playbook.Set($.extend(data, {play: this}));
 			
 			this.trigger("addNewSet", newSet);
+		},
+		
+		serverCreateArticle: function(data) {
+			// Add newly created article
+			var newArticle = new $.playbook.Article($.extend(data, {play: this}));
+			
+			this.trigger("addArticle", newArticle);
 		},
 	});
 	
@@ -443,6 +467,7 @@ $(function() {
 			this.paths = [];
 		
 			this.model.on('addPathShape', this.addPathShape, this);
+			this.model.on('removePathShape', this.removePathShape, this);
 			this.model.on('show', this.show, this);
 			this.model.on('editLabel', this.editLabel, this);
 			this.model.on('change', this.render, this);
@@ -464,6 +489,12 @@ $(function() {
 		
 		addPathShape: function(path) {
 			this.paths.push(path);
+		},
+		
+		removePathShape: function(path) {
+			// remove path from this.paths
+			var index = _.indexOf(this.paths, path)
+			if (index !== -1) this.paths.splice(index, 1);
 		},
 		
 		show: function() {
@@ -560,7 +591,7 @@ $(function() {
 			
 			this.model.destroy();
 			this.remove();
-		}
+		},
 	});
 	
 	// Hidden view, used to control path model
@@ -580,6 +611,7 @@ $(function() {
 			this.model.on("selectPath", this.selectPath, this);
 			this.model.on("unselectPath", this.unselectPath, this);
 			this.model.on("clear", this.clear, this);
+			this.model.on("removeFromArticle", this.removeFromArticle, this);
 			
       		this.model.on('animate', this.animate, this);
 			this.model.on('reset', this.reset, this);
@@ -717,7 +749,11 @@ $(function() {
 			this.remove();
 			
 			this.model.destroy();
-		},  
+		},
+		
+		removeFromArticle: function() {
+			this.article.trigger("removePathShape", this.model);
+		}, 
 		
 		animate: function(cb) {
 			this.shape.transitionTo({
@@ -735,7 +771,7 @@ $(function() {
 				x: this.model.get("currX"),
 				y: this.model.get("currY")
 			});
-		}
+		},
 	});
 	
 	// (Mostly) Hidden view, used to control annotation model
@@ -931,7 +967,8 @@ $(function() {
 			// Prevent deleting last set
 			if (!prevSet && !nextSet) {
 				errorMessage("Cannot delete last set!");
-				return;
+				// Allow for now
+				//return;
 			}
 			
 			// Remove layer from canvas
@@ -958,13 +995,18 @@ $(function() {
 			this.model.get("play").trigger("change"); // refreshes # for other sets
 			$("#" + this.model.get("_id")).remove(); // removes this set from set list, it is there because set not yet removed from play
 			
+			// Remove paths from article array
+			this.model.get("paths").each(function(path) {
+				path.trigger("removeFromArticle");
+			});
+			
 			// Delete model
 			this.model.destroy();
 			
 			// Set current set to next set if exists, otherwise, to prev set
 			if (nextSet)
 				nextSet.trigger("show");
-			else
+			else if (prevSet)
 				prevSet.trigger("show");
 		},
 		
@@ -1124,18 +1166,6 @@ $(function() {
 			var view = this;
 			this.model.fetch({
 				success: function(model, response) {
-					// Depending on field
-					var field;
-					if (model.get("type") === "ultimate") {
-						field = ultimateField(model.get("size"));
-					} else if (model.get("type") === "soccer") {
-						field = soccerField(model.get("size"));
-					} else if (model.get("type") === "football") {
-						field = footballField(model.get("size"));
-					}
-					view.addFieldEvents(field);
-					stage.add(field);
-				
 					model.trigger('init');
 				}
 			});
@@ -1146,6 +1176,8 @@ $(function() {
 			// Hack to select correct field type and size
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
+			
+			this.addField(this.model.get("type"), this.model.get("size"));
 			
 			// Hack to keep current set selected
 			var currSetId = $(".set-list").find(".selected").attr("id");
@@ -1188,6 +1220,32 @@ $(function() {
 			
 			$("#play").append(this.el);
 			return this;
+		},
+		
+		addField: function(fieldType, fieldSize) {
+			var fieldLayer = stage.get(".fieldLayer")[0];
+			var currX, currY;
+			
+			if (fieldLayer) {
+				currX = fieldLayer.getX();
+				currY = fieldLayer.getY();
+				fieldLayer.clear();
+				stage.remove(fieldLayer);
+				$(fieldLayer.getCanvas().element).remove();
+			}
+			
+			if (fieldType === "ultimate") {
+				fieldLayer = ultimateField(fieldSize, currX, currY);
+			} else if (fieldType === "soccer") {
+				fieldLayer = soccerField(fieldSize, currX, currY);
+			} else if (fieldType === "football") {
+				fieldLayer = footballField(fieldSize, currX, currY);
+			}
+			
+			this.addFieldEvents(fieldLayer);
+			stage.add(fieldLayer);
+			fieldLayer.moveToBottom();
+			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
 		},
 		
 		addFieldEvents: function(fieldLayer) {
@@ -1281,7 +1339,7 @@ $(function() {
 					
 				path.save({}, {
 					wait: true,
-					success: function() {
+					success: function(model, response) {
 						model.trigger("addIoBind");
 						set.trigger("addPath", path);
 					}
@@ -1323,28 +1381,9 @@ $(function() {
 		},
 		
 		changeField: function(e) {
-			var fieldLayer = stage.get(".fieldLayer")[0];
-			var currX = fieldLayer.getX();
-			var currY = fieldLayer.getY();
-			fieldLayer.clear();
-			stage.remove(fieldLayer);
-			$(fieldLayer.getCanvas().element).remove();
-			
-			if ($("#fieldType").val() === "ultimate") {
-				fieldLayer = ultimateField($("#fieldSize").val(), currX, currY);
-			} else if ($("#fieldType").val() === "soccer") {
-				fieldLayer = soccerField($("#fieldSize").val(), currX, currY);
-			} else if ($("#fieldType").val() === "football") {
-				fieldLayer = footballField($("#fieldSize").val(), currX, currY);
-			}
 			this.model.save({type: $("#fieldType").val(), size: $("#fieldSize").val()});
-			
-			this.addFieldEvents(fieldLayer);
-			stage.add(fieldLayer);
-			fieldLayer.moveToBottom();
-			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
 		},
-		
+
 		currentSet: function() {
 			var currSetId = $(".set-list").find(".selected").attr("id");
 			return this.model.get("sets").find(function(set) {
@@ -1560,6 +1599,7 @@ $(function() {
 				newSet2.save({}, {
 					wait: true,
 					success: function(model, response) {
+						console.log('asdf');
 						model.trigger("addIoBind");
 						model.get("play").trigger("change");
 						model.get("play").trigger("addNewSet", model);

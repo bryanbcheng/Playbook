@@ -38,8 +38,8 @@ function ultimateField(size, startX, startY) {
 
 function ultimateFieldFull(startX, startY) {
 	var fieldLayer = new Kinetic.Layer({
-		x: startX ? startX : START_X,
-		y: startY ? startY : START_Y,
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",
@@ -135,8 +135,8 @@ function ultimateFieldFull(startX, startY) {
 
 function ultimateFieldHalf(startX, startY) {
 	var fieldLayer = new Kinetic.Layer({
-		x: startX ? startX : START_X,
-		y: startY ? startY : START_Y,
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",
@@ -212,8 +212,8 @@ function soccerField(size, startX, startY) {
 
 function soccerFieldFull(startX, startY) {
 	var fieldLayer = new Kinetic.Layer({
-		x: startX ? startX : START_X,
-		y: startY ? startY : START_Y,
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",
@@ -361,8 +361,8 @@ function soccerFieldFull(startX, startY) {
 
 function soccerFieldHalf(startX, startY) {
 	var fieldLayer = new Kinetic.Layer({
-		x: startX ? startX : START_X,
-		y: startY ? startY : START_Y,
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",
@@ -455,8 +455,8 @@ function footballField(size, startX, startY) {
 
 function footballFieldFull(startX, startY) {
 	var fieldLayer = new Kinetic.Layer({
-		x: startX ? startX : START_X,
-		y: startY ? startY : START_Y,
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",
@@ -595,8 +595,8 @@ function footballFieldFull(startX, startY) {
 
 function footballFieldHalf(startX, startY) {
 	var fieldLayer = new Kinetic.Layer({
-		x: startX ? startX : START_X,
-		y: startY ? startY : START_Y,
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",

@@ -215,7 +215,8 @@ io.sockets.on('connection', function(socket) {
 			play.save();
 			
 			//socket.emit('path/' + data._id + ':create', newPath);
-			socket.broadcast.emit('path/' + data._id + ':create', newPath);
+			//socket.broadcast.emit('path/' + data._id + ':create', newPath);
+			socket.broadcast.emit('set/' + data.set + ':createPath', newPath);
 			callback(null, newPath);
 		});
 	});
@@ -288,7 +289,8 @@ io.sockets.on('connection', function(socket) {
 			play.save();
 			
 			//socket.emit('annotation:create', newAnnotation);
-			socket.broadcast.emit('annotation/' + data._id + ':create', newAnnotation);
+			//socket.broadcast.emit('annotation/' + data._id + ':create', newAnnotation);
+			socket.broadcast.emit('set/' + data.set + ':createAnnotation', newAnnotation);
 			callback(null, newAnnotation);
 		});
 	});
@@ -360,7 +362,8 @@ io.sockets.on('connection', function(socket) {
 			play.save();
 			
 			//socket.emit('article/' + data._id + ':create', newArticle);
-			socket.broadcast.emit('article/' + data._id + ':create', newArticle);
+			//socket.broadcast.emit('article/' + data._id + ':create', newArticle);
+			socket.broadcast.emit('play/' + data.play + ':createArticle', newArticle);
 			callback(null, newArticle);	
 		});
 	});
