@@ -3,6 +3,8 @@ var stage;
 var testSet = [];
 
 $(function() {
+	window.socket = io.connect('http://localhost');
+
 	$.playbook = {}
 	
 	$.playbook.Article = Backbone.RelationalModel.extend({
@@ -268,7 +270,10 @@ $(function() {
 			};
 		},
 		
-		urlRoot: "/api/play",
+		//urlRoot: "/api/play",
+		urlRoot: "play",
+		
+		socket: window.socket,
 	});
 	
 	$.playbook.ArticleView = Backbone.View.extend({
