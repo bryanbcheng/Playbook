@@ -93,7 +93,7 @@ body {
 }
 
 #playbook {
-	padding: 25px 0 25px 50px;
+/* 	padding: 0 0 25px 50px; */
 }
 
 #playbook h2 {
@@ -101,8 +101,43 @@ body {
 	font-weight: bold;
 }
 
-#play {
+.right-back {
+	background-color: #F0F0F0;
 	float: left;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+
+.left-back {
+	background-color: white;
+	border-right: 1px solid #CDCDCD;
+	float: left;
+	position: relative;
+	right: 281px;
+	width: 100%;
+}
+
+#left-panel {
+	float: left;
+	left: 281px;
+	overflow: hidden;
+	padding: 15px 50px 30px;
+	position: relative;
+	width: 802px;
+}
+
+#right-panel {
+	float: right;
+	left: 281px;
+	overflow: hidden;
+	padding: 15px;
+	position: relative;
+	width: 250px;
+}
+
+
+#play {
 	width: 800px;
 }
 
@@ -124,26 +159,47 @@ body {
 
 #canvas {
 	border: 1px solid #CDCDCD;
-	float: left;
 	width: 800px;
 }
 
-#panel {
+#right-panel hr {
+	/* IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+	
+	/* IE 5-7 */
+	filter: alpha(opacity=25);
+	
+	/* Netscape */
+	-moz-opacity: 0.25;
+	
+	/* Safari 1.x */
+	-khtml-opacity: 0.25;
+	
+	/* Good browsers */
+	opacity: 0.25;
+	
+	margin: 15px 0;
+}
+
+#right-panel label.sectionLabel {
 	float: right;
-	width: 280px;
+	font-size: 12px;
+	font-style: italic;
+	margin-top: -8px;
 }
 
 #play-contents {
 	float: left;
-	margin: 0 0 20px 0;
-	width: 200px;
+/* 	margin: 0 0 20px 0; */
+	width: 250px;
 }
 
 #play-contents .set-list-container {
-	margin: 20px 0;
+	border: 1px solid #CDCDCD;
+/* 	margin: 20px 0; */
 	padding-top: 20px;
 	position: relative;
-	width: 200px;
+	width: 248px;
 }
 
 #play-contents .set-list-area {
@@ -176,11 +232,13 @@ body {
 }
 
 #play-contents .set-list .num {
-	width: 35px;
+	border-right: 1px solid #CDCDCD;
+	text-align: center;
+	width: 44px;
 }
 
 #play-contents .set-list .name {
-	width: 130px;
+	width: 168px;
 }
 
 #play-contents .set-list tr:hover {
@@ -219,6 +277,18 @@ body {
 	background: #c3c3c3;
 }
 
+#play-contents .formations {
+	margin-top: 15px;
+}
+
+#play-contents .formationType {
+	width: 180px;
+}
+
+#play-contents .useForm {
+	float: right;
+}
+
 #play-contents .team {
 	line-height: 28px;
 }
@@ -228,6 +298,10 @@ body {
 	width: 65px;
 }
 
+#play-contents .select-color {
+	
+}
+
 #play-contents .select-shape {
 	background-image: url("/images/imageSelect.png");
 	border: 1px solid #CCCCCC;
@@ -235,6 +309,7 @@ body {
 /* 	display: inline; */
 	float: left;
 	height: 28px;
+	margin: 0 10px;
 	width: 28px;
 }
 
@@ -298,8 +373,7 @@ body {
 
 #set {
 	float: left;
-	margin: 0 0 20px 0;
-	width: 200px;
+	width: 250px;
 }
 
 #set div.set-view {
@@ -385,8 +459,7 @@ body {
 
 #article {
 	float: left;
-	margin: 0 0 20px 0;
-	width: 200px;
+	width: 250px;
 }
 
 #article div {

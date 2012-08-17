@@ -33,13 +33,20 @@
 	
 	<div id="playbook-container">
 		<div id="playbook">
-			<button id="new-play">New Play</button>
-			<div id="play"></div>
-			<div id="canvas"></div>
-			<div id="panel">
-				<div id="play-contents"></div>
-				<div id="set"></div>
-				<div id="article"></div>
+			<!-- <button id="new-play">New Play</button> -->
+			<div class="right-back">
+				<div class="left-back">
+					<div id="left-panel">
+						<div id="play"></div>
+						<div id="canvas"></div>
+						<div id="instructions"></div>
+					</div>
+					<div id="right-panel">
+						<div id="play-contents"></div>
+						<div id="set"></div>
+						<div id="article"></div>
+					</div>
+				</div>
 			</div>
 			<br class="clear" />
 		</div>
@@ -60,12 +67,10 @@
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
 		</div>
-<!-- 
 	</script>
 	
 	<script type="text/template" id="play-contents-template">
- -->
-		<div class="contents">
+		<label class="sectionLabel">Field</label>
 		<select id="fieldType">
 			<option value="ultimate">Ultimate</option>
 			<option value="soccer">Soccer</option>
@@ -75,7 +80,7 @@
 			<option value="full">Full</option>
 			<option value="half">Half</option>
 		</select>
-		
+		<hr />
 		<div class="set-list-container">
 			<div class="set-list-area">
 				<table class="set-list">
@@ -103,7 +108,7 @@
 		</div>
 		<div class="formations">
 			<select class="formationType">
-				<option value="default">---Formations---</option>
+				<option value="default">------Formations------</option>
 				<optgroup label="Ultimate" value="ultimate">
 					<option value="vertical">Vertical Stack</option>
 					<option value="horizontal">Horizontal Stack</option>
@@ -129,23 +134,17 @@
 				</optgroup>
 			</select>
 			<button class="useForm">Apply</button>
+			<br class="clear" />
 		</div>
+		<hr />
+		<label class="sectionLabel">Teams</label>
 		<div id="team0" class="team">
 			<span>Team 1</span>
 			<br />
 			<button class="add-player">Add Player</button>
 			<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
 			
-			<div id="shape0" class="select-shape" value="{{teamShapes.0}}">
-				<!-- 
-<div class="select-shape-palette">
-					<div class="palette-circle"></div>
-					<div class="palette-square"></div>
-					<div class="palette-triangle"></div>
-					<div class="palette-x"></div>
-				</div>
- -->
-			</div>
+			<div id="shape0" class="select-shape" value="{{teamShapes.0}}"></div>
 			<br class="clear"/>
 		</div>
 		<div id="team1" class="team">
@@ -156,6 +155,7 @@
 			<div id="shape1" class="select-shape" value="{{teamShapes.1}}"></div>
 			<br class="clear"/>
 		</div>
+		<hr />
 		<button class="add-ball">Add Ball</button>
 		<button class="add-cone">Add Cone</button>
 		<button class="add-ann">Add Annotation</button>
@@ -168,10 +168,11 @@
 		</div>
 		<button class="reset-play">Reset Play</button>
 		</div>
-		</div>
 	</script>
 	
 	<script type="text/template" id="set-template">
+		<hr />
+		<label class="sectionLabel">Set</label>
 		<div class="name">
 			<h2>Name: {{name}}</h2>
 			<input class="name-edit" value="{{name}}"></input>
@@ -193,6 +194,8 @@
 	</script>
 	
 	<script type="text/template" id="article-template">
+		<hr />
+		<label class="sectionLabel">Object</label>
 		<span>Label: </span><input class="label" value="{{label}}" maxlength=3></input>
 		<select>
 			<option value="player">Player</option>
