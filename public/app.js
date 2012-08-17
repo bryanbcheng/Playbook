@@ -1,6 +1,6 @@
 /* GLOBALS */
-var stage;
-window.socket = io.connect('http://localhost');
+var stage,
+	socket = io.connect();
 
 $(function() {
 	$.playbook = {}
@@ -32,7 +32,7 @@ $(function() {
 		//urlRoot: "/api/article"
 		urlRoot: "article",
 		
-		socket: window.socket,
+		socket: socket,
 		
 		addIoBind: function() {
 			this.ioBind('update', this.serverChange, this);
@@ -77,7 +77,7 @@ $(function() {
 		//urlRoot: "/api/path",
 		urlRoot: "path",
 		
-		socket: window.socket,
+		socket: socket,
 		
 		addIoBind: function() {
 			this.ioBind('update', this.serverChange, this);
@@ -212,7 +212,7 @@ $(function() {
 		//urlRoot: "/api/annotation",
 		urlRoot: "annotation",
 		
-		socket: window.socket,
+		socket: socket,
 		
 		addIoBind: function() {
 			this.ioBind('update', this.serverChange, this);
@@ -293,7 +293,7 @@ $(function() {
 		//urlRoot: "/api/set",
 		urlRoot: "set",
 		
-		socket: window.socket,
+		socket: socket,
 		
 		addIoBind: function() {
 			this.ioBind('update', this.serverChange, this);
@@ -423,13 +423,12 @@ $(function() {
 		//urlRoot: "/api/play",
 		urlRoot: "play",
 		
-		socket: window.socket,
+		socket: socket,
 		
 		serverChange: function(data) {
 			// Useful to prevent loops when dealing with client-side updates (ie: forms).
 			data.fromServer = true;
 			this.set(data);
-			// BUG: NEED TO REFRESH FIELD LAYER MAYBE
 		},
 		
 		serverDelete: function(data) {
@@ -526,7 +525,6 @@ $(function() {
 		},
 		
 		changeColor: function(color) {
-			console.log(color);
 			this.model.save({color: color}, {
 				wait: true,
 				success: function(model, response) {
@@ -635,7 +633,6 @@ $(function() {
 			
 			// Draw shape
 			if (this.shape) this.shape.parent.remove(this.shape);
-			console.log(view.article);
 			this.shape = createArticle({
 				x: view.model.get("currX"),
 				y: view.model.get("currY"),
@@ -1206,11 +1203,9 @@ $(function() {
 					wait: true,
 					success: function(model, response) {
 						var teamPlayers = model.get("articles").filter(function(article) {
-							console.log($("#" + id).parent().attr("id"));
 							return article.get("team") == $("#" + id).parent().attr("id");
 						});
 						
-						console.log(teamPlayers);
 						// update each article with new color
 						_.each(teamPlayers, function(player) {
 							player.trigger("changeColor", newValue);
@@ -1224,7 +1219,6 @@ $(function() {
 					silent: true,
 					wait: true,
 					success: function(model, response) {
-						console.log(id);
 						var teamPlayers = model.get("articles").filter(function(article) {
 							return article.get("team") == $("#" + id).parent().attr("id");
 						});
@@ -1650,7 +1644,7 @@ $(function() {
 					}
 				});
 			} else {
-				console.log("Cancelled formation selection");
+				console.log("Cancelled reset");
 			}
 		}
 	});
