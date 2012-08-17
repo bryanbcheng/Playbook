@@ -27,30 +27,27 @@
 	<script src="/formation.js"></script>
 	<script src="/app.js"></script>
 	
-	<div id="playbook">
-		<header>
-			<h1>Playbook</h1>
-		</header>
-		<button id="new-play">New Play</button>
-		<div id="canvas"></div>
-		<div id="play"></div>
-		<div id="set"></div>
-		<div id="article"></div>
-<!-- 		<button onClick="print()">Print</button> -->
+	<div id="header">
+		<h1>PlayBook</h1>
+	</div>
+	
+	<div id="playbook-container">
+		<div id="playbook">
+			<button id="new-play">New Play</button>
+			<div id="play"></div>
+			<div id="canvas"></div>
+			<div id="panel">
+				<div id="play-contents"></div>
+				<div id="set"></div>
+				<div id="article"></div>
+			</div>
+			<br class="clear" />
+		</div>
 	</div>
 	
 	<!-- Templates -->
 	
 	<script type="text/template" id="play-template">
-		<select id="fieldType">
-			<option value="ultimate">Ultimate</option>
-			<option value="soccer">Soccer</option>
-			<option value="football">Football</option>
-		</select>
-		<select id="fieldSize">
-			<option value="full">Full</option>
-			<option value="half">Half</option>
-		</select>
 		<div>
 			<div class="name">
 				<h2>Name: {{name}}</h2>
@@ -63,6 +60,22 @@
 				<textarea class="desc-edit">{{description}}</textarea>
 			</div>
 		</div>
+<!-- 
+	</script>
+	
+	<script type="text/template" id="play-contents-template">
+ -->
+		<div class="contents">
+		<select id="fieldType">
+			<option value="ultimate">Ultimate</option>
+			<option value="soccer">Soccer</option>
+			<option value="football">Football</option>
+		</select>
+		<select id="fieldSize">
+			<option value="full">Full</option>
+			<option value="half">Half</option>
+		</select>
+		
 		<div class="set-list-container">
 			<div class="set-list-area">
 				<table class="set-list">
@@ -89,8 +102,8 @@
 			</div>
 		</div>
 		<div class="formations">
-			Use preset formation: 
 			<select class="formationType">
+				<option value="default">---Formations---</option>
 				<optgroup label="Ultimate" value="ultimate">
 					<option value="vertical">Vertical Stack</option>
 					<option value="horizontal">Horizontal Stack</option>
@@ -154,6 +167,7 @@
 			<br class="clear"/>
 		</div>
 		<button class="reset-play">Reset Play</button>
+		</div>
 		</div>
 	</script>
 	

@@ -1167,6 +1167,47 @@ $(function() {
 			"blur .name-edit"	: "updateName",
 			"dblclick .desc"	: "editDescription",
 			"blur .desc-edit"	: "updateDescription",
+		},
+		
+		initialize: function() {
+			this.model.on('change', this.render, this);
+		},
+		
+		render: function() {
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			
+			$("#play").append(this.el);
+			return this;
+		},
+		
+		editName: function(e) {
+			$(e.currentTarget).addClass("edit");
+			$(e.currentTarget).find("input").focus();
+		},
+		
+		updateName: function(e) {
+			$(e.currentTarget).parent().removeClass("edit");
+			this.model.save({name: e.currentTarget.value});
+		},
+		
+		editDescription: function(e) {
+			$(e.currentTarget).addClass("edit");
+			$(e.currentTarget).find("textarea").focus();
+		},
+		
+		updateDescription: function(e) {
+			$(e.currentTarget).parent().removeClass("edit");
+			this.model.save({description: e.currentTarget.value});
+		}
+	});
+	
+	$.playbook.PlayContentsView = Backbone.View.extend({
+		tagName: "div",
+		className: "play-contents-view",
+		
+		template: $("#play-contents-template").html(),
+		
+		events: {
 			"change #fieldType"	: "changeField",
 			"change #fieldSize"	: "changeField",
 			"click .add-set"	: "createSet",
@@ -1189,8 +1230,8 @@ $(function() {
 			// create stage
 			stage = new Kinetic.Stage({
 				container: "canvas",
-				width: 1000,
-				height: 1000,
+				width: 800,
+				height: 600,
 			});
 			
 			this.model.on('change', this.render, this);
@@ -1211,6 +1252,7 @@ $(function() {
 		
 		render: function() {
 			var html = Mustache.render(this.template, this.model.toJSON());
+			
 			// Hack to select correct field type and size
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
@@ -1273,7 +1315,8 @@ $(function() {
 			
 			this.$el.html(html);
 			
-			$("#play").append(this.el);
+			$("#play-contents").append(this.el);
+			
 			return this;
 		},
 		
@@ -1416,26 +1459,6 @@ $(function() {
 			});
 		},
 		
-		editName: function(e) {
-			$(e.currentTarget).addClass("edit");
-			$(e.currentTarget).find("input").focus();
-		},
-		
-		updateName: function(e) {
-			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({name: e.currentTarget.value});
-		},
-		
-		editDescription: function(e) {
-			$(e.currentTarget).addClass("edit");
-			$(e.currentTarget).find("textarea").focus();
-		},
-		
-		updateDescription: function(e) {
-			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({description: e.currentTarget.value});
-		},
-		
 		changeField: function(e) {
 			this.model.save({type: $("#fieldType").val(), size: $("#fieldSize").val()});
 		},
@@ -1504,6 +1527,7 @@ $(function() {
 		},
 		
 		useFormation: function() {
+			if ($(".formationType").val() === "default") return;
 			if (confirm("Selecting a formation removes all items currently in your play. Are you sure you want to continue?")) {
 				var articles = this.model.get("articles")
 				while (!articles.isEmpty()) {
@@ -1689,6 +1713,8 @@ $(function() {
 			var play = new $.playbook.Play({_id: _id});
 			
 			var playView = new $.playbook.PlayView({model: play});
+			
+			var playContentsView = new $.playbook.PlayContentsView({model: play});
 		},
 	});
 	
@@ -1741,6 +1767,7 @@ function changeSet(e) {
 
 function clearDivs() {
 	$("#play").html("");
+	$("#play-contents").html("");
 	$("#set").html("");
 	$("#article").html("");
 }
