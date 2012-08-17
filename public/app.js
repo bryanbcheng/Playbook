@@ -483,6 +483,12 @@ $(function() {
 			var html = Mustache.render(this.template, this.model.toJSON());
 			// Hack to select correct item in list
 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
+			
+			if (this.model.get("type") === "player") {
+				html = $(html).find('option[value=' + this.model.get("team") + ']').attr('selected', 'selected').end();
+				$(html).closest(".team-select").show();
+			}
+			
 			this.$el.html(html);
 			return this;
 		},
@@ -543,11 +549,33 @@ $(function() {
 		},
 		
 		changeType: function(e) {
-			var articleColor;
-			if (e.currentTarget.value === "player") articleColor = $("#" + this.model.get("team")).find("input").val();
-			else if (e.currentTarget.value === "ball") articleColor = "white";
-			else if (e.currentTarget.value === "cone") articleColor = "orange";
-			this.model.save({type: e.currentTarget.value, color: articleColor}, {
+			var articleProp = {};
+			// Assign by default to team0
+			if (e.currentTarget.value === "player") {
+				articleProp.type = e.currentTarget.value;
+				articleProp.color = $("#color0").val();
+				articleProp.shape = $("#shape0").val();
+				articleProp.team = "team0";
+			} else if (e.currentTarget.value === "team0") {
+				articleProp.color = $("#color0").val();
+				articleProp.shape = $("#shape0").val();
+				articleProp.team = "team0";
+			} else if (e.currentTarget.value === "team1") {
+				articleProp.color = $("#color1").val();
+				articleProp.shape = $("#shape1").val();
+				articleProp.team = "team1";
+			} else if (e.currentTarget.value === "ball") {
+				articleProp.type = e.currentTarget.value;
+				articleProp.color = "white";
+				articleProp.shape = "circle";
+				articleProp.team = "";
+			} else if (e.currentTarget.value === "cone") {
+				articleProp.type = e.currentTarget.value;
+				articleProp.color = "orange";
+				articleProp.shape = "triangle";
+				articleProp.team = "";
+			}
+			this.model.save(articleProp, {
 				wait: true,
 				success: function(model, response) {
 					model.trigger("replaceShape");

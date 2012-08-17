@@ -841,6 +841,9 @@ function createLabel(label) {
  			context.textBaseline = "middle";
  			context.fillText(label.label, 0, 0);
 		},
+		offset: {
+			y: label.shape === "triangle" ? -0.4 * SCALE : 0
+		},
 		draggable: true
 	});
 }

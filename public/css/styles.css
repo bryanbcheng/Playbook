@@ -342,6 +342,10 @@ table {
 	display: none;
 }
 
+#article .team-select {
+	display: none;
+}
+
 #article div.selected {
 	display: block;
 }
