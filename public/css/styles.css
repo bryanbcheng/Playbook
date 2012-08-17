@@ -48,6 +48,10 @@ table {
 
 /***** PLAYBOOK STYLES *****/
 
+html,body {
+	height: 100%;
+}
+
 body {
 	background: #FBFEF5;
 }
@@ -80,7 +84,7 @@ body {
 	font-size: 40px;
 	font-family: "Copperplate";
 	font-weight: bold;
-	//margin: 0 50px;
+/* 	//margin: 0 50px; */
 	padding: 30px 0 0 100px;
 	text-shadow: 0px 2px 3px #666;
 }
@@ -89,10 +93,12 @@ body {
 	border-left: 1px solid #CDCDCD;
 	border-right: 1px solid #CDCDCD;
 	margin: 0 auto;
+	height: 100%;
 	width: 1200px;
 }
 
 #playbook {
+	height: 100%;
 /* 	padding: 0 0 25px 50px; */
 }
 
@@ -104,6 +110,7 @@ body {
 .right-back {
 	background-color: #F0F0F0;
 	float: left;
+	height: 100%;
 	overflow: hidden;
 	position: relative;
 	width: 100%;
@@ -113,6 +120,7 @@ body {
 	background-color: white;
 	border-right: 1px solid #CDCDCD;
 	float: left;
+	height: 100%;
 	position: relative;
 	right: 281px;
 	width: 100%;
@@ -160,6 +168,11 @@ body {
 #canvas {
 	border: 1px solid #CDCDCD;
 	width: 800px;
+}
+
+#instructions {
+	margin-top: 20px;
+	font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
 #right-panel hr {
@@ -480,3 +493,128 @@ br.clear {
 
 
 /* font-family: "Trebuchet MS",Arial,sans-serif; */
+/* 
+.button-link {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    -moz-user-select: none;
+    background: -moz-linear-gradient(center top , #FFFFFF 0%, #F3F3F3 100%) repeat scroll 0 0 transparent;
+    border-color: #CECECE #CECECE #A0A0A0;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    display: block;
+    font-weight: bold;
+    margin-top: 6px;
+    max-width: 220px;
+    overflow: hidden;
+    padding: 6px;
+    position: relative;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.button-link .on {
+    background: -moz-linear-gradient(center top , #24A828 0%, #1B7E1E 100%) repeat scroll 0 0 transparent;
+    border-radius: 3px 3px 3px 3px;
+    color: #FFFFFF;
+    display: none;
+    font-size: 12px;
+    font-weight: bold;
+    height: 17px;
+    line-height: 17px;
+    margin: 0;
+    padding: 2px 4px;
+    position: absolute;
+    right: 5px;
+    text-align: center;
+    top: 5px;
+}
+.button-link.is-on {
+    max-width: 196px;
+    padding-right: 30px;
+}
+.button-link.is-on .on {
+    display: block;
+}
+.button-link.setting {
+    float: left;
+    height: 38px;
+    margin: 0;
+    position: relative;
+}
+.button-link.setting.disabled {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #E9E9E9;
+    color: #939393;
+    cursor: default;
+}
+.button-link.setting.disabled select {
+    display: none;
+}
+.button-link.setting.disabled:hover {
+    color: #939393;
+}
+.button-link.setting.disabled:hover .label {
+    color: #939393;
+}
+.button-link.setting .label {
+    color: #939393;
+    display: block;
+    font-size: 12px;
+    line-height: 14px;
+    margin-bottom: 3px;
+}
+.button-link.setting:hover .label {
+    color: #EEEEEE;
+}
+.button-link.setting .value {
+    display: block;
+    font-size: 18px;
+    line-height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.button-link.setting label {
+    display: none;
+}
+.button-link.setting select {
+    border: medium none;
+    cursor: pointer;
+    height: 50px;
+    left: 0;
+    margin: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+.button-link:hover {
+    background: -moz-linear-gradient(center top , #2887BD 0%, #1F6993 100%) repeat scroll 0 0 transparent;
+    border-color: #2478A8;
+    color: #FFFFFF;
+}
+.button-link:hover .on {
+    background-color: rgba(255, 255, 255, 0.3);
+    background-image: none;
+    border-color: transparent;
+}
+.button-link:active {
+    background: -moz-linear-gradient(center top , #2478A8 0%, #1B5A7E 100%) repeat scroll 0 0 transparent;
+    border-color: #1F6993;
+    color: #FFFFFF;
+}
+.button-link.negate:hover {
+    background: -moz-linear-gradient(center top , #A82424 0%, #7E1B1B 100%) repeat scroll 0 0 transparent;
+    border-color: #7E1B1B;
+}
+.button-link.negate:active {
+    background: -moz-linear-gradient(center top , #931F1F 0%, #691616 100%) repeat scroll 0 0 transparent;
+    border-color: #691616;
+}
+ */
