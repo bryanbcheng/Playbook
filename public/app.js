@@ -12,6 +12,7 @@ $(function() {
 			return {
 				type: "player",
 				color: "blue",
+				shape: "circle",
 				label: "",
 				team: "",
 				select: false
@@ -403,7 +404,8 @@ $(function() {
 				description: "no description",
 				type: $("#fieldType").val() ? $("#fieldType").val() : "ultimate",
 				size: $("#fieldSize").val() ? $("#fieldSize").val() : "full",
-				teamColors: ["#0000ff", "#ff0000", ]
+				teamColors: ["#0000ff", "#ff0000", ],
+				teamShapes: ["circle", "circle", ],
 			};
 		},
 		
@@ -470,6 +472,7 @@ $(function() {
 			this.model.on('editLabel', this.editLabel, this);
 			this.model.on('change', this.render, this);
 			this.model.on('changeColor', this.changeColor, this);
+			this.model.on('changeShape', this.changeShape, this);
 			
 			this.model.on('replaceShape', this.replaceShape, this);
 			this.model.on('selectArticle', this.selectArticle, this);
@@ -523,7 +526,17 @@ $(function() {
 		},
 		
 		changeColor: function(color) {
+			console.log(color);
 			this.model.save({color: color}, {
+				wait: true,
+				success: function(model, response) {
+					model.trigger("replaceShape");
+				}
+			});
+		},
+		
+		changeShape: function(shape) {
+			this.model.save({shape: shape}, {
 				wait: true,
 				success: function(model, response) {
 					model.trigger("replaceShape");
@@ -622,11 +635,13 @@ $(function() {
 			
 			// Draw shape
 			if (this.shape) this.shape.parent.remove(this.shape);
+			console.log(view.article);
 			this.shape = createArticle({
 				x: view.model.get("currX"),
 				y: view.model.get("currY"),
 				type: view.article.get("type"),
 				color: view.article.get("color"),
+				shape: view.article.get("shape"),
 				label: view.article.get("label"),
 				//name: view.article.get("team")
 				select: view.article.get("select")
@@ -1191,9 +1206,11 @@ $(function() {
 					wait: true,
 					success: function(model, response) {
 						var teamPlayers = model.get("articles").filter(function(article) {
+							console.log($("#" + id).parent().attr("id"));
 							return article.get("team") == $("#" + id).parent().attr("id");
 						});
 						
+						console.log(teamPlayers);
 						// update each article with new color
 						_.each(teamPlayers, function(player) {
 							player.trigger("changeColor", newValue);
@@ -1202,7 +1219,23 @@ $(function() {
 				});
 			}});
 			
-			$(html).find(".select-shape").click(togglePalette);
+			$(html).find(".select-shape").shapePicker({onShapeChange: function(id, newValue) {
+				view.model.save({teamShapes: [$("#shape0").val(), $("#shape1").val()]}, {
+					silent: true,
+					wait: true,
+					success: function(model, response) {
+						console.log(id);
+						var teamPlayers = model.get("articles").filter(function(article) {
+							return article.get("team") == $("#" + id).parent().attr("id");
+						});
+						
+						// update each article with new color
+						_.each(teamPlayers, function(player) {
+							player.trigger("changeShape", newValue);
+						});
+					}
+				});
+			}});
 			
 			var currSpeed = $(".animation-speed").slider("value");
 			$(html).find(".animation-speed").slider({
@@ -1464,9 +1497,11 @@ $(function() {
 				for (var index in formationData) {
 					var data = formationData[index];
 					var color = data.team ? data.team === "team0" ? $("#color0").val() : $("#color1").val() : data.type === "ball" ? "white" : "orange";
+					var shape = data.team ? data.team === "team0" ? $("#shape0").val() : $("#shape1").val() : data.type === "ball" ? "circle" : "triangle";
 					var article = new $.playbook.Article({
 						type: data.type,
 						color: color,
+						shape: shape,
 						label: data.label,
 						team: data.team,
 						play: this.model.get("_id"),
@@ -1493,7 +1528,8 @@ $(function() {
 		addPlayer: function(e) {
 			var player = new $.playbook.Article({
 				type: "player",
-				color: $(e.target).siblings("input").val(),
+				color: $(e.target).siblings(".select-color").val(),
+				shape: $(e.target).siblings(".select-shape").val(),
 				team: $(e.target).parent().attr("id"),
 				play: this.model.get("_id")
 			});
@@ -1507,7 +1543,7 @@ $(function() {
 		},
 		
 		addBall: function(e) {
-			var ball = new $.playbook.Article({type: "ball", color: "white", play: this.model.get("_id")});
+			var ball = new $.playbook.Article({type: "ball", color: "white", shape: "circle", play: this.model.get("_id")});
 			ball.save({}, {
 				silent: true,
 				wait: true,
@@ -1518,7 +1554,7 @@ $(function() {
 		},
 		
 		addCone: function(e) {
-			var cone = new $.playbook.Article({type: "cone", color: "orange", play: this.model.get("_id")});
+			var cone = new $.playbook.Article({type: "cone", color: "orange", shape: "triangle", play: this.model.get("_id")});
 			cone.save({}, {
 				silent: true,
 				wait: true,
@@ -1600,7 +1636,6 @@ $(function() {
 				newSet2.save({}, {
 					wait: true,
 					success: function(model, response) {
-						console.log('asdf');
 						model.trigger("addIoBind");
 						model.get("play").trigger("change");
 						model.get("play").trigger("addNewSet", model);
@@ -1681,43 +1716,6 @@ function changeSet(e) {
 		}
 	}
 }
-
-// Shape palette functions
-var checkMouse = function(e) {
-	if ($(e.target).parents(".select-shape-palette").length > 0 || $(e.target).hasClass("select-shape")) return;
-	
-	// Hide palette
-	$(document).off("mousedown", checkMouse);
-
-	$(".select-shape-palette").hide();
-}
-
-var showPalette = function(palette) {
-	palette.show();
-		
-	$(document).on("mousedown", checkMouse);
-}
-
-var hidePalette = function(palette) {
-	$(document).off("mousedown", checkMouse);
-
-	$(".select-shape-palette").hide();
-}
-
-var togglePalette = function() {
-	var palette = $(this).siblings(".select-shape-palette");
-	
-	palette.css({
-		left: $(this).offset().left,
-		top: $(this).offset().top + $(this).height(),
-	});
-	
-	if (!palette.is(':visible')) {
-		showPalette(palette);
-	} else {
-		hidePalette(palette);
-	}
-};
 
 function clearDivs() {
 	$("#play").html("");

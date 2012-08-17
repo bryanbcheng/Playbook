@@ -20,7 +20,8 @@
 	<script src="/js/backbone.iobind.min.js"></script>
 	<script src="/js/mustache.js"></script>
 	<script src="/js/kinetic-v3.10.5.js"></script>
-	<script src="/js/jquery.colorPicker.min.js"></script>
+	<script src="/js/jquery.colorPicker.js"></script>
+	<script src="/js/jquery.shapePicker.js"></script>
 	<script src="/js/jquery-ui-1.8.22.min.js"></script>
 	<script src="/draw.js"></script>
 	<script src="/formation.js"></script>
@@ -122,19 +123,24 @@
 			<button class="add-player">Add Player</button>
 			<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
 			
-			<div class="select-shape">a</div>
-			<div class="select-shape-palette">
-				<div class="palette-circle"></div>
-				<div class="palette-square"></div>
-				<div class="palette-triangle"></div>
-				<div class="palette-x"></div>
+			<div id="shape0" class="select-shape" value="{{teamShapes.0}}">
+				<!-- 
+<div class="select-shape-palette">
+					<div class="palette-circle"></div>
+					<div class="palette-square"></div>
+					<div class="palette-triangle"></div>
+					<div class="palette-x"></div>
+				</div>
+ -->
 			</div>
 			<br class="clear"/>
 		</div>
 		<div id="team1" class="team">
 			<span>Team 2</span>
+			<br />
 			<button class="add-player">Add Player</button>
 			<input id="color1" class="select-color" value="{{teamColors.1}}" type="hidden" />
+			<div id="shape1" class="select-shape" value="{{teamShapes.1}}"></div>
 			<br class="clear"/>
 		</div>
 		<button class="add-ball">Add Ball</button>

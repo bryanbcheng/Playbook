@@ -178,6 +178,9 @@ table {
 }
 
 #play .select-shape {
+	background-image: url("/images/imageSelect.png");
+	border: 1px solid #CCCCCC;
+	cursor: pointer;
 /* 	display: inline; */
 	float: left;
 	height: 28px;
@@ -185,12 +188,21 @@ table {
 }
 
 #play .select-shape-palette {
+	background: #EFEFEF;
+/* 	border: 1px solid #CDCDCD; */
+	cursor: pointer;
 	display: none;
 	position: absolute;
 }
 
+#play .select-shape-palette div:first-child {
+	border-left: 1px solid #CDCDCD;
+}
+
 #play .select-shape-palette div {
 	background-image: url("/images/imageSelect.png");
+	border: 1px solid #CDCDCD;
+	border-left: none;
 	float: left;
 	height: 28px;
 	width: 28px;

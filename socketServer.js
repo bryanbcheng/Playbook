@@ -56,7 +56,8 @@ io.sockets.on('connection', function(socket) {
 			description: data.description,
 			type: data.type,
 			size: data.size,
-			teamColors: data.teamColors
+			teamColors: data.teamColors,
+			teamShapes: data.teamShapes
 		});
 		newPlay.save();
 		
@@ -355,6 +356,7 @@ io.sockets.on('connection', function(socket) {
 			var newArticle = new Article({
 				type: data.type,
 				color: data.color,
+				shape: data.shape,
 				label: data.label,
 				team: data.team
 			});

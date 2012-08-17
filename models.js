@@ -13,6 +13,7 @@ var mongoose = require('mongoose')
 var Article = new Schema({
     type		: { type: String, enum: ['player', 'ball', 'cone'] }
   , color		: String
+  , shape		: String
   , label		: { type: String, uppercase: true }
   , team		: String
 });
@@ -53,6 +54,7 @@ var Play = new Schema({
   , type		: { type : String, enum: ['ultimate', 'soccer', 'football'] }
   , size		: { type : String, enum: ['full', 'half'] }
   , teamColors	: [String]
+  , teamShapes	: [String]
   , articles	: [Article]
   , sets		: [Set]
 });

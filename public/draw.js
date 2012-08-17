@@ -749,13 +749,58 @@ function createArticle(item) {
 }
 
 function createPlayer(player) {
-	return new Kinetic.Circle({
-		radius: 1.5 * SCALE,
-		fill: player.color,
-		stroke: "black",
-		strokeWidth: 1,
-		draggable: true
-	});
+	if (player.shape === "circle") {
+		return new Kinetic.Circle({
+			radius: 1.5 * SCALE,
+			fill: player.color,
+			stroke: "black",
+			strokeWidth: 1,
+			draggable: true
+		});
+	} else if (player.shape === "square") {
+		return new Kinetic.Rect({
+			width: 3 * SCALE,
+			height: 3 * SCALE,
+			fill: player.color,
+			stroke: "black",
+			strokeWidth: 1,
+			draggable: true,
+			offset: {
+				x: 1.5 * SCALE,
+				y: 1.5 * SCALE
+			}
+		});
+	} else if (player.shape === "triangle") {
+		return new Kinetic.RegularPolygon({
+			sides: 3,
+			radius: 3 / Math.sqrt(3) * SCALE,
+			fill: player.color,
+			stroke: "black",
+			strokeWidth: 1,
+			offset: {
+				y: -0.4 * SCALE
+			},
+			draggable: true,
+			
+		});
+	} else if (player.shape === "x") {
+		return new Kinetic.Shape({
+			drawFunc: function(context) {
+				context.beginPath();
+				context.moveTo(-1.4 * SCALE, -1.4 * SCALE);
+				context.lineTo(1.4 * SCALE, 1.4 * SCALE);
+				context.moveTo(-1.4 * SCALE, 1.4 * SCALE);
+				context.lineTo(1.4 * SCALE, -1.4 * SCALE);
+				context.closePath();
+				this.fill(context);
+				this.stroke(context);
+			},
+			//fill: player.color,
+			stroke: player.color,
+			strokeWidth: 5,
+			draggable: true,
+		});
+	}
 }
 
 function createBall(ball) {
@@ -771,10 +816,14 @@ function createBall(ball) {
 function createCone(cone) {
 	return new Kinetic.RegularPolygon({
 		sides: 3,
-		radius: 1.5 * SCALE,
+		//radius: 1.5 * SCALE,
+		radius: 3 / Math.sqrt(3) * SCALE,
 		fill: cone.color,
 		stroke: "black",
 		strokeWidth: 1,
+		offset: {
+			y: -0.4 * SCALE
+		},
 		draggable: true
 	});
 }
