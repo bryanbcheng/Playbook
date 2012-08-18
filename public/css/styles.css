@@ -322,7 +322,7 @@ body {
 /* 	display: inline; */
 	float: left;
 	height: 28px;
-	margin: 0 10px;
+	margin-right: 0 10px;
 	width: 28px;
 }
 
@@ -342,6 +342,7 @@ body {
 	background-image: url("/images/imageSelect.png");
 	border: 1px solid #CDCDCD;
 	border-left: none;
+	display: inline;
 	float: left;
 	height: 28px;
 	width: 28px;

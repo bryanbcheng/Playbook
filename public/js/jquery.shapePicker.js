@@ -65,8 +65,8 @@
 
         showPalette: function(palette) {
         	palette.css({
-				left: selectorOwner.offset().left,
-				top: selectorOwner.offset().top + selectorOwner.outerHeight(),
+				left: selectorOwner.position().left,
+				top: selectorOwner.position().top + selectorOwner.outerHeight(),
 			});
         
         	palette.show();
