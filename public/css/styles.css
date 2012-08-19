@@ -619,3 +619,17 @@ br.clear {
     border-color: #691616;
 }
  */
+ 
+ /* 
+text-transform: uppercase;
+        -webkit-transition: all .5s ease;
+        -moz-transition: all .5s ease;
+        -o-transition: all .5s ease;
+        transition: all .5s ease;
+        transition: property duration timing-function delay;
+        box-shadow: h-shadow v-shadow blur spread color inset;
+        border-radius??
+        text-shadow: horizontal vertical blur color;
+        
+        text-shadow: 0 1px 1px white;
+ */
