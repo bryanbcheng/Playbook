@@ -1,7 +1,9 @@
 /* CONSTANTS */
 var SCALE = 10;
-var START_X = 150;
-var START_Y = 50;
+var CANVAS_WIDTH = 800;
+var CANVAS_HEIGHT = 600;
+var START_X = 0;
+var START_Y = 0;
 
 /* ULTIMATE CONSTANTS */
 var ULTIMATE_WIDTH = 40;
@@ -34,6 +36,7 @@ var FOOTBALL_NUMBERS_HEIGHT = 2;
 function ultimateField(size, startX, startY) {
 	if (size === "full") return ultimateFieldFull(startX, startY);
 	else if (size === "half") return ultimateFieldHalf(startX, startY);
+	else if (size === "empty") return blankField(startX, startY);
 }
 
 function ultimateFieldFull(startX, startY) {
@@ -47,6 +50,12 @@ function ultimateFieldFull(startX, startY) {
 			top: -300,
 			bottom: 100
 		}
+	});
+	
+	var fieldGroup = new Kinetic.Group({
+		x: (CANVAS_WIDTH - ULTIMATE_WIDTH * SCALE) / 2,
+		y: 0,
+		name: "fieldGroup"
 	});
 	
 	var field = new Kinetic.Rect({
@@ -124,11 +133,14 @@ function ultimateFieldFull(startX, startY) {
         }
 	});	
 	
-	fieldLayer.add(field);
-	fieldLayer.add(endLine1);
-	fieldLayer.add(endLine2);
-	fieldLayer.add(brick1);
-	fieldLayer.add(brick2);
+	fieldGroup.add(field);
+	fieldGroup.add(endLine1);
+	fieldGroup.add(endLine2);
+	fieldGroup.add(brick1);
+	fieldGroup.add(brick2);
+	
+	fieldLayer.add(blankBackground(CANVAS_WIDTH, ULTIMATE_HEIGHT * SCALE));
+	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
 }
@@ -144,6 +156,12 @@ function ultimateFieldHalf(startX, startY) {
 			top: -300,
 			bottom: 100
 		}
+	});
+	
+	var fieldGroup = new Kinetic.Group({
+		x: (CANVAS_WIDTH - ULTIMATE_WIDTH * SCALE) / 2,
+		y: 0,
+		name: "fieldGroup"
 	});
 	
 	var field = new Kinetic.Rect({
@@ -198,9 +216,12 @@ function ultimateFieldHalf(startX, startY) {
         }
 	});
 	
-	fieldLayer.add(field);
-	fieldLayer.add(endLine1);
-	fieldLayer.add(brick1);
+	fieldGroup.add(field);
+	fieldGroup.add(endLine1);
+	fieldGroup.add(brick1);
+	
+	fieldLayer.add(blankBackground(CANVAS_WIDTH, ULTIMATE_HEIGHT / 2 * SCALE));
+	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
 }
@@ -208,6 +229,7 @@ function ultimateFieldHalf(startX, startY) {
 function soccerField(size, startX, startY) {
 	if (size === "full") return soccerFieldFull(startX, startY);
 	else if (size === "half") return soccerFieldHalf(startX, startY);
+	else if (size === "empty") return blankField(startX, startY);
 }
 
 function soccerFieldFull(startX, startY) {
@@ -221,6 +243,12 @@ function soccerFieldFull(startX, startY) {
 			top: -300,
 			bottom: 100
 		}
+	});
+	
+	var fieldGroup = new Kinetic.Group({
+		x: (CANVAS_WIDTH - SOCCER_WIDTH * SCALE) / 2,
+		y: 0,
+		name: "fieldGroup"
 	});
 	
 	var field = new Kinetic.Rect({
@@ -344,17 +372,20 @@ function soccerFieldFull(startX, startY) {
 		alpha: 0.5
 	});
 	
-	fieldLayer.add(field);
-	fieldLayer.add(penaltyBox1);
-	fieldLayer.add(penaltyBox2);
-	fieldLayer.add(penaltyMark1);
-	fieldLayer.add(penaltyMark2);
-	fieldLayer.add(penaltyCircle1);
-	fieldLayer.add(penaltyCircle2);
-	fieldLayer.add(goalBox1);
-	fieldLayer.add(goalBox2);
-	fieldLayer.add(midfieldLine);
-	fieldLayer.add(centerCircle);
+	fieldGroup.add(field);
+	fieldGroup.add(penaltyBox1);
+	fieldGroup.add(penaltyBox2);
+	fieldGroup.add(penaltyMark1);
+	fieldGroup.add(penaltyMark2);
+	fieldGroup.add(penaltyCircle1);
+	fieldGroup.add(penaltyCircle2);
+	fieldGroup.add(goalBox1);
+	fieldGroup.add(goalBox2);
+	fieldGroup.add(midfieldLine);
+	fieldGroup.add(centerCircle);
+	
+	fieldLayer.add(blankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
+	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
 }
@@ -370,6 +401,12 @@ function soccerFieldHalf(startX, startY) {
 			top: -300,
 			bottom: 100
 		}
+	});
+	
+	var fieldGroup = new Kinetic.Group({
+		x: (CANVAS_WIDTH - SOCCER_WIDTH * SCALE) / 2,
+		y: 0,
+		name: "fieldGroup"
 	});
 	
 	var field = new Kinetic.Rect({
@@ -438,12 +475,15 @@ function soccerFieldHalf(startX, startY) {
 		alpha: 0.5
 	});
 	
-	fieldLayer.add(field);
-	fieldLayer.add(penaltyBox1);
-	fieldLayer.add(penaltyMark1);
-	fieldLayer.add(penaltyCircle1);
-	fieldLayer.add(goalBox1);
-	fieldLayer.add(centerCircle);
+	fieldGroup.add(field);
+	fieldGroup.add(penaltyBox1);
+	fieldGroup.add(penaltyMark1);
+	fieldGroup.add(penaltyCircle1);
+	fieldGroup.add(goalBox1);
+	fieldGroup.add(centerCircle);
+	
+	fieldLayer.add(blankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
+	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
 }
@@ -451,6 +491,7 @@ function soccerFieldHalf(startX, startY) {
 function footballField(size, startX, startY) {
 	if (size === "full") return footballFieldFull(startX, startY);
 	else if (size === "half") return footballFieldHalf(startX, startY);
+	else if (size === "empty") return blankField(startX, startY);
 }
 
 function footballFieldFull(startX, startY) {
@@ -464,6 +505,12 @@ function footballFieldFull(startX, startY) {
 			top: -300,
 			bottom: 100
 		}
+	});
+	
+	var fieldGroup = new Kinetic.Group({
+		x: (CANVAS_WIDTH - FOOTBALL_WIDTH * SCALE) / 2,
+		y: 0,
+		name: "fieldGroup"
 	});
 	
 	var field = new Kinetic.Rect({
@@ -495,9 +542,9 @@ function footballFieldFull(startX, startY) {
 		name: "endLine2"
 	});
 	
-	fieldLayer.add(field);
-	fieldLayer.add(endLine1);
-	fieldLayer.add(endLine2);
+	fieldGroup.add(field);
+	fieldGroup.add(endLine1);
+	fieldGroup.add(endLine2);
 	
 	for (var i = 1; i < 100; i++) {
 		if (i % 5 == 0) {
@@ -510,7 +557,7 @@ function footballFieldFull(startX, startY) {
 				name: "line" + i
 			});
 			
-			fieldLayer.add(line);
+			fieldGroup.add(line);
 			
 			if (i % 10 == 0) {
 				// draw numbers
@@ -542,8 +589,8 @@ function footballFieldFull(startX, startY) {
 				
 				num2.setOffset(num2.getTextWidth() / 2, num2.getTextHeight() / 2);
 				
-				fieldLayer.add(num1);
-				fieldLayer.add(num2);
+				fieldGroup.add(num1);
+				fieldGroup.add(num2);
 			}
 		} else {
 			//draw hashes
@@ -583,12 +630,15 @@ function footballFieldFull(startX, startY) {
 				name: "hashRight" + i
 			});
 			
-			fieldLayer.add(sideline1);
-			fieldLayer.add(sideline2);
-			fieldLayer.add(hash1);
-			fieldLayer.add(hash2);
+			fieldGroup.add(sideline1);
+			fieldGroup.add(sideline2);
+			fieldGroup.add(hash1);
+			fieldGroup.add(hash2);
 		}
 	}
+	
+	fieldLayer.add(blankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
 }
@@ -604,6 +654,12 @@ function footballFieldHalf(startX, startY) {
 			top: -300,
 			bottom: 100
 		}
+	});
+	
+	var fieldGroup = new Kinetic.Group({
+		x: (CANVAS_WIDTH - FOOTBALL_WIDTH * SCALE) / 2,
+		y: 0,
+		name: "fieldGroup"
 	});
 	
 	var field = new Kinetic.Rect({
@@ -626,8 +682,8 @@ function footballFieldHalf(startX, startY) {
 		name: "endLine1"
 	});
 	
-	fieldLayer.add(field);
-	fieldLayer.add(endLine1);
+	fieldGroup.add(field);
+	fieldGroup.add(endLine1);
 	
 	for (var i = 1; i <= 50; i++) {
 		if (i % 5 == 0) {
@@ -640,7 +696,7 @@ function footballFieldHalf(startX, startY) {
 				name: "line" + i
 			});
 			
-			fieldLayer.add(line);
+			fieldGroup.add(line);
 			
 			if (i % 10 == 0) {
 				// draw numbers
@@ -672,8 +728,8 @@ function footballFieldHalf(startX, startY) {
 				
 				num2.setOffset(num2.getTextWidth() / 2, num2.getTextHeight() / 2);
 				
-				fieldLayer.add(num1);
-				fieldLayer.add(num2);
+				fieldGroup.add(num1);
+				fieldGroup.add(num2);
 			}
 		} else {
 			//draw hashes
@@ -713,14 +769,48 @@ function footballFieldHalf(startX, startY) {
 				name: "hashRight" + i
 			});
 			
-			fieldLayer.add(sideline1);
-			fieldLayer.add(sideline2);
-			fieldLayer.add(hash1);
-			fieldLayer.add(hash2);
+			fieldGroup.add(sideline1);
+			fieldGroup.add(sideline2);
+			fieldGroup.add(hash1);
+			fieldGroup.add(hash2);
 		}
 	}
 	
+	fieldLayer.add(blankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(fieldGroup);
+	
 	return fieldLayer;
+}
+
+function blankField(startX, startY) {
+	var fieldLayer = new Kinetic.Layer({
+		x: startX != null ? startX : START_X,
+		y: startY != null ? startY : START_Y,
+		name: "fieldLayer",
+		draggable: true,
+		dragConstraint: "vertical",
+		dragBounds: {
+			top: -300,
+			bottom: 100
+		}
+	});
+	
+	fieldLayer.add(blankBackground());
+	
+	return fieldLayer;
+}
+
+function blankBackground(width, height) {
+	return new Kinetic.Rect({
+		width: width >= CANVAS_WIDTH ? width : CANVAS_WIDTH,
+		height: height >= CANVAS_HEIGHT ? height : CANVAS_HEIGHT,
+		fill: "white",
+		//stroke: "black",
+		//strokeWidth: 1,
+		x: 0,
+		y: 0,
+		name: "blankBackground"
+	});
 }
 
 /* Articles */

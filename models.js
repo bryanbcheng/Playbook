@@ -52,7 +52,7 @@ var Play = new Schema({
 	name		: String
   , description	: String
   , type		: { type : String, enum: ['ultimate', 'soccer', 'football'] }
-  , size		: { type : String, enum: ['full', 'half'] }
+  , size		: { type : String, enum: ['full', 'half', 'empty'] }
   , teamColors	: [String]
   , teamShapes	: [String]
   , articles	: [Article]

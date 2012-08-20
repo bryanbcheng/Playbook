@@ -1,6 +1,6 @@
 /***** CSS RESET *****/
 html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, textarea, p, blockquote, pre,
+h1, h2, h3, h4, h5, h6, label, textarea, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
@@ -166,6 +166,13 @@ body {
 	text-decoration: underline;
 }
 
+/* 
+#play .name-edit {
+	font-family: sans;
+	font-size: 30px;
+}
+ */
+
 #play .desc {
 	float: left;
 	font-size: 14px;
@@ -269,6 +276,55 @@ body {
 	float: left;
 /* 	margin: 0 0 20px 0; */
 	width: 250px;
+}
+
+#play-contents .field-stats-container {
+/* 	//height: 20px; */
+/* 	overflow: auto; */
+}
+
+#field-type-icon, #field-size-icon {
+	display: inline-block;
+	float: left;
+	height: 20px;
+	width: 20px;
+}
+
+#field-type-icon {
+	background-image: url("/images/sportIconSet.png");
+	background-size: 80px 80px;
+}
+
+#field-type-icon.ultimate {
+	background-position: -20px -40px;
+}
+
+#field-type-icon.soccer {
+	background-position: 0px -40px;
+}
+
+#field-type-icon.football {
+	background-position: -20px 0px;
+}
+
+#field-type, #field-size {
+	float: left;
+}
+
+#field-size-icon {
+	background-image: url("/images/circleIconSet.png");
+}
+
+#field-size-icon.full {
+	background-position: -40px 0;
+}
+
+#field-size-icon.half {
+	background-position: -20px 0;
+}
+
+#field-size {
+
 }
 
 #play-contents .set-list-container {

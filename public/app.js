@@ -91,7 +91,7 @@ $(function() {
 		},
 		
 		serverDelete: function(data) {
-			this.trigger("clear");
+			this.trigger("clear", true);
 		},
 		
 		moveTo: function(x, y) {
@@ -402,8 +402,8 @@ $(function() {
 			return {
 				name: "untitled play",
 				description: "no description",
-				type: $("#fieldType").val() ? $("#fieldType").val() : "ultimate",
-				size: $("#fieldSize").val() ? $("#fieldSize").val() : "full",
+				type: $("#field-type").val() ? $("#field-type").val() : "ultimate",
+				size: $("#field-size").val() ? $("#field-size").val() : "full",
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
 			};
@@ -626,6 +626,7 @@ $(function() {
 				path.trigger("clear");
 			}
 			
+			this.model.off();
 			this.model.destroy();
 			this.remove();
 		},
@@ -786,6 +787,7 @@ $(function() {
 			// Remove article DOM
 			this.remove();
 			
+			this.model.off();
 			this.model.destroy();
 		},
 		
@@ -945,6 +947,7 @@ $(function() {
 			
 			this.remove();
 			
+			this.model.off();
 			this.model.destroy();
 		}
 	});
@@ -1039,6 +1042,8 @@ $(function() {
 			});
 			
 			// Delete model
+			this.model.off();
+			this.model.get("play").get("sets").remove(this.model);
 			this.model.destroy();
 			
 			// Set current set to next set if exists, otherwise, to prev set
@@ -1060,7 +1065,8 @@ $(function() {
 			$("#" + this.model.get("_id")).remove();
 			
 			// Delete model
-			this.model.destroy();
+			this.model.off();
+			this.model.destroy({wait: true});
 		},
 		
 		addPath: function(item) {
@@ -1272,17 +1278,17 @@ $(function() {
 		template: $("#play-contents-template").html(),
 		
 		events: {
-			"change #fieldType"	: "changeField",
-			"change #fieldSize"	: "changeField",
-			"click .add-set"	: "createSet",
-			"click .set-list"	: "changeSet",
-			"click .remove-set"	: "deleteSet",
-			"click .useForm"	: "useFormation",
-			"click .add-player"	: "addPlayer",
-			"click .add-ball"	: "addBall",
-			"click .add-cone"	: "addCone",
-			"click .add-ann"	: "addAnnotation",
-			"click .animate"	: "animateSets",
+			"change #field-type"	: "changeField",
+			"change #field-size"	: "changeField",
+			"click .add-set"		: "createSet",
+			"click .set-list"		: "changeSet",
+			"click .remove-set"		: "deleteSet",
+			"click .useForm"		: "useFormation",
+			"click .add-player"		: "addPlayer",
+			"click .add-ball"		: "addBall",
+			"click .add-cone"		: "addCone",
+			"click .add-ann"		: "addAnnotation",
+			"click .animate"		: "animateSets",
 		},
 		
 		initialize: function() {
@@ -1473,9 +1479,13 @@ $(function() {
 			this.model.get("sets").each(function(set) {
 				var path;
 				var point = {
-					x: x != null ? x : stage.get(".fieldLayer")[0].get(".playingField")[0].getWidth() / 2,
+					x: x != null ? x : stage.get(".fieldLayer")[0].get(".playingField")[0].getWidth() / 2 - START_X,
 					y: y != null ? y : stage.get(".fieldLayer")[0].get(".playingField")[0].getHeight() / 2 - START_Y
 				};
+				
+				point.x += stage.get(".fieldLayer")[0].get(".fieldGroup")[0].getX();
+				point.y += stage.get(".fieldLayer")[0].get(".fieldGroup")[0].getY();
+				
 				if (set.get("number") === 1)
 					path = new $.playbook.Path({
 						prevX: null,
@@ -1523,7 +1533,7 @@ $(function() {
 		},
 		
 		changeField: function(e) {
-			this.model.save({type: $("#fieldType").val(), size: $("#fieldSize").val()});
+			this.model.save({type: $("#field-type").val(), size: $("#field-size").val()});
 		},
 
 		currentSet: function() {
@@ -1596,7 +1606,6 @@ $(function() {
 				while (!articles.isEmpty()) {
 					articles.shift().trigger("clear");
 				}
-				
 				var formationType = $(".formationType").val();
 				
 				// Formation sport does not have to be same as field sport

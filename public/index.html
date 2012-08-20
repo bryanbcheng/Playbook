@@ -86,16 +86,22 @@
 	</script>
 	
 	<script type="text/template" id="play-contents-template">
-		<label class="sectionLabel">Field</label>
-		<select id="fieldType">
-			<option value="ultimate">Ultimate</option>
-			<option value="soccer">Soccer</option>
-			<option value="football">Football</option>
-		</select>
-		<select id="fieldSize">
-			<option value="full">Full</option>
-			<option value="half">Half</option>
-		</select>
+		<div class="field-stats-container">
+			<label class="sectionLabel">Field</label>
+			<div id="field-type-icon" class="{{type}}"></div>
+			<select id="field-type">
+				<option value="ultimate">Ultimate</option>
+				<option value="soccer">Soccer</option>
+				<option value="football">Football</option>
+			</select>
+			<div id="field-size-icon" class="{{size}}"></div>
+			<select id="field-size">
+				<option value="full">Full</option>
+				<option value="half">Half</option>
+				<option value="empty">None</option>
+			</select>
+			<br class="clear" />
+		</div>
 		<hr />
 		<div class="set-list-container">
 			<div class="set-list-area">

@@ -186,11 +186,15 @@ io.sockets.on('connection', function(socket) {
 			
 			var deleteSet = play.sets.id(data._id);
 			deleteSet.remove();
-			play.save();
-			
-			//socket.emit('set/' + data._id + ':delete', deleteSet);
-			socket.broadcast.emit('set/' + data._id + ':delete', deleteSet);
-			callback(null, deleteSet);	
+			play.save(function(err, play) {
+				if (err) {
+					return callback(new Error("Could not save play with _id=" + play._id));
+				}
+				
+				//socket.emit('set/' + data._id + ':delete', deleteSet);
+				socket.broadcast.emit('set/' + data._id + ':delete', deleteSet);
+				callback(null, deleteSet);	
+			});
 		});
 	});
 	
@@ -259,12 +263,17 @@ io.sockets.on('connection', function(socket) {
 				var deletePath = play.sets[i].paths.id(data._id);
 				if (deletePath) {
 					deletePath.remove();
-					play.save();
+					play.save(function(err, play) {
+						if (err) {
+							return callback(new Error("Could not save play with _id=" + play._id));
+						}
+						
+						//socket.emit('path/' + data._id + ':delete', deletePath);
+						socket.broadcast.emit('path/' + data._id + ':delete', deletePath);
+						callback(null, deletePath);
+					});
 					
-					//socket.emit('path/' + data._id + ':delete', deletePath);
-					socket.broadcast.emit('path/' + data._id + ':delete', deletePath);
-					callback(null, deletePath);
-					break;	
+					break;
 				}
 			}
 		});
@@ -333,11 +342,16 @@ io.sockets.on('connection', function(socket) {
 				var deleteAnnotation = play.sets[i].annotations.id(data._id);
 				if (deleteAnnotation) {
 					deleteAnnotation.remove();
-					play.save();
+					play.save(function(err, play) {
+						if (err) {
+							return callback(new Error("Could not save play with _id=" + play._id));
+						}						
+						
+						//socket.emit('annotation/' + data._id + ':delete', deleteAnnotation);
+						socket.broadcast.emit('annotation/' + data._id + ':delete', deleteAnnotation);
+						callback(null, deleteAnnotation);
+					});
 					
-					//socket.emit('annotation/' + data._id + ':delete', deleteAnnotation);
-					socket.broadcast.emit('annotation/' + data._id + ':delete', deleteAnnotation);
-					callback(null, deleteAnnotation);
 					break;	
 				}
 			}
@@ -405,11 +419,15 @@ io.sockets.on('connection', function(socket) {
 			
 			var deleteArticle = play.articles.id(data._id);
 			deleteArticle.remove();
-			play.save();
-			
-			//socket.emit('article/' + data._id + ':delete', deleteArticle);
-			socket.broadcast.emit('article/' + data._id + ':delete', deleteArticle);
-			callback(null, deleteArticle);	
+			play.save(function(err, play) {
+				if (err) {
+					return callback(new Error("Could not save play with _id=" + play._id));
+				}
+				
+				//socket.emit('article/' + data._id + ':delete', deleteArticle);
+				socket.broadcast.emit('article/' + data._id + ':delete', deleteArticle);
+				callback(null, deleteArticle);	
+			});
 		});
 	});
 });
