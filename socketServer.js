@@ -417,14 +417,12 @@ io.sockets.on('connection', function(socket) {
 				return callback(new Error("Could not find article with _id=" + data._id));
 			}
 			
-			console.log('asdf');
-			console.log(play);
 			var deleteArticle = play.articles.id(data._id);
+			console.log('basd');
+			console.log(deleteArticle);
 			deleteArticle.remove();
 			play.save(function(err, play) {
 				if (err) {
-					console.log(err);
-					console.log(play);
 					return callback(new Error("Could not save play"));
 				}
 				
