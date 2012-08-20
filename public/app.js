@@ -1167,6 +1167,8 @@ $(function() {
 			"blur .name-edit"	: "updateName",
 			"dblclick .desc"	: "editDescription",
 			"blur .desc-edit"	: "updateDescription",
+			"click .new-play"	: "newPlay",
+			"click .reset-play"	: "resetPlay",
 		},
 		
 		initialize: function() {
@@ -1198,6 +1200,66 @@ $(function() {
 		updateDescription: function(e) {
 			$(e.currentTarget).parent().removeClass("edit");
 			this.model.save({description: e.currentTarget.value});
+		},
+		
+		newPlay: function() {
+			var play = new $.playbook.Play({});
+			
+			play.save({}, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
+				}
+			});
+		},
+		
+		resetPlay: function() {
+			if (confirm("Resetting this play will remove all work done so far on this play. Are you sure you want to continue?")) {				
+				// Remove all articles
+				var articles = this.model.get("articles")
+				while (!articles.isEmpty()) {
+					articles.shift().trigger("clear");
+				}
+				
+				// Remove all sets
+				var sets = this.model.get("sets")
+				while (!sets.isEmpty()) {
+					sets.pop().trigger("clearAll");
+				}
+				
+				// Add three new sets
+				var newSet1 = new $.playbook.Set({number: 1,  play: this.model});
+				var newSet2 = new $.playbook.Set({number: 2,  play: this.model});
+				var newSet3 = new $.playbook.Set({number: 3,  play: this.model});
+				
+				newSet1.save({}, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("addIoBind");
+						model.get("play").trigger("change");
+						model.get("play").trigger("addNewSet", model);
+					}
+				});
+				newSet2.save({}, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("addIoBind");
+						model.get("play").trigger("change");
+						model.get("play").trigger("addNewSet", model);
+					}
+				});
+				newSet3.save({}, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("addIoBind");
+						model.get("play").trigger("change");
+						model.get("play").trigger("addNewSet", model);
+					}
+				});
+			} else {
+				console.log("Cancelled reset");
+			}
 		}
 	});
 	
@@ -1219,7 +1281,6 @@ $(function() {
 			"click .add-cone"	: "addCone",
 			"click .add-ann"	: "addAnnotation",
 			"click .animate"	: "animateSets",
-			"click .reset-play"	: "resetPlay",
 		},
 		
 		initialize: function() {
@@ -1651,54 +1712,6 @@ $(function() {
 				view.model.trigger("animate", nextSet, initialSet);
 			});
 		},
-		
-		resetPlay: function() {
-			if (confirm("Resetting this play will remove all work done so far on this play. Are you sure you want to continue?")) {				
-				// Remove all articles
-				var articles = this.model.get("articles")
-				while (!articles.isEmpty()) {
-					articles.shift().trigger("clear");
-				}
-				
-				// Remove all sets
-				var sets = this.model.get("sets")
-				while (!sets.isEmpty()) {
-					sets.pop().trigger("clearAll");
-				}
-				
-				// Add three new sets
-				var newSet1 = new $.playbook.Set({number: 1,  play: this.model});
-				var newSet2 = new $.playbook.Set({number: 2,  play: this.model});
-				var newSet3 = new $.playbook.Set({number: 3,  play: this.model});
-				
-				newSet1.save({}, {
-					wait: true,
-					success: function(model, response) {
-						model.trigger("addIoBind");
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-					}
-				});
-				newSet2.save({}, {
-					wait: true,
-					success: function(model, response) {
-						model.trigger("addIoBind");
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-					}
-				});
-				newSet3.save({}, {
-					wait: true,
-					success: function(model, response) {
-						model.trigger("addIoBind");
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-					}
-				});
-			} else {
-				console.log("Cancelled reset");
-			}
-		}
 	});
 	
 	$.playbook.Router = Backbone.Router.extend({

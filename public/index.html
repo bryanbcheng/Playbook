@@ -37,7 +37,9 @@
 			<div class="right-back">
 				<div class="left-back">
 					<div id="left-panel">
-						<div id="play"></div>
+						<div id="play">
+							<button id="new-play">New Play</button>
+						</div>
 						<div id="canvas"></div>
 						<div id="instructions">
 							Instructions:<br>
@@ -61,17 +63,19 @@
 	<!-- Templates -->
 	
 	<script type="text/template" id="play-template">
-		<div>
-			<div class="name">
-				<h2>Name: {{name}}</h2>
-				<input class="name-edit" value="{{name}}"></input>
-			</div>
-			<div class="desc">
-				<p>
-					Description: {{description}}
-				</p>
-				<textarea class="desc-edit">{{description}}</textarea>
-			</div>
+		<div class="name">
+			<h2>Name: {{name}}</h2>
+			<input class="name-edit" value="{{name}}"></input>
+		</div>
+		<div class="desc">
+			<p>
+				Description: {{description}}
+			</p>
+			<textarea class="desc-edit">{{description}}</textarea>
+		</div>
+		<div class="actions">
+			<div class="new-play">New</div>
+			<div class="reset-play">Reset</div>
 		</div>
 	</script>
 	
@@ -172,7 +176,6 @@
 			<div class="animation-speed"></div>
 			<br class="clear"/>
 		</div>
-		<button class="reset-play">Reset Play</button>
 		</div>
 	</script>
 	
