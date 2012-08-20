@@ -1321,9 +1321,11 @@ $(function() {
 		
 		render: function() {
 			// Sort set list
-			this.model.get("sets").sortBy(function(set) {
+			var sortedSets = this.model.get("sets").sortBy(function(set) {
 				return set.get("number");
 			});
+			this.model.set("sets", sortedSets, {silent: true});
+			
 			var html = Mustache.render(this.template, this.model.toJSON());
 			
 			// Hack to select correct field type and size
