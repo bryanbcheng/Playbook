@@ -822,7 +822,13 @@ function createArticle(item) {
 		draggable: true
 	});
 	
-	group.add(createArticleShape(item));
+	if (item.type === "player") {
+		group.add(createPlayer(item));
+	} else if (item.type === "ball") {
+		group.add(createBall(item));
+	} else if (item.type === "cone") {
+		group.add(createCone(item));
+	}
 	
 	if (item.label)
 		group.add(createLabel(item));
@@ -832,20 +838,20 @@ function createArticle(item) {
 	return group;
 }
 
-function createArticleShape(item) {
-	if (item.shape === "circle") {
+function createPlayer(player) {
+	if (player.shape === "circle") {
 		return new Kinetic.Circle({
 			radius: 1.5 * SCALE,
-			fill: item.color,
+			fill: player.color,
 			stroke: "black",
 			strokeWidth: 1,
 			draggable: true
 		});
-	} else if (item.shape === "square") {
+	} else if (player.shape === "square") {
 		return new Kinetic.Rect({
 			width: 3 * SCALE,
 			height: 3 * SCALE,
-			fill: item.color,
+			fill: player.color,
 			stroke: "black",
 			strokeWidth: 1,
 			draggable: true,
@@ -854,11 +860,11 @@ function createArticleShape(item) {
 				y: 1.5 * SCALE
 			}
 		});
-	} else if (item.shape === "triangle") {
+	} else if (player.shape === "triangle") {
 		return new Kinetic.RegularPolygon({
 			sides: 3,
 			radius: 3 / Math.sqrt(3) * SCALE,
-			fill: item.color,
+			fill: player.color,
 			stroke: "black",
 			strokeWidth: 1,
 			offset: {
@@ -867,7 +873,7 @@ function createArticleShape(item) {
 			draggable: true,
 			
 		});
-	} else if (item.shape === "x") {
+	} else if (player.shape === "x") {
 		return new Kinetic.Shape({
 			drawFunc: function(context) {
 				context.beginPath();
@@ -879,12 +885,37 @@ function createArticleShape(item) {
 				this.fill(context);
 				this.stroke(context);
 			},
-			//fill: item.color,
-			stroke: item.color,
+			//fill: player.color,
+			stroke: player.color,
 			strokeWidth: 5,
 			draggable: true,
 		});
 	}
+}
+
+function createBall(ball) {
+	return new Kinetic.Circle({
+		radius: 1.5 * SCALE,
+		fill: ball.color,
+		stroke: "black",
+		strokeWidth: 1,
+		draggable: true
+	});
+}
+
+function createCone(cone) {
+	return new Kinetic.RegularPolygon({
+		sides: 3,
+		//radius: 1.5 * SCALE,
+		radius: 3 / Math.sqrt(3) * SCALE,
+		fill: cone.color,
+		stroke: "black",
+		strokeWidth: 1,
+		offset: {
+			y: -0.4 * SCALE
+		},
+		draggable: true
+	});
 }
 
 function createLabel(label) {
