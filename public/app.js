@@ -1320,6 +1320,10 @@ $(function() {
 		},
 		
 		render: function() {
+			// Sort set list
+			this.model.get("sets").sortBy(function(set) {
+				return set.get("number");
+			});
 			var html = Mustache.render(this.template, this.model.toJSON());
 			
 			// Hack to select correct field type and size

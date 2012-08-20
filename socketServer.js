@@ -418,8 +418,6 @@ io.sockets.on('connection', function(socket) {
 			}
 			
 			var deleteArticle = play.articles.id(data._id);
-			console.log('basd');
-			console.log(deleteArticle);
 			deleteArticle.remove();
 			play.save(function(err, play) {
 				if (err) {
