@@ -146,7 +146,31 @@ body {
 
 
 #play {
+	margin: 0 1px;
+	height: 60px;
+	overflow:hidden;
 	width: 800px;
+}
+
+#play .name {
+	float: left;
+	font-size: 30px;
+	height: 30px;
+	line-height: 30px;
+	margin-right: 50px;
+	width: 650px;
+}
+
+#play .name:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+#play .desc {
+	float: left;
+	font-size: 14px;
+	margin-right: 50px;
+	width: 650px;
 }
 
 #play .name h2, #play .desc p {
@@ -163,6 +187,46 @@ body {
 
 #play .edit input, #play .edit textarea {
 	display: block;
+}
+
+#play .actions {
+	float: right;
+	width: 100px;
+}
+
+#play .action-container {
+	float: left;
+	height: 60px;
+	position: relative;
+	width: 50px;
+}
+
+#play .action-container:hover {
+	background: #EEE;
+	cursor: pointer;
+}
+
+#play .action-icon {
+	background-image: url("/images/iconSet.png");
+	height: 42px;
+	margin: 0 9px;
+	width: 32px;
+}
+
+#play .action-name {
+	bottom: 5px;
+	font-size: 14px;
+	position: absolute;
+	text-align: center;
+	width: 50px;
+}
+
+#play .new-play .action-icon {
+	background-position: -31px -164px;
+}
+
+#play .reset-play .action-icon {
+	background-position: -248px -123px;
 }
 
 #canvas {
@@ -230,6 +294,7 @@ body {
 }
 
 #play-contents .set-list tbody {
+	cursor: pointer;
 	display: block;
 	height: 100px;
 	overflow-x: auto;

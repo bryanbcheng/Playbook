@@ -63,8 +63,18 @@
 	<!-- Templates -->
 	
 	<script type="text/template" id="play-template">
+		<div class="actions">
+			<div class="action-container new-play">
+				<div class="action-icon"></div>
+				<div class="action-name">New</div>
+			</div>
+			<div class="action-container reset-play">
+				<div class="action-icon"></div>
+				<div class="action-name">Reset</div>
+			</div>
+		</div>
 		<div class="name">
-			<h2>Name: {{name}}</h2>
+			<h2>{{name}}</h2>
 			<input class="name-edit" value="{{name}}"></input>
 		</div>
 		<div class="desc">
@@ -72,10 +82,6 @@
 				Description: {{description}}
 			</p>
 			<textarea class="desc-edit">{{description}}</textarea>
-		</div>
-		<div class="actions">
-			<div class="new-play">New</div>
-			<div class="reset-play">Reset</div>
 		</div>
 	</script>
 	

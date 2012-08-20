@@ -1163,12 +1163,13 @@ $(function() {
 		template: $("#play-template").html(),
 		
 		events: {
-			"dblclick .name"	: "editName",
-			"blur .name-edit"	: "updateName",
-			"dblclick .desc"	: "editDescription",
-			"blur .desc-edit"	: "updateDescription",
-			"click .new-play"	: "newPlay",
-			"click .reset-play"	: "resetPlay",
+			"click .name"			: "editName",
+			"blur .name-edit"		: "updateName",
+			"keypress .name-edit"	: "updateName",
+			"dblclick .desc"		: "editDescription",
+			"blur .desc-edit"		: "updateDescription",
+			"click .new-play"		: "newPlay",
+			"click .reset-play"		: "resetPlay",
 		},
 		
 		initialize: function() {
@@ -1188,6 +1189,7 @@ $(function() {
 		},
 		
 		updateName: function(e) {
+			if (e.type === "keypress" && e.keyCode != 13) return;
 			$(e.currentTarget).parent().removeClass("edit");
 			this.model.save({name: e.currentTarget.value});
 		},
