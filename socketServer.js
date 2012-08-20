@@ -188,7 +188,7 @@ io.sockets.on('connection', function(socket) {
 			deleteSet.remove();
 			play.save(function(err, play) {
 				if (err) {
-					return callback(new Error("Could not save play with _id=" + play._id));
+					return callback(new Error("Could not save play"));
 				}
 				
 				//socket.emit('set/' + data._id + ':delete', deleteSet);
@@ -265,7 +265,7 @@ io.sockets.on('connection', function(socket) {
 					deletePath.remove();
 					play.save(function(err, play) {
 						if (err) {
-							return callback(new Error("Could not save play with _id=" + play._id));
+							return callback(new Error("Could not save play"));
 						}
 						
 						//socket.emit('path/' + data._id + ':delete', deletePath);
@@ -344,7 +344,7 @@ io.sockets.on('connection', function(socket) {
 					deleteAnnotation.remove();
 					play.save(function(err, play) {
 						if (err) {
-							return callback(new Error("Could not save play with _id=" + play._id));
+							return callback(new Error("Could not save play"));
 						}						
 						
 						//socket.emit('annotation/' + data._id + ':delete', deleteAnnotation);
@@ -421,7 +421,9 @@ io.sockets.on('connection', function(socket) {
 			deleteArticle.remove();
 			play.save(function(err, play) {
 				if (err) {
-					return callback(new Error("Could not save play with _id=" + play._id));
+					console.log(err);
+					console.log(play);
+					return callback(new Error("Could not save play"));
 				}
 				
 				//socket.emit('article/' + data._id + ':delete', deleteArticle);
