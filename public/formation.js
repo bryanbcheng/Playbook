@@ -24,70 +24,58 @@ function formationUltimate(formationType) {
 	}
 }
 
+
 function verticalStack() {
 	return [{
 		x: ULTIMATE_WIDTH / 2 * SCALE,
-		y: ULTIMATE_HEIGHT / 2 * SCALE,
+		y: (ULTIMATE_HEIGHT - ULTIMATE_ENDZONE - ULTIMATE_BRICK) * SCALE,
 		type: "player",
 		label: "H",
 		team: "team0"
-	}
-	
-	]
+	}, {
+		x: (ULTIMATE_WIDTH / 2 - 8) * SCALE,
+		y: (ULTIMATE_HEIGHT - ULTIMATE_ENDZONE - ULTIMATE_BRICK + 5) * SCALE,
+		type: "player",
+		label: "H",
+		team: "team0"
+	}, {
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
+		y: (ULTIMATE_HEIGHT / 2 + 5) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team0"
+	}, {
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
+		y: (ULTIMATE_HEIGHT / 2) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team0"
+	}, {
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
+		y: (ULTIMATE_HEIGHT / 2 - 5) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team0"
+	}, {
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
+		y: (ULTIMATE_HEIGHT / 2 - 10) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team0"
+	}, {
+		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
+		y: (ULTIMATE_HEIGHT / 2 - 15) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team0"
+	}, {
+		x: (ULTIMATE_WIDTH / 2 + 2) * SCALE,
+		y: (ULTIMATE_HEIGHT - ULTIMATE_ENDZONE - ULTIMATE_BRICK - 1) * SCALE,
+		type: "ball",
+		label: "",
+		team: ""
+	}];
 }
-
-// 
-// function verticalStack() {
-// 	return [{
-// 		x: ULTIMATE_WIDTH / 2 * SCALE,
-// 		y: (ULTIMATE_HEIGHT - ULTIMATE_ENDZONE - ULTIMATE_BRICK) * SCALE,
-// 		type: "player",
-// 		label: "H",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 - 8) * SCALE,
-// 		y: (ULTIMATE_HEIGHT - ULTIMATE_ENDZONE - ULTIMATE_BRICK + 5) * SCALE,
-// 		type: "player",
-// 		label: "H",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
-// 		y: (ULTIMATE_HEIGHT / 2 + 5) * SCALE,
-// 		type: "player",
-// 		label: "C",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
-// 		y: (ULTIMATE_HEIGHT / 2) * SCALE,
-// 		type: "player",
-// 		label: "C",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
-// 		y: (ULTIMATE_HEIGHT / 2 - 5) * SCALE,
-// 		type: "player",
-// 		label: "C",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
-// 		y: (ULTIMATE_HEIGHT / 2 - 10) * SCALE,
-// 		type: "player",
-// 		label: "C",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 - 3) * SCALE,
-// 		y: (ULTIMATE_HEIGHT / 2 - 15) * SCALE,
-// 		type: "player",
-// 		label: "C",
-// 		team: "team0"
-// 	}, {
-// 		x: (ULTIMATE_WIDTH / 2 + 2) * SCALE,
-// 		y: (ULTIMATE_HEIGHT - ULTIMATE_ENDZONE - ULTIMATE_BRICK - 1) * SCALE,
-// 		type: "ball",
-// 		label: "",
-// 		team: ""
-// 	}];
-// }
 
 function horizontalStack() {
 	return [{
