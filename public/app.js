@@ -1381,8 +1381,16 @@ $(function() {
 				});
 			}});
 			
-			$(html).find(".animate-control").on("click", function(e) {
-				$(this).parent().siblings(".animation").show();
+			$(html).find(".animate-control").on("mouseover", function(e) {
+				$(this).find(".animation").fadeIn(500, "swing");
+				
+				$(this).on("mouseout", function(e) {
+					if ($(e.relatedTarget).closest(".animate-control").length) return;
+					
+					$(this).find(".animation").fadeOut(500, "swing");
+					
+					$(this).off("mouseout");
+				});
 			});
 			var currSpeed = $(".animation-speed").slider("value");
 			$(html).find(".animation-speed").slider({
