@@ -65,11 +65,11 @@
 	
 	<script type="text/template" id="play-template">
 		<div class="actions">
-			<div class="action-container new-play">
+			<div class="action-container new-play" title="New Play">
 				<div class="action-icon"></div>
 				<div class="action-name">New</div>
 			</div>
-			<div class="action-container reset-play">
+			<div class="action-container reset-play" title="Reset Play">
 				<div class="action-icon"></div>
 				<div class="action-name">Reset</div>
 			</div>
@@ -124,8 +124,13 @@
 				</table>
 			</div>
 			<div class="set-action-container">
-				<div class="set-action"><a class="add-set">+</a></div>
-				<div class="set-action"><a class="remove-set">-</a></div>
+				<div class="set-action"><a class="add-set" title="Add New Set">+</a></div>
+				<div class="set-action"><a class="remove-set" title="Delete Selected Set">-</a></div>
+				<div class="set-action"><a class="first-set" title="Go To First Set"></a></div>
+				<div class="set-action"><a class="prev-set" title="Go To Previous Set"></a></div>
+				<div class="set-action"><a class="animate" title="Animate"></a></div>
+				<div class="set-action"><a class="next-set" title="Go To Next Set"></a></div>
+				<div class="set-action"><a class="last-set" title="Go To Last Set"></a></div>
 				<br class="clear"/>
 			</div>
 		</div>
@@ -183,8 +188,8 @@
 		<button class="add-cone">Add Cone</button>
 		<button class="add-ann">Add Annotation</button>
 		<div class="animation">
-			<button class="animate">Animate!</button>
-			<br class="clear"/>
+<!-- 			<button class="animate">Animate!</button> -->
+<!-- 			<br class="clear"/> -->
 			Speed: <label class="animation-speed-display"></label>
 			<div class="animation-speed"></div>
 			<br class="clear"/>

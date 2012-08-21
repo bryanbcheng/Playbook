@@ -1284,6 +1284,10 @@ $(function() {
 			"click .add-set"		: "createSet",
 			"click .set-list"		: "changeSet",
 			"click .remove-set"		: "deleteSet",
+			"click .first-set"		: "firstSet",
+			"click .prev-set"		: "prevSet",
+			"click .next-set"		: "nextSet",
+			"click .last-set"		: "lastSet",
 			"click .useForm"		: "useFormation",
 			"click .add-player"		: "addPlayer",
 			"click .add-ball"		: "addBall",
@@ -1611,6 +1615,26 @@ $(function() {
 			currSet.trigger("clear");
 		},
 		
+		firstSet: function(e) {
+			var firstSet = $(".set-list").find(".set-row").first();
+			if (firstSet.length !== 0) firstSet.click();
+		},
+		
+		prevSet: function(e) {
+			var prevSet = $('.set-list').find(".selected").prev();
+			if (prevSet.length !== 0) prevSet.click();
+		},
+		
+		nextSet: function(e) {
+			var nextSet = $('.set-list').find(".selected").next();
+			if (nextSet.length !== 0) nextSet.click();
+		},
+		
+		lastSet: function(e) {
+			var lastSet = $(".set-list").find(".set-row").last();
+			if (lastSet.length !== 0) lastSet.click();
+		},
+		
 		useFormation: function() {
 			if ($(".formationType").val() === "default") return;
 			if (confirm("Selecting a formation removes all items currently in your play. Are you sure you want to continue?")) {
@@ -1792,11 +1816,11 @@ function print() {
 function changeSet(e) {
 	if (e.target.tagName === "BODY") {
 		if (e.keyCode === 37 || e.keyCode === 38) {
-			var prevSet = $('.set-list').find(".selected").prev();
-			if (prevSet.length !== 0) prevSet.click();
+			$(".prev-set").click();
 		} else if (e.keyCode === 39 || e.keyCode === 40) {
-			var nextSet = $('.set-list').find(".selected").next();
-			if (nextSet.length !== 0) nextSet.click();
+			$(".next-set").click();
+		} else if (e.charCode === 32) {
+			$(".animate").click();
 		}
 	}
 }

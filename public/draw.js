@@ -4,6 +4,8 @@ var CANVAS_WIDTH = 800;
 var CANVAS_HEIGHT = 600;
 var START_X = 0;
 var START_Y = 0;
+var DRAG_TOP = -300;
+var DRAG_BOTTOM = 50;
 
 /* ULTIMATE CONSTANTS */
 var ULTIMATE_WIDTH = 40;
@@ -40,17 +42,7 @@ function ultimateField(size, startX, startY) {
 }
 
 function ultimateFieldFull(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
-		x: startX != null ? startX : START_X,
-		y: startY != null ? startY : START_Y,
-		name: "fieldLayer",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: -300,
-			bottom: 100
-		}
-	});
+	var fieldLayer = createFieldLayer(startX, startY);
 	
 	var fieldGroup = new Kinetic.Group({
 		x: (CANVAS_WIDTH - ULTIMATE_WIDTH * SCALE) / 2,
@@ -146,17 +138,7 @@ function ultimateFieldFull(startX, startY) {
 }
 
 function ultimateFieldHalf(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
-		x: startX != null ? startX : START_X,
-		y: startY != null ? startY : START_Y,
-		name: "fieldLayer",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: -300,
-			bottom: 100
-		}
-	});
+	var fieldLayer = createFieldLayer(startX, startY);
 	
 	var fieldGroup = new Kinetic.Group({
 		x: (CANVAS_WIDTH - ULTIMATE_WIDTH * SCALE) / 2,
@@ -233,17 +215,7 @@ function soccerField(size, startX, startY) {
 }
 
 function soccerFieldFull(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
-		x: startX != null ? startX : START_X,
-		y: startY != null ? startY : START_Y,
-		name: "fieldLayer",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: -300,
-			bottom: 100
-		}
-	});
+	var fieldLayer = createFieldLayer(startX, startY);
 	
 	var fieldGroup = new Kinetic.Group({
 		x: (CANVAS_WIDTH - SOCCER_WIDTH * SCALE) / 2,
@@ -391,17 +363,7 @@ function soccerFieldFull(startX, startY) {
 }
 
 function soccerFieldHalf(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
-		x: startX != null ? startX : START_X,
-		y: startY != null ? startY : START_Y,
-		name: "fieldLayer",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: -300,
-			bottom: 100
-		}
-	});
+	var fieldLayer = createFieldLayer(startX, startY);
 	
 	var fieldGroup = new Kinetic.Group({
 		x: (CANVAS_WIDTH - SOCCER_WIDTH * SCALE) / 2,
@@ -495,17 +457,7 @@ function footballField(size, startX, startY) {
 }
 
 function footballFieldFull(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
-		x: startX != null ? startX : START_X,
-		y: startY != null ? startY : START_Y,
-		name: "fieldLayer",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: -300,
-			bottom: 100
-		}
-	});
+	var fieldLayer = createFieldLayer(startX, startY);
 	
 	var fieldGroup = new Kinetic.Group({
 		x: (CANVAS_WIDTH - FOOTBALL_WIDTH * SCALE) / 2,
@@ -644,17 +596,7 @@ function footballFieldFull(startX, startY) {
 }
 
 function footballFieldHalf(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
-		x: startX != null ? startX : START_X,
-		y: startY != null ? startY : START_Y,
-		name: "fieldLayer",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: -300,
-			bottom: 100
-		}
-	});
+	var fieldLayer = createFieldLayer(startX, startY);
 	
 	var fieldGroup = new Kinetic.Group({
 		x: (CANVAS_WIDTH - FOOTBALL_WIDTH * SCALE) / 2,
@@ -783,21 +725,25 @@ function footballFieldHalf(startX, startY) {
 }
 
 function blankField(startX, startY) {
-	var fieldLayer = new Kinetic.Layer({
+	var fieldLayer = createFieldLayer(startX, startY);
+	
+	fieldLayer.add(blankBackground());
+	
+	return fieldLayer;
+}
+
+function createFieldLayer(startX, startY) {
+	return new Kinetic.Layer({
 		x: startX != null ? startX : START_X,
 		y: startY != null ? startY : START_Y,
 		name: "fieldLayer",
 		draggable: true,
 		dragConstraint: "vertical",
 		dragBounds: {
-			top: -300,
-			bottom: 100
+			top: DRAG_TOP,
+			bottom: DRAG_BOTTOM
 		}
 	});
-	
-	fieldLayer.add(blankBackground());
-	
-	return fieldLayer;
 }
 
 function blankBackground(width, height) {
