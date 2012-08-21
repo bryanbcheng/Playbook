@@ -252,6 +252,7 @@ io.sockets.on('connection', function(socket) {
 	
 	// path:delete
 	socket.on('path:delete', function(data, callback) {
+		console.log('pathClear');
 		Play.findOne({'sets.paths._id': data._id}, function(err, play) {
 			if (err)
 				return callback(err);
@@ -265,6 +266,7 @@ io.sockets.on('connection', function(socket) {
 					deletePath.remove();
 					play.save(function(err, play) {
 						if (err) {
+							console.log('pathError');
 							return callback(new Error("Could not save play"));
 						}
 						
@@ -410,7 +412,7 @@ io.sockets.on('connection', function(socket) {
 	
 	// article:delete
 	socket.on('article:delete', function(data, callback) {
-		console.log('counter');
+		console.log('articleClear');
 		Play.findOne({'articles._id': data._id}, function(err, play) {
 			if (err)
 				return callback(err);
@@ -422,6 +424,7 @@ io.sockets.on('connection', function(socket) {
 			deleteArticle.remove();
 			play.save(function(err, play) {
 				if (err) {
+					console.log('ArticleError');
 					return callback(new Error("Could not save play"));
 				}
 				
