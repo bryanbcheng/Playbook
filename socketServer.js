@@ -410,6 +410,7 @@ io.sockets.on('connection', function(socket) {
 	
 	// article:delete
 	socket.on('article:delete', function(data, callback) {
+		console.log('counter');
 		Play.findOne({'articles._id': data._id}, function(err, play) {
 			if (err)
 				return callback(err);
