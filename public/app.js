@@ -1381,12 +1381,16 @@ $(function() {
 				});
 			}});
 			
+			$(html).find(".animate-control").on("click", function(e) {
+				$(this).parent().siblings(".animation").show();
+			});
 			var currSpeed = $(".animation-speed").slider("value");
 			$(html).find(".animation-speed").slider({
 				value: currSpeed ? currSpeed : 1.5,
 				min: 0.5,
 				max: 2.5,
 				step: 0.5,
+				orientation: "vertical",
 				slide: function(event, ui) {
 					$(html).find(".animation-speed-display").html(ui.value + "x");
 				}

@@ -28,6 +28,7 @@
 	<script src="/app.js"></script>
 	
 	<div id="header">
+		<img id="icon" src="/images/playbookIcon.png" />
 		<h1>PlayBook</h1>
 	</div>
 	
@@ -68,6 +69,10 @@
 			<div class="action-container new-play" title="New Play">
 				<div class="action-icon"></div>
 				<div class="action-name">New</div>
+			</div>
+			<div class="action-container new-formation" title="New Formation">
+				<div class="action-icon"></div>
+				<div class="action-name">Formation</div>
 			</div>
 			<div class="action-container reset-play" title="Reset Play">
 				<div class="action-icon"></div>
@@ -129,8 +134,14 @@
 				<div class="set-action"><a class="first-set" title="Go To First Set"></a></div>
 				<div class="set-action"><a class="prev-set" title="Go To Previous Set"></a></div>
 				<div class="set-action"><a class="animate" title="Animate"></a></div>
+				<div class="set-action"><a class="animate-control" title="Animatation Speed"></a></div>
 				<div class="set-action"><a class="next-set" title="Go To Next Set"></a></div>
 				<div class="set-action"><a class="last-set" title="Go To Last Set"></a></div>
+				<div class="animation">
+					<div class="animation-speed"></div>
+					Speed: <label class="animation-speed-display"></label>
+					<br class="clear"/>
+				</div>
 				<br class="clear"/>
 			</div>
 		</div>
@@ -169,30 +180,25 @@
 		<div id="team0" class="team">
 			<span>Team 1</span>
 			<br />
-			<button class="add-player">Add Player</button>
 			<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
-			
 			<div id="shape0" class="select-shape" value="{{teamShapes.0}}"></div>
+			<a class="add-player">Add Player</a>
 			<br class="clear"/>
 		</div>
 		<div id="team1" class="team">
 			<span>Team 2</span>
 			<br />
-			<button class="add-player">Add Player</button>
 			<input id="color1" class="select-color" value="{{teamColors.1}}" type="hidden" />
 			<div id="shape1" class="select-shape" value="{{teamShapes.1}}"></div>
+			<a class="add-player">Add Player</a>
 			<br class="clear"/>
 		</div>
 		<hr />
-		<button class="add-ball">Add Ball</button>
-		<button class="add-cone">Add Cone</button>
-		<button class="add-ann">Add Annotation</button>
-		<div class="animation">
-<!-- 			<button class="animate">Animate!</button> -->
-<!-- 			<br class="clear"/> -->
-			Speed: <label class="animation-speed-display"></label>
-			<div class="animation-speed"></div>
-			<br class="clear"/>
+		<label class="sectionLabel">Extras</label>
+		<div class="add-items">
+			<a class="add-ball">Add Ball</a>
+			<a class="add-cone">Add Cone</a>
+			<a class="add-ann">Add Note</a>
 		</div>
 		</div>
 	</script>
