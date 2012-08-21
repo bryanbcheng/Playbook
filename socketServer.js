@@ -422,8 +422,9 @@ io.sockets.on('connection', function(socket) {
 			
 			var deleteArticle = play.articles.id(data._id);
 			deleteArticle.remove();
+			var savePlay = play;
 			setTimeout(play.save(function(err, play) {
-				console.log('whatever:'+deleteArticle);
+				console.log('whatever:'+deleteArticle+' :playObject: '+require('util').inspect(savePlay));
 				if (err) {
 					console.log('ArticleError');
 					return callback(new Error("Could not save play"));
