@@ -422,7 +422,7 @@ io.sockets.on('connection', function(socket) {
 			
 			var deleteArticle = play.articles.id(data._id);
 			deleteArticle.remove();
-			play.save(function(err, play) {
+			setTimeout(play.save(function(err, play) {
 				if (err) {
 					console.log('ArticleError');
 					return callback(new Error("Could not save play"));
@@ -431,7 +431,7 @@ io.sockets.on('connection', function(socket) {
 				//socket.emit('article/' + data._id + ':delete', deleteArticle);
 				socket.broadcast.emit('article/' + data._id + ':delete', deleteArticle);
 				callback(null, deleteArticle);	
-			});
+			}), 5000);
 		});
 	});
 });
