@@ -252,7 +252,6 @@ io.sockets.on('connection', function(socket) {
 	
 	// path:delete
 	socket.on('path:delete', function(data, callback) {
-		console.log('pathClear');
 		Play.findOne({'sets.paths._id': data._id}, function(err, play) {
 			if (err)
 				return callback(err);
@@ -266,7 +265,6 @@ io.sockets.on('connection', function(socket) {
 					deletePath.remove();
 					play.save(function(err, play) {
 						if (err) {
-							console.log('pathError');
 							return callback(new Error("Could not save play"));
 						}
 						
@@ -412,7 +410,6 @@ io.sockets.on('connection', function(socket) {
 	
 	// article:delete
 	socket.on('article:delete', function(data, callback) {
-		console.log('articleClear');
 		Play.findOne({'articles._id': data._id}, function(err, play) {
 			if (err)
 				return callback(err);
@@ -422,18 +419,15 @@ io.sockets.on('connection', function(socket) {
 			
 			var deleteArticle = play.articles.id(data._id);
 			deleteArticle.remove();
-			var savePlay = play;
-			setTimeout(play.save(function(err, play) {
-				console.log('whatever:'+deleteArticle+' :playObject: '+require('util').inspect(savePlay));
+			play.save(function(err, play) {
 				if (err) {
-					console.log('ArticleError');
 					return callback(new Error("Could not save play"));
 				}
 				
 				//socket.emit('article/' + data._id + ':delete', deleteArticle);
 				socket.broadcast.emit('article/' + data._id + ':delete', deleteArticle);
 				callback(null, deleteArticle);	
-			}), 5000);
+			});
 		});
 	});
 });
