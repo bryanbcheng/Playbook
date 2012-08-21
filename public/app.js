@@ -467,7 +467,7 @@ $(function() {
 		
 			this.model.on('addPathShape', this.addPathShape, this);
 			this.model.on('removePathShape', this.removePathShape, this);
-			this.model.on('show', this.show, this);
+// 			this.model.on('show', this.show, this);
 			this.model.on('editLabel', this.editLabel, this);
 			this.model.on('change', this.render, this);
 			this.model.on('changeColor', this.changeColor, this);
@@ -503,10 +503,10 @@ $(function() {
 			if (index !== -1) this.paths.splice(index, 1);
 		},
 		
-		show: function() {
-			this.$el.siblings().removeClass("selected");
-			this.$el.addClass("selected");
-		},
+// 		show: function() {
+// 			this.$el.siblings().removeClass("selected");
+// 			this.$el.addClass("selected");
+// 		},
 		
 		editLabel: function(e) {
 			this.$el.find(".label").focus();
@@ -592,6 +592,9 @@ $(function() {
 		},
 		
 		selectArticle: function() {
+			this.$el.siblings().removeClass("selected");
+			this.$el.addClass("selected");
+		
 			var tempModel = this.model;
 			this.model.get("play").get("articles").each(function(article) {
 				if (article.get("select") && article.get("_id") !== tempModel.get("_id"))
@@ -607,6 +610,8 @@ $(function() {
 		},
 		
 		unselectArticle: function() {
+			this.$el.removeClass("selected");
+		
 			if (this.model.get("select")) {
 				this.model.set("select", false);
 				
@@ -675,8 +680,6 @@ $(function() {
 			
 			// Shape event handlers
 			this.shape.on('click', function(e) {
-				view.article.trigger("show");
-				
 				// Move select shape to selected article
 				view.article.trigger("selectArticle");
 			});
@@ -686,8 +689,6 @@ $(function() {
 			});
 				
 			this.shape.on('dragstart', function(e) {
-				view.article.trigger("show");
-				
 				// Move select shape to selected article
 				view.article.trigger("selectArticle");
 			});
@@ -1482,6 +1483,7 @@ $(function() {
 			
 			this.model.trigger("addArticle", item);
 		
+			var count = 0, numSets = this.model.get("sets").length;
 			this.model.get("sets").each(function(set) {
 				var path;
 				var point = {
@@ -1514,12 +1516,16 @@ $(function() {
 						set: set,
 						articleId: item.get("_id")
 					});
-					
+				
 				path.save({}, {
 					wait: true,
 					success: function(model, response) {
 						model.trigger("addIoBind");
 						set.trigger("addPath", path);
+						
+						if (++count == numSets) {
+							item.trigger("selectArticle");
+						}
 					}
 				});
 				
