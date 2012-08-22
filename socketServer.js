@@ -54,8 +54,8 @@ io.sockets.on('connection', function(socket) {
 		var newPlay = new Play({
 			name: data.name, 
 			description: data.description,
-			type: data.type,
-			size: data.size,
+			fieldType: data.fieldType,
+			fieldSize: data.fieldSize,
 			teamColors: data.teamColors,
 			teamShapes: data.teamShapes
 		});
@@ -132,7 +132,7 @@ io.sockets.on('connection', function(socket) {
 				return callback(err);
 			} else if(!play) {
 				return callback(new Error("Could not find play with _id=" + data.play));
-			}
+			} g
 			
 			var newSet = new Set({
 				name : data.name,

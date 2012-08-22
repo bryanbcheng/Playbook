@@ -402,8 +402,8 @@ $(function() {
 			return {
 				name: "untitled play",
 				description: "no description",
-				type: $("#field-type").val() ? $("#field-type").val() : "ultimate",
-				size: $("#field-size").val() ? $("#field-size").val() : "full",
+				fieldType: $("#field-type").val() ? $("#field-type").val() : "ultimate",
+				fieldSize: $("#field-size").val() ? $("#field-size").val() : "full",
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
 			};
@@ -1334,10 +1334,10 @@ $(function() {
 			var html = Mustache.render(this.template, this.model.toJSON());
 			
 			// Hack to select correct field type and size
-			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
-			html = $(html).find('option[value=' + this.model.get("size") + ']').attr('selected', 'selected').end();
+			html = $(html).find('option[value=' + this.model.get("fieldType") + ']').attr('selected', 'selected').end();
+			html = $(html).find('option[value=' + this.model.get("fieldSize") + ']').attr('selected', 'selected').end();
 			
-			this.addField(this.model.get("type"), this.model.get("size"));
+			this.addField(this.model.get("fieldType"), this.model.get("fieldSize"));
 			
 			// Hack to keep current set selected
 			var currSetId = $(".set-list").find(".selected").attr("id");
@@ -1382,12 +1382,12 @@ $(function() {
 			}});
 			
 			$(html).find(".animate-control").on("mouseover", function(e) {
-				$(this).find(".animation").fadeIn(500, "swing");
+				$(this).find(".animation").fadeIn(350, "swing");
 				
 				$(this).on("mouseout", function(e) {
 					if ($(e.relatedTarget).closest(".animate-control").length) return;
 					
-					$(this).find(".animation").fadeOut(500, "swing");
+					$(this).find(".animation").fadeOut(350, "swing");
 					
 					$(this).off("mouseout");
 				});
@@ -1561,7 +1561,7 @@ $(function() {
 		},
 		
 		changeField: function(e) {
-			this.model.save({type: $("#field-type").val(), size: $("#field-size").val()});
+			this.model.save({fieldType: $("#field-type").val(), fieldSize: $("#field-size").val()});
 		},
 
 		currentSet: function() {
