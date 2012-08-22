@@ -132,7 +132,7 @@ io.sockets.on('connection', function(socket) {
 				return callback(err);
 			} else if(!play) {
 				return callback(new Error("Could not find play with _id=" + data.play));
-			} g
+			}
 			
 			var newSet = new Set({
 				name : data.name,

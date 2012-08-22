@@ -3,6 +3,7 @@ div.colorPicker-picker {
   width: 28px;
   padding: 0 !important;
   border: 1px solid #ccc;
+  border-radius: 3px 3px 3px 3px;
   background: url(/images/select.png) no-repeat center;
   cursor: pointer;
   line-height: 16px;

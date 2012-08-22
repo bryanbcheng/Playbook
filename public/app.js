@@ -1177,6 +1177,10 @@ $(function() {
 			"blur .desc-edit"		: "updateDescription",
 			"click .new-play"		: "newPlay",
 			"click .reset-play"		: "resetPlay",
+			
+			"mouseover .new-formation" : "showFormations",
+			"mouseout .new-formation"  : "hideFormations",
+			"click .formation-option"  : "useFormation",
 		},
 		
 		initialize: function() {
@@ -1268,7 +1272,61 @@ $(function() {
 			} else {
 				console.log("Cancelled reset");
 			}
-		}
+		},
+		
+		showFormations: function(e) {
+			this.$el.find(".formations").fadeIn(350, "swing");
+		},
+		
+		hideFormations: function(e) {
+			if ($(e.relatedTarget).closest(".new-formation").length) return;
+			
+			this.$el.find(".formations").fadeOut(350, "swing");
+		},
+		
+		useFormation: function(e) {
+			if (confirm("Selecting a formation removes all items currently in your play. Are you sure you want to continue?")) {
+				var articles = this.model.get("articles")
+				while (!articles.isEmpty()) {
+					articles.shift().trigger("clear");
+				}
+				var formationType = $(e.target).data("value");
+				
+				// Formation sport is same as field sport
+				var sportType = $("#field-type").data("value");
+				
+				var formationData = formation(sportType, formationType);
+				for (var index in formationData) {
+					var data = formationData[index];
+					var color = data.team ? data.team === "team0" ? $("#color0").val() : $("#color1").val() : data.type === "ball" ? "white" : "orange";
+					var shape = data.team ? data.team === "team0" ? $("#shape0").val() : $("#shape1").val() : data.type === "ball" ? "circle" : "triangle";
+					var article = new $.playbook.Article({
+						type: data.type,
+						color: color,
+						shape: shape,
+						label: data.label,
+						team: data.team,
+						play: this.model.get("_id"),
+						tempX: data.x,
+						tempY: data.y
+					});
+					
+					article.save({}, {
+						silent: true,
+						wait: true,
+						success: function(model, response) {
+							model.trigger("addIoBind");
+							model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
+							model.unset("tempX");
+							model.unset("tempY");
+						}
+					});
+				}
+			} else {
+				console.log("Cancelled formation selection");
+			}
+		},
+		
 	});
 	
 	$.playbook.PlayContentsView = Backbone.View.extend({
@@ -1291,7 +1349,6 @@ $(function() {
 			"click .prev-set"	: "prevSet",
 			"click .next-set"	: "nextSet",
 			"click .last-set"	: "lastSet",
-			"click .useForm"	: "useFormation",
 			"click .add-player"	: "addPlayer",
 			"click .add-ball"	: "addBall",
 			"click .add-cone"	: "addCone",
@@ -1671,50 +1728,6 @@ $(function() {
 		lastSet: function(e) {
 			var lastSet = $(".set-list").find(".set-row").last();
 			if (lastSet.length !== 0) lastSet.click();
-		},
-		
-		useFormation: function() {
-			if ($(".formationType").val() === "default") return;
-			if (confirm("Selecting a formation removes all items currently in your play. Are you sure you want to continue?")) {
-				var articles = this.model.get("articles")
-				while (!articles.isEmpty()) {
-					articles.shift().trigger("clear");
-				}
-				var formationType = $(".formationType").val();
-				
-				// Formation sport does not have to be same as field sport
-				var sportType = $(".formationType").find("option:selected").parent().attr("value");
-				
-				var formationData = formation(sportType, formationType);
-				for (var index in formationData) {
-					var data = formationData[index];
-					var color = data.team ? data.team === "team0" ? $("#color0").val() : $("#color1").val() : data.type === "ball" ? "white" : "orange";
-					var shape = data.team ? data.team === "team0" ? $("#shape0").val() : $("#shape1").val() : data.type === "ball" ? "circle" : "triangle";
-					var article = new $.playbook.Article({
-						type: data.type,
-						color: color,
-						shape: shape,
-						label: data.label,
-						team: data.team,
-						play: this.model.get("_id"),
-						tempX: data.x,
-						tempY: data.y
-					});
-					
-					article.save({}, {
-						silent: true,
-						wait: true,
-						success: function(model, response) {
-							model.trigger("addIoBind");
-							model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
-							model.unset("tempX");
-							model.unset("tempY");
-						}
-					});
-				}
-			} else {
-				console.log("Cancelled formation selection");
-			}
 		},
 		
 		addPlayer: function(e) {

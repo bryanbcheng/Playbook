@@ -224,7 +224,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 #play .action-container {
 	float: left;
 	height: 60px;
-	position: relative;
+/* 	position: relative; */
 	width: 50px;
 	
 	transition: all .35s ease;
@@ -258,9 +258,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play .action-name {
-	bottom: 5px;
+/* 	bottom: 5px; */
 	font-size: 14px;
-	position: absolute;
+/* 	position: absolute; */
 	text-align: center;
 	width: 50px;
 }
@@ -268,6 +268,41 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 #play .new-formation .action-name {
 	font-size: 11px;
 	line-height: 14px;
+}
+
+#play .formations {
+	display: none;
+	position: absolute;
+	top: 75px;
+	z-index: 9999;
+}
+
+#play .formations ul {
+	background: #EEE;
+	display: none;
+	width: 150px;
+}
+
+#play .formations li {
+	font-size: 12px;
+	padding: 6px;
+}
+
+#play .formations li:hover {
+	background: #DDD;
+}
+
+/* Hack to show only formation of the selected field type */
+#play .ultimate .ultimate-formations {
+	display: block;
+}
+
+#play .soccer .soccer-formations {
+	display: block;
+}
+
+#play .football .football-formations {
+	display: block;
 }
 
 #canvas {
@@ -651,6 +686,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	
 }
 
+/* 
 #play-contents .formations {
 	margin-top: 15px;
 }
@@ -662,6 +698,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 #play-contents .useForm {
 	float: right;
 }
+ */
 
 #play-contents .team {
 	line-height: 28px;
@@ -680,6 +717,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	background-color: #F8F8F8;
 	background-image: url("/images/imageSelect.png");
 	border: 1px solid #CCCCCC;
+	border-radius: 3px 3px 3px 3px;
 	cursor: pointer;
 /* 	display: inline; */
 	float: left;
