@@ -402,8 +402,8 @@ $(function() {
 			return {
 				name: "untitled play",
 				description: "no description",
-				fieldType: $("#field-type").val() ? $("#field-type").val() : "ultimate",
-				fieldSize: $("#field-size").val() ? $("#field-size").val() : "full",
+				fieldType: $("#field-type").data("value") ? $("#field-type").data("value") : "ultimate",
+				fieldSize: $("#field-size").data("value") ? $("#field-size").data("value") : "full",
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
 			};
@@ -1185,7 +1185,6 @@ $(function() {
 		
 		render: function() {
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
-			
 			$("#play").append(this.el);
 			return this;
 		},
@@ -1279,8 +1278,11 @@ $(function() {
 		template: $("#play-contents-template").html(),
 		
 		events: {
-			"change #field-type"	: "changeField",
-			"change #field-size"	: "changeField",
+			"mouseover .field-prop"	: "showFieldPropOptions",
+			"mouseout .field-prop"	: "hideFieldPropOptions",
+			"click .field-option"	: "changeField",
+// 			"change #field-type"	: "changeField",
+// 			"change #field-size"	: "changeField",
 			"click .add-set"		: "createSet",
 			"click .set-list"		: "changeSet",
 			"click .remove-set"		: "deleteSet",
@@ -1331,21 +1333,23 @@ $(function() {
 			});
 			this.model.set("sets", sortedSets, {silent: true});
 			
-			var html = Mustache.render(this.template, this.model.toJSON());
+			var html = Mustache.render(this.template, this.model.toJSON()),
+				htmlObj = $(html);
 			
+// 			$(html).find("li[value=" + this.model.get("fieldType") + "]").addClass("selected");
 			// Hack to select correct field type and size
-			html = $(html).find('option[value=' + this.model.get("fieldType") + ']').attr('selected', 'selected').end();
-			html = $(html).find('option[value=' + this.model.get("fieldSize") + ']').attr('selected', 'selected').end();
-			
+// 			html = $(html).find('option[value=' + this.model.get("fieldType") + ']').attr('selected', 'selected').end();
+// 			html = $(html).find('option[value=' + this.model.get("fieldSize") + ']').attr('selected', 'selected').end();
+
 			this.addField(this.model.get("fieldType"), this.model.get("fieldSize"));
 			
 			// Hack to keep current set selected
 			var currSetId = $(".set-list").find(".selected").attr("id");
-			if (currSetId) $(html).find('#' + currSetId).addClass('selected');
+			if (currSetId) htmlObj.find('#' + currSetId).addClass('selected');
 			
 			// JQuery UI Plugins
 			var view = this;
-			$(html).find(".select-color").colorPicker({onColorChange: function(id, newValue) {
+			htmlObj.find(".select-color").colorPicker({onColorChange: function(id, newValue) {
 				// PREVENT CHOOSING THE SAME COLOR FOR BOTH TEAMS		
 				
 				view.model.save({teamColors: [$("#color0").val(), $("#color1").val()]}, {
@@ -1364,7 +1368,7 @@ $(function() {
 				});
 			}});
 			
-			$(html).find(".select-shape").shapePicker({onShapeChange: function(id, newValue) {
+			htmlObj.find(".select-shape").shapePicker({onShapeChange: function(id, newValue) {
 				view.model.save({teamShapes: [$("#shape0").val(), $("#shape1").val()]}, {
 					silent: true,
 					wait: true,
@@ -1381,7 +1385,7 @@ $(function() {
 				});
 			}});
 			
-			$(html).find(".animate-control").on("mouseover", function(e) {
+			htmlObj.find(".animate-control").on("mouseover", function(e) {
 				$(this).find(".animation").fadeIn(350, "swing");
 				
 				$(this).on("mouseout", function(e) {
@@ -1393,19 +1397,19 @@ $(function() {
 				});
 			});
 			var currSpeed = $(".animation-speed").slider("value");
-			$(html).find(".animation-speed").slider({
+			htmlObj.find(".animation-speed").slider({
 				value: currSpeed ? currSpeed : 1.5,
 				min: 0.5,
 				max: 2.5,
 				step: 0.5,
 				orientation: "vertical",
 				slide: function(event, ui) {
-					$(html).find(".animation-speed-display").html(ui.value + "x");
+					htmlObj.find(".animation-speed-display").html(ui.value + "x");
 				}
 			});
-			$(html).find(".animation-speed-display").html($(html).find(".animation-speed").slider("value") + "x");
+			htmlObj.find(".animation-speed-display").html(htmlObj.find(".animation-speed").slider("value") + "x");
 			
-			this.$el.html(html);
+			this.$el.html(htmlObj);
 			
 			$("#play-contents").append(this.el);
 			
@@ -1560,8 +1564,24 @@ $(function() {
 			});
 		},
 		
+		showFieldPropOptions: function(e) {
+			$(e.target).closest(".field-prop").find("ul").fadeIn(350, "swing");
+		},
+		
+		hideFieldPropOptions: function(e) {
+			if ($(e.relatedTarget).closest(".field-prop").attr("id") == $(e.target).closest(".field-prop").attr("id")) return;
+			
+			$(e.target).closest(".field-prop").find("ul").fadeOut(350, "swing");
+		},
+		
 		changeField: function(e) {
-			this.model.save({fieldType: $("#field-type").val(), fieldSize: $("#field-size").val()});
+			var fieldProp = $(e.target).closest(".field-prop");
+			var fieldOption = $(e.target).closest(".field-option");
+			
+			if (fieldProp.data("value") !== fieldOption.data("value")) {
+				fieldProp.data("value", fieldOption.data("value"));
+				this.model.save({fieldType: $("#field-type").data("value"), fieldSize: $("#field-size").data("value")});
+			}
 		},
 
 		currentSet: function() {

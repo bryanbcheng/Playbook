@@ -92,9 +92,52 @@
 	</script>
 	
 	<script type="text/template" id="play-contents-template">
+		<label class="sectionLabel">Field</label>	
 		<div class="field-stats-container">
-			<label class="sectionLabel">Field</label>
-			<div id="field-type-icon" class="{{type}}"></div>
+			<div id="field-type" class="field-prop" data-value="{{fieldType}}">
+				<li class="selected">
+					<div class="field-icon {{fieldType}}"></div>
+					<span>{{fieldType}}</span>
+				</li>
+				<ul>
+					<li class="field-option" data-value="ultimate">
+						<div class="field-icon ultimate"></div>
+						<span>Ultimate</span>
+					</li>
+					<li class="field-option" data-value="soccer">
+						<div class="field-icon soccer"></div>
+						<span>Soccer</span>
+					</li>
+					<li class="field-option" data-value="football">
+						<div class="field-icon football"></div>
+						<span>Football</span>
+					</li>
+				</ul>
+			</div>
+			
+			<div id="field-size" class="field-prop" data-value="{{fieldSize}}">
+				<li class="selected">
+					<div class="field-icon {{fieldSize}}"></div>
+					<span>{{fieldSize}}</span>
+				</li>
+				<ul>
+					<li class="field-option" data-value="full">
+						<div class="field-icon full"></div>
+						<span>Full</span>
+					</li>
+					<li class="field-option" data-value="half">
+						<div class="field-icon half"></div>
+						<span>Half</span>
+					</li>
+					<li class="field-option" data-value="empty">
+						<div class="field-icon empty"></div>
+						<span>None</span>
+					</li>
+				</ul>
+			</div>
+			
+			<!-- 
+<div id="field-type-icon" class="{{type}}"></div>
 			<select id="field-type">
 				<option value="ultimate">Ultimate</option>
 				<option value="soccer">Soccer</option>
@@ -106,6 +149,7 @@
 				<option value="half">Half</option>
 				<option value="empty">None</option>
 			</select>
+ -->
 			<br class="clear" />
 		</div>
 		<hr />

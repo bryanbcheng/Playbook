@@ -15,8 +15,9 @@ time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font-size: 100%;
 	font: inherit;
+	font-family: Arial;
+	font-size: 100%;
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -104,7 +105,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	font-weight: bold;
 	line-height: 60px;
 /* 	margin: 0 50px; */
-	text-shadow: 2px 2px 4px #038872;
+/* 	text-shadow: 2px 2px 4px #038872; */
+	text-shadow: 2px 2px 4px #2b9eab;
 }
 
 #playbook-container {
@@ -225,10 +227,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	position: relative;
 	width: 50px;
 	
-	transition: all .25s ease;
-	-moz-transition: all .25s ease;
-	-webkit-transition: all .25s ease;
-	-o-transition: all .25s ease;
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #play .action-container:hover {
@@ -279,20 +281,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #right-panel hr {
-	/* IE 8 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
-	
-	/* IE 5-7 */
-	filter: alpha(opacity=25);
-	
-	/* Netscape */
-	-moz-opacity: 0.25;
-	
-	/* Safari 1.x */
-	-khtml-opacity: 0.25;
-	
-	/* Good browsers */
-	opacity: 0.25;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)"; /* IE 8 */
+	filter: alpha(opacity=25); /* IE 5-7 */
+	-moz-opacity: 0.25; /* Netscape */
+	-khtml-opacity: 0.25; /* Safari 1.x */
+	opacity: 0.25; /* Good browsers */
 	
 	margin: 15px 0;
 }
@@ -312,52 +305,100 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 
 #play-contents .field-stats-container {
 /* 	//height: 20px; */
-/* 	overflow: auto; */
+	overflow: auto;
+	padding-top: 6px;
+	width: 250px;
 }
 
-#field-type-icon, #field-size-icon {
+#play-contents .field-prop {
+	background: rgb(255,255,255); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(243,243,243,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(243,243,243,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f3f3f3',GradientType=0 ); /* IE6-9 */
+	
+    border-color: #CECECE #CECECE #A0A0A0;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    display: block;
+}
+
+#field-type {
+	float: left;
+}
+
+#field-size {
+	float:right;
+}
+
+#play-contents .field-prop ul {
+	background: #F0F0F0;
+	display: none;
+/* 	left: -6px; */
+	position: absolute;
+/* 	top: 27px; */
+	z-index: 9999;
+}
+
+#play-contents .field-prop li {
+	list-style: none;
+	padding: 4px 6px;
+	width: 105px;
+}
+
+
+#play-contents .field-icon {
 	display: inline-block;
 	float: left;
 	height: 20px;
 	width: 20px;
 }
 
-#field-type-icon {
+#field-type .field-icon {
 	background-image: url("/images/sportIconSet.png");
 	background-size: 80px 80px;
 }
 
-#field-type-icon.ultimate {
-	background-position: -20px -40px;
-}
-
-#field-type-icon.soccer {
-	background-position: 0px -40px;
-}
-
-#field-type-icon.football {
-	background-position: -20px 0px;
-}
-
-#field-type, #field-size {
-	float: left;
-}
-
-#field-size-icon {
+#field-size .field-icon  {
 	background-image: url("/images/circleIconSet.png");
 }
 
-#field-size-icon.full {
+#field-type .field-icon.ultimate {
+	background-position: -20px -40px;
+}
+
+#field-type .field-icon.soccer {
+	background-position: 0px -40px;
+}
+
+#field-type .field-icon.football {
+	background-position: -20px 0px;
+}
+
+#field-size .field-icon.full {
 	background-position: -40px 0;
 }
 
-#field-size-icon.half {
+#field-size .field-icon.half {
 	background-position: -20px 0;
 }
 
-#field-size {
-
+#play-contents .field-prop span {
+	display: block;
+	font-size: 14px;
+    font-weight: bold;
+	line-height: 20px;
+	text-align: center;
+    text-decoration: none;
+    text-transform: capitalize;
+    text-shadow: 0 1px 0 rgba(180, 180, 180, 0.4);
 }
+
 
 #play-contents .set-list-container {
 	border: 1px solid #CDCDCD;
@@ -393,10 +434,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 #play-contents .set-list tr {
 	line-height: 20px;
 	
-	transition: all .25s ease;
-	-moz-transition: all .25s ease;
-	-webkit-transition: all .25s ease;
-	-o-transition: all .25s ease;
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #play-contents .set-list td, #play-contents .set-list th {
@@ -414,11 +455,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .set-list tr:hover {
-	background: rgba(4,186,156, 0.25);
+	background: rgba(59, 191, 206, 0.25);
+/* 	background: rgba(4,186,156, 0.25); */
 }
 
 #play-contents .set-list tr.selected {
-	background: rgba(4,186,156, 0.6);
+	background: rgba(59, 191, 206, 0.6);
+/* 	background: rgba(4,186,156, 0.6); */
 }
 
 #play-contents .set-action-container {
@@ -441,10 +484,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	text-align:center;
 	width: 30px;
 	
-	transition: all .25s ease;
-	-moz-transition: all .25s ease;
-	-webkit-transition: all .25s ease;
-	-o-transition: all .25s ease;
+	/* Transition */
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #play-contents .set-action:first-child {
@@ -501,6 +545,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	font-size: 14px;
 	font-weight: normal;
 	height: 120px;
+	left: -1px;
 	line-height: 14px;
 	padding: 5px;
 	position: absolute;
@@ -636,23 +681,40 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
     padding: 6px;
     text-align: center;
     text-decoration: none;
-    text-shadow: 0 1px 0 rgba(130, 130, 130, 0.4);
+    text-shadow: 0 1px 0 rgba(180, 180, 180, 0.4);
     width: 80px;
 }
 
 #play-contents .add-player:hover, #play-contents .add-items a:hover {
-	background: rgb(94,187,4); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(94,187,4,1) 0%, rgba(69,137,3,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(94,187,4,1)), color-stop(100%,rgba(69,137,3,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(94,187,4,1) 0%,rgba(69,137,3,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(94,187,4,1) 0%,rgba(69,137,3,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(94,187,4,1) 0%,rgba(69,137,3,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(94,187,4,1) 0%,rgba(69,137,3,1) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5ebb04', endColorstr='#458903',GradientType=0 ); /* IE6-9 */
-
-    border-color: #51A203;
+	background: rgb(85,196,51); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(85,196,51,1) 0%, rgba(68,156,40,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(85,196,51,1)), color-stop(100%,rgba(68,156,40,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#55c433', endColorstr='#449c28',GradientType=0 ); /* IE6-9 */
+	
+    border-color: #55C433 #4CB02D #449C28;
     color: #FFFFFF;
-    text-shadow: 0 1px 0 rgba(102, 204, 4, 0.4);
+/*     text-shadow: 0 1px 0 rgba(102, 204, 4, 0.4); */
+	text-shadow: 0 1px 0 rgba(94, 205, 60, 0.4);
+}
+
+#play-contents .add-player:active, #play-contents .add-items a:active {
+	background: rgb(79,183,47); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(79,183,47,1) 0%, rgba(62,142,37,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(79,183,47,1)), color-stop(100%,rgba(62,142,37,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4fb72f', endColorstr='#3e8e25',GradientType=0 ); /* IE6-9 */
+	
+    border-color: #4FB72F #46A22A #3E8E25;
+    color: #FFFFFF;
+/*     text-shadow: 0 1px 0 rgba(102, 204, 4, 0.4); */
+	text-shadow: 0 1px 0 rgba(85, 196, 51, 0.4);
 }
 
 #set {
@@ -768,10 +830,10 @@ br.clear {
  
  /* 
 text-transform: uppercase;
-        -webkit-transition: all .25s ease;
-        -moz-transition: all .25s ease;
-        -o-transition: all .25s ease;
-        transition: all .25s ease;
+        -webkit-transition: all .35s ease;
+        -moz-transition: all .35s ease;
+        -o-transition: all .35s ease;
+        transition: all .35s ease;
         transition: property duration timing-function delay;
         box-shadow: h-shadow v-shadow blur spread color inset;
         border-radius??
