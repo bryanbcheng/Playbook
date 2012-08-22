@@ -1278,24 +1278,25 @@ $(function() {
 		template: $("#play-contents-template").html(),
 		
 		events: {
-			"mouseover .field-prop"	: "showFieldPropOptions",
-			"mouseout .field-prop"	: "hideFieldPropOptions",
-			"click .field-option"	: "changeField",
-// 			"change #field-type"	: "changeField",
-// 			"change #field-size"	: "changeField",
-			"click .add-set"		: "createSet",
-			"click .set-list"		: "changeSet",
-			"click .remove-set"		: "deleteSet",
-			"click .first-set"		: "firstSet",
-			"click .prev-set"		: "prevSet",
-			"click .next-set"		: "nextSet",
-			"click .last-set"		: "lastSet",
-			"click .useForm"		: "useFormation",
-			"click .add-player"		: "addPlayer",
-			"click .add-ball"		: "addBall",
-			"click .add-cone"		: "addCone",
-			"click .add-ann"		: "addAnnotation",
-			"click .animate"		: "animateSets",
+			"mouseover .field-prop"	  : "showFieldPropOptions",
+			"mouseout .field-prop"	  : "hideFieldPropOptions",
+			"mouseover .field-option" : "fadeFieldPropOptions",
+			"mouseout .field-option"  : "unfadeFieldPropOptions",
+			"click .field-option"	  : "changeField",
+
+			"click .add-set"	: "createSet",
+			"click .set-list"	: "changeSet",
+			"click .remove-set"	: "deleteSet",
+			"click .first-set"	: "firstSet",
+			"click .prev-set"	: "prevSet",
+			"click .next-set"	: "nextSet",
+			"click .last-set"	: "lastSet",
+			"click .useForm"	: "useFormation",
+			"click .add-player"	: "addPlayer",
+			"click .add-ball"	: "addBall",
+			"click .add-cone"	: "addCone",
+			"click .add-ann"	: "addAnnotation",
+			"click .animate"	: "animateSets",
 		},
 		
 		initialize: function() {
@@ -1337,9 +1338,6 @@ $(function() {
 				htmlObj = $(html);
 			
 // 			$(html).find("li[value=" + this.model.get("fieldType") + "]").addClass("selected");
-			// Hack to select correct field type and size
-// 			html = $(html).find('option[value=' + this.model.get("fieldType") + ']').attr('selected', 'selected').end();
-// 			html = $(html).find('option[value=' + this.model.get("fieldSize") + ']').attr('selected', 'selected').end();
 
 			this.addField(this.model.get("fieldType"), this.model.get("fieldSize"));
 			
@@ -1572,6 +1570,14 @@ $(function() {
 			if ($(e.relatedTarget).closest(".field-prop").attr("id") == $(e.target).closest(".field-prop").attr("id")) return;
 			
 			$(e.target).closest(".field-prop").find("ul").fadeOut(350, "swing");
+		},
+		
+		fadeFieldPropOptions: function(e) {
+			$(e.target).closest(".field-prop").addClass("field-prop-faded");
+		},
+		
+		unfadeFieldPropOptions: function(e) {
+			$(e.target).closest(".field-prop").removeClass("field-prop-faded");
 		},
 		
 		changeField: function(e) {
