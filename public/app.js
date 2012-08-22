@@ -458,8 +458,14 @@ $(function() {
 		
 		events: {
 			"keyup .label"  : "updateLabel",
-			"change select" : "changeType",
-			"click .delete" : "clear"
+			"click .delete" : "clear",
+			
+			"mouseover .article-prop"	: "showArticlePropOptions",
+			"mouseout .article-prop"	: "hideArticlePropOptions",
+			"mouseover .article-option"	: "fadeArticlePropOptions",
+			"mouseout .article-option"	: "unfadeArticlePropOptions",
+			"click .article-option" 	: "changeType",
+// 			"change select" : "changeType",
 		},
 		
 		initialize: function() {
@@ -467,7 +473,6 @@ $(function() {
 		
 			this.model.on('addPathShape', this.addPathShape, this);
 			this.model.on('removePathShape', this.removePathShape, this);
-// 			this.model.on('show', this.show, this);
 			this.model.on('editLabel', this.editLabel, this);
 			this.model.on('change', this.render, this);
 			this.model.on('changeColor', this.changeColor, this);
@@ -480,16 +485,28 @@ $(function() {
 		},
 		
 		render: function() {
-			var html = Mustache.render(this.template, this.model.toJSON());
+			var html = Mustache.render(this.template, this.model.toJSON()),
+				htmlObj = $(html);
+			
+			
 			// Hack to select correct item in list
-			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
+// 			html = $(html).find('option[value=' + this.model.get("type") + ']').attr('selected', 'selected').end();
 			
-			if (this.model.get("type") === "player") {
-				html = $(html).find('option[value=' + this.model.get("team") + ']').attr('selected', 'selected').end();
-				$(html).closest(".team-select").show();
+			// if (this.model.get("type") === "player") {
+// 				htmlObj.find('option[value=' + this.model.get("team") + ']').attr('selected', 'selected').end();
+// 				htmlObj.closest(".team-select").show();
+// 			}
+			
+			var teamDisplay = this.model.get("team");
+			if (teamDisplay) {
+				teamDisplay = teamDisplay.slice(0, -1) + " " + (parseInt(teamDisplay.slice(-1)) + 1);
+			} else {
+				teamDisplay = "No Team";
+				htmlObj.find(".article-team").addClass("disabled");
 			}
+			htmlObj.find(".article-team").children(".selected").children("span").html(teamDisplay);
 			
-			this.$el.html(html);
+			this.$el.html(htmlObj);
 			return this;
 		},
 		
@@ -548,39 +565,74 @@ $(function() {
 			});
 		},
 		
-		changeType: function(e) {
-			var articleProp = {};
-			// Assign by default to team0
-			if (e.currentTarget.value === "player") {
-				articleProp.type = e.currentTarget.value;
-				articleProp.color = $("#color0").val();
-				articleProp.shape = $("#shape0").val();
-				articleProp.team = "team0";
-			} else if (e.currentTarget.value === "team0") {
-				articleProp.color = $("#color0").val();
-				articleProp.shape = $("#shape0").val();
-				articleProp.team = "team0";
-			} else if (e.currentTarget.value === "team1") {
-				articleProp.color = $("#color1").val();
-				articleProp.shape = $("#shape1").val();
-				articleProp.team = "team1";
-			} else if (e.currentTarget.value === "ball") {
-				articleProp.type = e.currentTarget.value;
-				articleProp.color = "white";
-				articleProp.shape = "circle";
-				articleProp.team = "";
-			} else if (e.currentTarget.value === "cone") {
-				articleProp.type = e.currentTarget.value;
-				articleProp.color = "orange";
-				articleProp.shape = "triangle";
-				articleProp.team = "";
+		showArticlePropOptions: function(e) {
+			if ($(e.target).closest(".article-prop").hasClass("disabled")) return;
+		
+			$(e.target).closest(".article-prop").find("ul").fadeIn(350, "swing");
+		},
+		
+		hideArticlePropOptions: function(e) {
+			if ($(e.relatedTarget).closest(".article-prop")[0] === $(e.target).closest(".article-prop")[0]) return;
+			
+			$(e.target).closest(".article-prop").find("ul").fadeOut(350, "swing");
+		},
+		
+		fadeArticlePropOptions: function(e) {
+			$(e.target).closest(".article-prop").addClass("article-prop-faded");
+		},
+		
+		unfadeArticlePropOptions: function(e) {
+			$(e.target).closest(".article-prop").removeClass("article-prop-faded");
+		},
+		
+		changeField: function(e) {
+			var fieldProp = $(e.target).closest(".field-prop");
+			var fieldOption = $(e.target).closest(".field-option");
+			
+			if (fieldProp.data("value") !== fieldOption.data("value")) {
+				fieldProp.data("value", fieldOption.data("value"));
+				this.model.save({fieldType: $("#field-type").data("value"), fieldSize: $("#field-size").data("value")});
 			}
-			this.model.save(articleProp, {
-				wait: true,
-				success: function(model, response) {
-					model.trigger("replaceShape");
+		},
+		
+		changeType: function(e) {
+			var articleProp = $(e.target).closest(".article-prop");
+			var articleOption = $(e.target).closest(".article-option");
+			
+			if (articleProp.data("value") !== articleOption.data("value")) {
+				var articlePropList = {};
+				// Assign by default to team0
+				if (articleOption.data("value") === "player") {
+					articlePropList.type = articleOption.data("value");
+					articlePropList.color = $("#color0").val();
+					articlePropList.shape = $("#shape0").val();
+					articlePropList.team = "team0";
+				} else if (articleOption.data("value") === "team0") {
+					articlePropList.color = $("#color0").val();
+					articlePropList.shape = $("#shape0").val();
+					articlePropList.team = "team0";
+				} else if (articleOption.data("value") === "team1") {
+					articlePropList.color = $("#color1").val();
+					articlePropList.shape = $("#shape1").val();
+					articlePropList.team = "team1";
+				} else if (articleOption.data("value") === "ball") {
+					articlePropList.type = articleOption.data("value");
+					articlePropList.color = "white";
+					articlePropList.shape = "circle";
+					articlePropList.team = "";
+				} else if (articleOption.data("value") === "cone") {
+					articlePropList.type = articleOption.data("value");
+					articlePropList.color = "orange";
+					articlePropList.shape = "triangle";
+					articlePropList.team = "";
 				}
-			});
+				this.model.save(articlePropList, {
+					wait: true,
+					success: function(model, response) {
+						model.trigger("replaceShape");
+					}
+				});				
+			}
 		},
 		
 		replaceShape: function() {

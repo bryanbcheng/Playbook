@@ -216,38 +216,6 @@
 				<br class="clear"/>
 			</div>
 		</div>
-<!-- 
-		<div class="formations">
-			<select class="formationType">
-				<option value="default">~~~~~~Formations~~~~~~</option>
-				<optgroup label="Ultimate" value="ultimate">
-					<option value="vertical">Vertical Stack</option>
-					<option value="horizontal">Horizontal Stack</option>
-					<option value="side">Side Stack</option>
-					<option value="split">Split Stack</option>
-					<option value="l">L Stack</option>
-				</optgroup>
-				<optgroup label="Soccer" value="soccer">
-					<option value="4-4-2">4-4-2 Formation</option>
-					<option value="4-3-3">4-3-3 Formation</option>
-					<option value="3-4-3">3-4-3 Formation</option>
-					<option value="3-5-2">3-5-2 Formation</option>
-				</optgroup>
-				<optgroup label="Football" value="football">
-					<option value="i">I Formation</option>
-					<option value="pro">Pro Set Formation</option>
-					<option value="shotgun">Shotgun</option>
-					<option value="spread">Spread Formation</option>
-					<option value="4-3">4-3 Defense</option>
-					<option value="3-4">3-4 Defense</option>
-					<option value="4-2-5">4-2-5 Nickel</option>
-					<option value="3-5-3">3-5-3 Nickel</option>
-				</optgroup>
-			</select>
-			<button class="useForm">Apply</button>
-			<br class="clear" />
-		</div>
- -->
 		<hr />
 		<label class="sectionLabel">Teams</label>
 		<div id="team0" class="team">
@@ -303,15 +271,24 @@
 		<hr />
 		<label class="sectionLabel">Object</label>
 		<span>Label: </span><input class="label" value="{{label}}" maxlength=3></input>
-		<select>
-			<option value="player">Player</option>
-			<option value="ball">Ball</option>
-			<option value="cone">Cone</option>
-		</select>
-		<select class="team-select">
-			<option value="team0">Team 1</option>
-			<option value="team1">Team 2</option>
-		</select>
+		<div>
+		<div class="article-prop article-type" data-value="{{type}}">
+			<li class="selected"><span>{{type}}</span></li>
+			<ul>
+				<li class="article-option" data-value="player"><span>Player</span></li>
+				<li class="article-option" data-value="ball"><span>Ball</span></li>
+				<li class="article-option" data-value="cone"><span>Cone</span></li>
+			</ul>
+		</div>
+		
+		<div class="article-prop article-team" data-value="{{team}}">
+			<li class="selected"><span></span></li>
+			<ul>
+				<li class="article-option" data-value="team0"><span>Team 1</span></li>
+				<li class="article-option" data-value="team1"><span>Team 2</span></li>
+			</ul>
+		</div>
+		</div>
 		<button class="delete">Delete</button>
 	</script>
 </body>

@@ -854,6 +854,7 @@ function createLabel(label) {
 }
 
 function createSelect(select) {
+	console.log(select);
 	var selectGroup = new Kinetic.Group({
 		visible: select.select,
 		name: "select"
