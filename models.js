@@ -16,7 +16,7 @@ var Article = new Schema({
   , shape		: String
   , label		: { type: String, uppercase: true }
   , team		: String
-});
+}, { strict: true });
 
 Article.path('label').validate(function (v) {
   return v.length <= 3;
@@ -30,7 +30,7 @@ var Path = new Schema({
   , nextX		: Number
   , nextY		: Number
   , articleId	: { type: Schema.ObjectId, required: true }
-});
+}, { strict: true });
 
 var Annotation = new Schema({
 	text		: String
@@ -38,7 +38,7 @@ var Annotation = new Schema({
   ,	y			: Number
   , width		: Number
   , height		: Number
-});
+}, { strict: true });
 
 var Set = new Schema({
     name		: String
@@ -46,7 +46,7 @@ var Set = new Schema({
   , comments	: String
   , paths		: [Path]
   , annotations	: [Annotation]
-});
+}, { strict: true });
 
 var Play = new Schema({
 	name		: String
@@ -57,7 +57,7 @@ var Play = new Schema({
   , teamShapes	: [String]
   , articles	: [Article]
   , sets		: [Set]
-});
+}, { strict: true });
 
 /**
  * Models
