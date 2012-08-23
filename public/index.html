@@ -179,6 +179,7 @@
 			<br class="clear" />
 		</div>
 		<hr />
+<!-- 		<label class="sectionLabel">Set List</label> -->
 		<div class="set-list-container">
 			<div class="set-list-area">
 				<table class="set-list">
@@ -219,7 +220,7 @@
 		<hr />
 		<label class="sectionLabel">Teams</label>
 		<div id="team0" class="team">
-			<span>Team 1</span>
+			<span>Team 1:</span>
 			<br />
 			<input id="color0" class="select-color" value="{{teamColors.0}}" type="hidden" />
 			<div id="shape0" class="select-shape" value="{{teamShapes.0}}"></div>
@@ -227,7 +228,7 @@
 			<br class="clear"/>
 		</div>
 		<div id="team1" class="team">
-			<span>Team 2</span>
+			<span>Team 2:</span>
 			<br />
 			<input id="color1" class="select-color" value="{{teamColors.1}}" type="hidden" />
 			<div id="shape1" class="select-shape" value="{{teamShapes.1}}"></div>
@@ -269,27 +270,29 @@
 	
 	<script type="text/template" id="article-template">
 		<hr />
-		<label class="sectionLabel">Object</label>
-		<span>Label: </span><input class="label" value="{{label}}" maxlength=3></input>
 		<div>
-		<div class="article-prop article-type" data-value="{{type}}">
-			<li class="selected"><span>{{type}}</span></li>
-			<ul>
-				<li class="article-option" data-value="player"><span>Player</span></li>
-				<li class="article-option" data-value="ball"><span>Ball</span></li>
-				<li class="article-option" data-value="cone"><span>Cone</span></li>
-			</ul>
+			<label class="sectionLabel">Object</label>
+			<span class="label-title">Label: </span><input class="label" value="{{label}}" maxlength=3></input>
+			<a class="delete">Delete</a>
+			<br class="clear" />
 		</div>
-		
-		<div class="article-prop article-team" data-value="{{team}}">
-			<li class="selected"><span></span></li>
-			<ul>
-				<li class="article-option" data-value="team0"><span>Team 1</span></li>
-				<li class="article-option" data-value="team1"><span>Team 2</span></li>
-			</ul>
+		<div class="article-prop-container">
+			<div class="article-prop article-type" data-value="{{type}}">
+				<li class="selected"><span>{{type}}</span></li>
+				<ul>
+					<li class="article-option" data-value="player"><span>Player</span></li>
+					<li class="article-option" data-value="ball"><span>Ball</span></li>
+					<li class="article-option" data-value="cone"><span>Cone</span></li>
+				</ul>
+			</div>
+			<div class="article-prop article-team" data-value="{{team}}">
+				<li class="selected"><span></span></li>
+				<ul>
+					<li class="article-option" data-value="team0"><span>Team 1</span></li>
+					<li class="article-option" data-value="team1"><span>Team 2</span></li>
+				</ul>
+			</div>
 		</div>
-		</div>
-		<button class="delete">Delete</button>
 	</script>
 </body>
 </html>
