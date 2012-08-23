@@ -109,10 +109,10 @@
 			</div>
 		</div>
 		<div class="play-attributes">
-			<div class="name" title="Play Name" contenteditable=true>
+			<div class="name" title="Play Name" contenteditable="true">
 				<h2>{{name}}</h2>
 			</div>
-			<div class="desc" title="Play Description" contenteditable=true>
+			<div class="desc" title="Play Description" contenteditable="true">
 				<p>{{description}}</p>
 			</div>
 		</div>
@@ -238,15 +238,19 @@
 	<script type="text/template" id="set-template">
 		<hr />
 		<label class="sectionLabel">Set</label>
-		<div class="name">
-			<h2>Name: {{name}}</h2>
-			<input class="name-edit" value="{{name}}"></input>
+		<div class="name-container" title="Set Name">
+			<span>Set Name:</span>
+			<div class="name" contenteditable="true">
+				<h2>{{name}}</h2>
+			</div>
+			<br class="clear" />
 		</div>
-		<div class="comments">
-			<p>
-				Comments: {{comments}}
-			</p>
-			<textarea class="comments-edit">{{comments}}</textarea>
+		<div class="comments-container" title="Set Comments">
+			<span>Comments:</span>
+			<div class="comments" contenteditable="true">
+				<p>{{comments}}</p>
+			</div>
+			<br class="clear" />
 		</div>
 	</script>
 	

@@ -1012,10 +1012,8 @@ $(function() {
 		template: $("#set-template").html(),
 		
 		events: {
-			"dblclick .name"      : "editName",
-			"blur .name-edit"     : "updateName",
-			"dblclick .comments"  : "editComments",
-			"blur .comments-edit" : "updateComments",
+			"blur .name"	 : "updateName",
+			"blur .comments" : "updateComments",
 		},
 		
 		initialize: function() {
@@ -1146,24 +1144,12 @@ $(function() {
 			});
 		},
 		
-		editName: function(e) {
-			$(e.currentTarget).addClass("edit");
-			$(e.currentTarget).find("input").focus();
-		},
-		
 		updateName: function(e) {
-			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({name: e.currentTarget.value});
-		},
-		
-		editComments: function(e) {
-			$(e.currentTarget).addClass("edit");
-			$(e.currentTarget).find("textarea").focus();
+			this.model.save({name: $.trim($(e.target).text())});
 		},
 		
 		updateComments: function(e) {
-			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({comments: e.currentTarget.value});
+			this.model.save({comments: $.trim($(e.target).text())});
 		},
 		
 		show: function() {
@@ -1224,7 +1210,6 @@ $(function() {
 		events: {
 			"blur .name"		: "updateName",
 // 			"keypress .name"	: "updateCloseName",
-// 			"click .desc"		: "editDescription",
 			"blur .desc"		: "updateDescription",
 			"click .new-play"	: "newPlay",
 			"click .reset-play"	: "resetPlay",
