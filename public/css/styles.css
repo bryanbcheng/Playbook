@@ -169,8 +169,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	margin-left: 2px;
 	height: 60px;
 /* 	overflow:hidden; */
-	position: relative;
 	width: 800px;
+}
+
+#play .play-attributes {
+	position: relative;
 }
 
 #play .name {
