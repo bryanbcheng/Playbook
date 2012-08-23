@@ -51,7 +51,7 @@ var Set = new Schema({
 var Play = new Schema({
 	name		: String
   , description	: String
-  , fieldType	: { type : String, enum: ['ultimate', 'soccer', 'football'] }
+  , fieldType	: { type : String, enum: ['ultimate', 'soccer', 'football', 'basketball'] }
   , fieldSize	: { type : String, enum: ['full', 'half', 'empty'] }
   , teamColors	: [String]
   , teamShapes	: [String]

@@ -1536,6 +1536,8 @@ $(function() {
 				fieldLayer = soccerField(fieldSize, currX, currY);
 			} else if (fieldType === "football") {
 				fieldLayer = footballField(fieldSize, currX, currY);
+			} else if (fieldType === "basketball") {
+				fieldLayer = basketballField(fieldSize, currX, currY);
 			}
 			
 			this.addFieldEvents(fieldLayer);
