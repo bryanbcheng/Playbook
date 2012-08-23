@@ -1303,6 +1303,7 @@ $(function() {
 						model.trigger("addIoBind");
 						model.get("play").trigger("change");
 						model.get("play").trigger("addNewSet", model);
+						$(".first-set").click(); // Hack to select first set after reset
 					}
 				});
 				newSet2.save({}, {
@@ -1311,6 +1312,7 @@ $(function() {
 						model.trigger("addIoBind");
 						model.get("play").trigger("change");
 						model.get("play").trigger("addNewSet", model);
+						$(".first-set").click();
 					}
 				});
 				newSet3.save({}, {
@@ -1319,6 +1321,7 @@ $(function() {
 						model.trigger("addIoBind");
 						model.get("play").trigger("change");
 						model.get("play").trigger("addNewSet", model);
+						$(".first-set").click();
 					}
 				});
 			} else {

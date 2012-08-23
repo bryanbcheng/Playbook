@@ -234,7 +234,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play .action-container:hover {
-	background: #EEE;
+	background-color: rgba(59, 191, 206, 0.25);
 	cursor: pointer;
 }
 
@@ -278,18 +278,24 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play .formations ul {
-	background: #EEE;
+	background-color: #FFF;
 	display: none;
 	width: 150px;
 }
 
 #play .formations li {
+	background-color: rgba(59, 191, 206, 0.25);
 	font-size: 12px;
 	padding: 6px;
+	
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #play .formations li:hover {
-	background: #DDD;
+	background: rgba(59, 191, 206, 0.5);
 }
 
 /* Hack to show only formation of the selected field type */
@@ -575,7 +581,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .set-list tr:hover {
-	background: rgba(59, 191, 206, 0.25);
+	background-color: rgba(59, 191, 206, 0.25);
 /* 	background: rgba(4,186,156, 0.25); */
 }
 
@@ -616,7 +622,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .set-action:hover {
-	background-color: #ddd;
+	background-color: rgba(59, 191, 206, 0.25);
 }
 
 #play-contents .set-action:active {
@@ -726,19 +732,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 28px;
 }
 
+#play-contents .select-shape:hover {
+	background-color: rgba(59, 191, 206, 0.25);
+	border-color: rgba(59, 191, 206, 0.75);
+}
+
 #play-contents .select-shape-palette {
 	background: #EFEFEF;
 /* 	border: 1px solid #CDCDCD; */
 	cursor: pointer;
 	display: none;
 	position: absolute;
+	z-index: 9999;
 }
 
 #play-contents .select-shape-palette div:first-child {
 	border-left: 1px solid #CDCDCD;
 }
 
-#play-contents .select-shape-palette div {
+#play-contents .palette-item {
 	background-image: url("/images/imageSelect.png");
 	border: 1px solid #CDCDCD;
 	border-left: none;
@@ -746,6 +758,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	float: left;
 	height: 28px;
 	width: 28px;
+	
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
+}
+
+#play-contents .palette-item:hover {
+	background-color: rgba(59, 191, 206, 0.25);
 }
 
 #play-contents .palette-circle {
@@ -753,7 +774,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .palette-circle:hover {
-	background-position: 0px -28px;
+/* 	background-position: 0px -28px; */
 }
 
 #play-contents .palette-square {
@@ -761,7 +782,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .palette-square:hover {
-	background-position: -28px -28px;
+/* 	background-position: -28px -28px; */
 }
 
 #play-contents .palette-triangle {
@@ -769,7 +790,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .palette-triangle:hover {
-	background-position: -56px -28px;
+/* 	background-position: -56px -28px; */
 }
 
 #play-contents .palette-x {
@@ -777,7 +798,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #play-contents .palette-x:hover {
-	background-position: -84px -28px;
+/* 	background-position: -84px -28px; */
 }
 
 #play-contents .add-player, #play-contents .add-items a {

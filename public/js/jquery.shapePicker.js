@@ -34,8 +34,13 @@
 			newPalette.append(newCircle, newSquare, newTriangle, newX);
 			element.append(newPalette);
 			
-			element.on("click", function() {
-				$.fn.shapePicker.togglePalette($(this).children(".select-shape-palette"), $(this));
+			element.on("mouseover", function(e) {
+// 				$.fn.shapePicker.togglePalette($(this).children(".select-shape-palette"), $(this));
+				$.fn.shapePicker.showPalette($(this).children(".select-shape-palette"), $(this));
+			});
+			
+			element.on("mouseout", function(e) {
+				$.fn.shapePicker.checkMouse(e);
 			});
 			
 			element.find(".palette-item").each(function(i, value) {
@@ -54,8 +59,8 @@
      * Extend shapePicker with... all our functionality.
     **/
     $.extend(true, $.fn.shapePicker, {
-        checkMouse: function(e) {
-        	if (e.target === selectorOwner[0] || $(e.target).parents(".select-shape").length > 0) {
+    	checkMouse: function(e) {
+        	if (e.relatedTarget === selectorOwner[0] || $(e.relatedTarget).parents(".select-shape").length > 0) {
                 return;
             }
 			
@@ -63,26 +68,26 @@
 			$.fn.shapePicker.hidePalette();
         },
 
-        showPalette: function(palette) {
+        showPalette: function(palette, origin) {
+        	selectorOwner = origin;
+			activePalette = palette;
+        
         	palette.css({
 				left: selectorOwner.position().left,
 				top: selectorOwner.position().top + selectorOwner.outerHeight(),
 			});
         
-        	palette.show();
-		
-			$(document).on("mousedown", $.fn.shapePicker.checkMouse);
+        	palette.fadeIn(350, "swing");
         },
 
 		hidePalette: function() {
-			$(document).off("mousedown", $.fn.shapePicker.checkMouse);
-		
-			$(".select-shape-palette").hide();
+			$(".select-shape-palette").fadeOut(350, "swing");
 		},
 
         /**
          * Toggle visibility of the shapePicker palette.
         **/
+        /*
         togglePalette: function(palette, origin) {
             selectorOwner = origin;
 			activePalette = palette;
@@ -93,6 +98,7 @@
             	$.fn.shapePicker.showPalette(palette);
             }
         },
+        */
 
         /**
          * Update the input with a newly selected shape.
