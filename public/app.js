@@ -1225,7 +1225,7 @@ $(function() {
 			"click .name"			: "editName",
 			"blur .name-edit"		: "updateName",
 			"keypress .name-edit"	: "updateName",
-			"dblclick .desc"		: "editDescription",
+			"click .desc"			: "editDescription",
 			"blur .desc-edit"		: "updateDescription",
 			"click .new-play"		: "newPlay",
 			"click .reset-play"		: "resetPlay",

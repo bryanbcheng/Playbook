@@ -854,7 +854,6 @@ function createLabel(label) {
 }
 
 function createSelect(select) {
-	console.log(select);
 	var selectGroup = new Kinetic.Group({
 		visible: select.select,
 		name: "select"
@@ -865,7 +864,8 @@ function createSelect(select) {
 			var corner = new Kinetic.Rect({
 				width: 4,
 				height: 4,
-				fill: "#e4f084",
+				fill: "#E4F084",
+// 				fill: "#3BBFCE",
 				x: i * 1.5 * SCALE,
 				y: j * 1.5 * SCALE,
 				offset: {
@@ -880,7 +880,8 @@ function createSelect(select) {
 	var box = new Kinetic.Rect({
 		width: 3 * SCALE,
 		height: 3 * SCALE,
-		stroke: "#e4f084",
+		stroke: "#E4F084",
+// 		stroke: "#3BBFCE",
 		strokeWidth: 1,
 		offset: {
 			x: 1.5 * SCALE,
