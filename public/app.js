@@ -1222,13 +1222,12 @@ $(function() {
 		template: $("#play-template").html(),
 		
 		events: {
-			"click .name"			: "editName",
-			"blur .name-edit"		: "updateName",
-			"keypress .name-edit"	: "updateName",
-			"click .desc"			: "editDescription",
-			"blur .desc-edit"		: "updateDescription",
-			"click .new-play"		: "newPlay",
-			"click .reset-play"		: "resetPlay",
+			"blur .name"		: "updateName",
+// 			"keypress .name"	: "updateCloseName",
+// 			"click .desc"		: "editDescription",
+			"blur .desc"		: "updateDescription",
+			"click .new-play"	: "newPlay",
+			"click .reset-play"	: "resetPlay",
 			
 			"mouseover .new-formation" : "showFormations",
 			"mouseout .new-formation"  : "hideFormations",
@@ -1245,25 +1244,17 @@ $(function() {
 			return this;
 		},
 		
-		editName: function(e) {
-			$(e.currentTarget).addClass("edit");
-			$(e.currentTarget).find("input").focus();
-		},
-		
 		updateName: function(e) {
-			if (e.type === "keypress" && e.keyCode != 13) return;
-			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({name: e.currentTarget.value});
+			this.model.save({name: $.trim($(e.target).text())});
 		},
 		
-		editDescription: function(e) {
-			$(e.currentTarget).addClass("edit");
-			$(e.currentTarget).find("textarea").focus();
-		},
+// 		updateCloseName: function(e) {
+// 			if (e.type === "keypress" && e.keyCode != 13) return;
+// 			$(e.target).blur();
+// 		},
 		
 		updateDescription: function(e) {
-			$(e.currentTarget).parent().removeClass("edit");
-			this.model.save({description: e.currentTarget.value});
+			this.model.save({description: $.trim($(e.target).text())});
 		},
 		
 		newPlay: function() {
