@@ -737,6 +737,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	height: 50px;
 }
 
+#play-contents .team:first-child {
+	padding-bottom: 10px;
+}
+
 #play-contents .team span {
 	float: left;
 	font-size: 14px;
@@ -859,6 +863,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
     font-size: 13px;
     font-weight: bold;
     line-height: 15px;
+    margin-right: 10px;
     overflow: hidden;
     padding: 6px;
     text-align: center;
@@ -1291,6 +1296,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 
 br.clear {
 	clear: both;
+}
+
+div.spacer {
+	clear: both;
+	height: 10px;
 }
 
 

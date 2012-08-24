@@ -1145,11 +1145,19 @@ $(function() {
 		},
 		
 		updateName: function(e) {
-			this.model.save({name: $.trim($(e.target).text())});
+			// Check if changed
+			var newValue = $.trim($(e.target).text());
+			if (this.model.get("name") !== newValue) {
+				this.model.save({name: newValue});
+			}
 		},
 		
 		updateComments: function(e) {
-			this.model.save({comments: $.trim($(e.target).text())});
+			// Check if changed
+			var newValue = $.trim($(e.target).text());
+			if (this.model.get("comments") !== newValue) {
+				this.model.save({comments: newValue});
+			}
 		},
 		
 		show: function() {
@@ -1230,7 +1238,11 @@ $(function() {
 		},
 		
 		updateName: function(e) {
-			this.model.save({name: $.trim($(e.target).text())});
+			// Check if changed
+			var newValue = $.trim($(e.target).text());
+			if (this.model.get("name") !== newValue) {
+				this.model.save({name: newValue});
+			}
 		},
 		
 // 		updateCloseName: function(e) {
@@ -1239,7 +1251,11 @@ $(function() {
 // 		},
 		
 		updateDescription: function(e) {
-			this.model.save({description: $.trim($(e.target).text())});
+			// Check if changed
+			var newValue = $.trim($(e.target).text());
+			if (this.model.get("description") !== newValue) {
+				this.model.save({description: newValue});
+			}
 		},
 		
 		newPlay: function() {
