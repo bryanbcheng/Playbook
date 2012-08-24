@@ -334,6 +334,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 
 #canvas {
 	border: 1px solid #CDCDCD;
+	position: relative;
 	width: 800px;
 }
 
@@ -990,20 +991,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	display: block;
 }
 
-#set .annotation-view {
+#play .annotation-view {
 	display: none;
 	position: absolute;
 }
 
-#set .editing {
+#play .editing {
 	display: block;
 }
 
-#set .annotation-view div {
+#play .annotation-view div {
 	float: left;
 }
 
-#set .annotation-edit {
+#play .annotation-edit {
 	background: transparent;
 	font-family: Helvetica;
 	font-size: 12;
@@ -1014,14 +1015,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	resize: vertical;
 /* 	white-space: pre; */
 	word-wrap: break-word;
+	z-index: 9999;
 }
 
-#set .annotation-controls {
+#play .annotation-controls {
 	position: relative;
 	width: 20px;
 }
 
-#set .annotation-controls a {
+#play .annotation-controls a {
 	display: block;
 	height: 20px;
 	line-height: 20px;
@@ -1029,16 +1031,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 16px;
 }
 
-#set .annotation-controls div:hover {
+#play .annotation-controls div:hover {
 	background-color: rgba(255,255,255,0.1);
 }
 
-#set a.annotation-save:hover {
+#play a.annotation-save:hover {
 	color: green;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
-#set a.annotation-cancel:hover {
+#play a.annotation-cancel:hover {
 	color: red;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }

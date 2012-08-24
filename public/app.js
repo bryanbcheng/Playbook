@@ -916,13 +916,13 @@ $(function() {
 			
 				// Append to set, move over canvas dom
 				if (!view.$el.parent().length)
-					$("#set").append(view.el);
+					$("#play").append(view.el);
 				view.$el.addClass("editing");
 				
 				// Calculate offset (canvas DOM + layer offset + item location)
 				view.$el.css({
-					left: $("#canvas").position().left + stage.current.getX() + view.model.get("x"),
-					top: $("#canvas").position().top + stage.current.getY() + view.model.get("y"),
+					left: $("#canvas").position().left + stage.current.getX() + view.model.get("x"),// - $("#right-panel").position().left,
+					top: $("#canvas").position().top + stage.current.getY() + view.model.get("y"),// - $("#right-panel").position().right,
 				});
 				// Calculate size (item size - padding size)
 				view.$el.find(".annotation-edit").css({
