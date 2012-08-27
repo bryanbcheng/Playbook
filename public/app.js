@@ -1351,6 +1351,9 @@ $(function() {
 			var currSet = $(".set-list").find(".selected");
 			// Start printing from beginning
 			$(".first-set").click();
+			
+			// Save the current layer position
+			var currPosition = stage.current.getPosition();
 		
 			var tempStage = stage.clone({height: 1200});
 			$(tempStage.getDOM()).addClass("print");
@@ -1358,6 +1361,7 @@ $(function() {
 				var layer = stage.getChildren()[0];
 				layer.moveTo(tempStage);
 				layer.canvas.setHeight(1200);
+				layer.setPosition({x: 0, y: 0});
 				layer.draw();
 			}
 		
@@ -1392,6 +1396,7 @@ $(function() {
 							var layer = tempStage.getChildren()[0];
 							layer.moveTo(stage);
 							layer.canvas.setHeight(CANVAS_HEIGHT);
+							layer.setPosition(currPosition);
 							layer.draw();
 						}
 						
