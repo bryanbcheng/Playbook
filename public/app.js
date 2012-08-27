@@ -982,7 +982,7 @@ $(function() {
 		},
 
 		checkSize: function(e) {
-			var divHeight = $(e.target).height() / SCALE;
+			var divHeight = Math.max($(e.target).height() / SCALE, 3);
 			if (divHeight !== this.model.get("height")) {
 				this.renderBackground(divHeight);
 			}
@@ -991,7 +991,7 @@ $(function() {
 		saveAnnotation: function(e) {
 			this.model.save({
 				text: this.$el.find(".annotation-edit").text(),
-				height: this.$el.find(".annotation-edit").height() / SCALE
+				height: Math.max(this.$el.find(".annotation-edit").height() / SCALE, 3)
 			});
 			
 			this.$el.detach();
