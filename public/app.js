@@ -1352,6 +1352,15 @@ $(function() {
 			// Start printing from beginning
 			$(".first-set").click();
 		
+			var tempStage = stage.clone({height: 1200});
+			$(tempStage.getDOM()).addClass("print");
+			while(stage.getChildren().length > 0) {
+				var layer = stage.getChildren()[0];
+				layer.moveTo(tempStage);
+				layer.canvas.setHeight(1200);
+				layer.draw();
+			}
+		
 			// Generate the image for each of the sets
 			var count = 1;
 			async.whilst(
@@ -1359,7 +1368,7 @@ $(function() {
 					return count <= view.model.get("sets").length;
 				},
 				function(callback) {
-					stage.toImage({
+					tempStage.toImage({
 						callback: function(image) {
 							// put play and set info
 							$("#playbook-print").append(Mustache.render($("#play-print-template").html(), view.model.toJSON()));
@@ -1379,6 +1388,15 @@ $(function() {
 				},
 				function(err) {
 					if (!err) {
+						while(tempStage.getChildren().length > 0) {
+							var layer = tempStage.getChildren()[0];
+							layer.moveTo(stage);
+							layer.canvas.setHeight(CANVAS_HEIGHT);
+							layer.draw();
+						}
+						
+						$(tempStage.getDOM()).remove();
+					
 						currSet.click();
 						window.print();
 						uncoverScreen();

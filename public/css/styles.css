@@ -341,6 +341,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 800px;
 }
 
+#canvas .print {
+	display: none !important;
+}
+
 #instructions {
 	margin-top: 20px;
 	font-family: "Comic Sans MS", cursive, sans-serif;
@@ -1318,16 +1322,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #blackout {
-	background: rgba(0, 0, 0, 0.4);
-	bottom: 0;
-	color: rgba(255, 255, 255, 0.4);
+	background: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.5);
 	display: none;
 	left: 0;
-	position: absolute;
-	right: 0; 
+	height: 100%;
+	position: fixed;
+	right: 0;
 	top: 0;
 	text-align: center;
-	vertical-align: center;
+	width: 100%;
+	z-index: 10000;
 }
 
 br.clear {

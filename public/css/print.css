@@ -65,6 +65,10 @@ body {
 	display: block;
 }
 
+#playbook-print img {
+	height: 800px;
+}
+
 .page-break {
 	display: block;
 	page-break-before: always;
