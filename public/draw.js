@@ -1,10 +1,10 @@
 /* CONSTANTS */
 var SCALE = 10;
 var CANVAS_WIDTH = 800;
-var CANVAS_HEIGHT = 600;
+var CANVAS_HEIGHT = 700;
 var START_X = 0;
 var START_Y = 0;
-var DRAG_TOP = -650;
+var DRAG_TOP = -550;
 var DRAG_BOTTOM = 50;
 
 var ANNOTATION_LINE_HEIGHT = 15;

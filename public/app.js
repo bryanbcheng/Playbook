@@ -192,8 +192,8 @@ $(function() {
 		defaults: function() {
 			return {
 				text: "text",
-				x: 0,
-				y: 0,
+				x: CANVAS_WIDTH / 2,
+				y: CANVAS_HEIGHT / 2,
 				width: 20,
 				height: 3,
 			}
@@ -1237,6 +1237,7 @@ $(function() {
 			"blur .desc"		: "updateDescription",
 			"click .new-play"	: "newPlay",
 			"click .reset-play"	: "resetPlay",
+			"click .print-play"	: "printPlay",
 			
 			"mouseover .new-formation" : "showFormations",
 			"mouseout .new-formation"  : "hideFormations",
@@ -1337,6 +1338,57 @@ $(function() {
 			}
 		},
 		
+		printPlay: function(e) {
+			var view = this;
+			
+			// Cover screen to prevent touching
+			coverScreen();
+		
+			// Reset #playbook-print
+			$("#playbook-print").html("");
+			
+			// Save current set
+			var currSet = $(".set-list").find(".selected");
+			// Start printing from beginning
+			$(".first-set").click();
+		
+			// Generate the image for each of the sets
+			var count = 1;
+			async.whilst(
+				function() {
+					return count <= view.model.get("sets").length;
+				},
+				function(callback) {
+					stage.toImage({
+						callback: function(image) {
+							// put play and set info
+							$("#playbook-print").append(Mustache.render($("#play-print-template").html(), view.model.toJSON()));
+							var thisSet = view.model.get("sets").find(function(set) {
+								return set.get("number") === count;
+							});
+							$("#playbook-print").append(Mustache.render($("#set-print-template").html(), thisSet.toJSON()));
+							
+							$("#playbook-print").append(image);
+							$("#playbook-print").append('<div class="page-break"></div>');
+							
+							$(".next-set").click();
+							count++;
+							callback();
+						}
+					});
+				},
+				function(err) {
+					if (!err) {
+						currSet.click();
+						window.print();
+						uncoverScreen();
+					} else {
+						errorMessage("Sorry could not print, please try again later.");
+					}
+				}
+			);
+		},
+		
 		showFormations: function(e) {
 			this.$el.find(".formations").fadeIn(350, "swing");
 		},
@@ -1427,8 +1479,8 @@ $(function() {
 			// create stage
 			stage = new Kinetic.Stage({
 				container: "canvas",
-				width: 800,
-				height: 600,
+				width: CANVAS_WIDTH,
+				height: CANVAS_HEIGHT,
 			});
 			
 			this.model.on('change', this.render, this);
@@ -1920,13 +1972,14 @@ $(function() {
 
 /* Util functions */
 
-function print() {
-// 	console.log(stage);
-// 	var fl = stage.get(".fieldLayer")[0];
-// 	console.log(fl);
-// 	console.log(fl.getPosition());
-// 	console.log(stage.getDOM());
-	console.log(stage.current);
+function coverScreen() {
+	// show div that covers entire screen
+	$("#blackout").show();
+}
+
+function uncoverScreen() {
+	// hide that div
+	$("#blackout").hide();
 }
 
 function changeSet(e) {

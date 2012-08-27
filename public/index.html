@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="/css/styles.css"/>
 	<link rel="stylesheet" href="/css/colorPicker.css" />
 	<link rel="stylesheet" href="/css/jquery-ui-1.8.22.css" />
+	<link rel="stylesheet" href="/css/print.css" media="print" />
 </head>
 
 <body>
@@ -18,6 +19,7 @@
 	<script src="/js/backbone-relational.min.js"></script>
 	<script src="/js/backbone.iosync.min.js"></script>
 	<script src="/js/backbone.iobind.min.js"></script>
+	<script src="/js/async.min.js"></script>
 	<script src="/js/mustache.min.js"></script>
 	<script src="/js/kinetic-v3.10.5.min.js"></script>
 	<script src="/js/jquery.colorPicker.min.js"></script>
@@ -63,6 +65,9 @@
 		</div>
 	</div>
 	
+	<div id="playbook-print"></div>
+	<div id="blackout">Configuring print settings...</div>
+	
 	<!-- Templates -->
 	
 	<script type="text/template" id="play-template">
@@ -107,6 +112,10 @@
 			<div class="action-container reset-play" title="Reset Play">
 				<div class="action-icon"></div>
 				<div class="action-name">Reset</div>
+			</div>
+			<div class="action-container print-play" title="Print Play">
+				<div class="action-icon"></div>
+				<div class="action-name">Print</div>
 			</div>
 		</div>
 		<div class="play-attributes">
@@ -289,6 +298,35 @@
 			</div>
 			
 			<div class="delete"><div class="delete-image"></div></div>
+		</div>
+	</script>
+	
+	<script type="text/template" id="play-print-template">
+		<div class="play-attributes">
+			<div class="name">
+				<h2>{{name}}</h2>
+			</div>
+			<div class="desc">
+				<p>{{description}}</p>
+			</div>
+		</div>
+	</script>
+	
+	<script type="text/template" id="set-print-template">
+		<hr />
+		<div class="name-container" title="Set Name">
+			<span>Set Name:</span>
+			<div class="name">
+				<h2>{{name}}</h2>
+			</div>
+			<br class="clear" />
+		</div>
+		<div class="comments-container">
+			<span>Comments:</span>
+			<div class="comments">
+				<p>{{comments}}</p>
+			</div>
+			<br class="clear" />
 		</div>
 	</script>
 </body>

@@ -180,8 +180,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	border: 1px solid rgba(255, 255, 255, 0);
 	border-radius: 3px 3px 3px 3px;
 	float: left;
-	margin-right: 28px;
-	width: 620px;
+	margin-right: 13px;
+	width: 585px;
 	
 	transition: all .35s ease;
 	-moz-transition: all .35s ease;
@@ -235,7 +235,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 
 #play .actions {
 	float: right;
-	width: 150px;
+	width: 200px;
 }
 
 #play .action-container {
@@ -272,6 +272,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 
 #play .reset-play .action-icon {
 	background-position: -248px -123px;
+}
+
+#play .print-play .action-icon {
+	background-position: -341px -410px;
 }
 
 #play .action-name {
@@ -1307,6 +1311,23 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	background-position: -595.5px -176px;
 	height: 20px;
 	width: 19px;
+}
+
+#playbook-print {
+	display: none;
+}
+
+#blackout {
+	background: rgba(0, 0, 0, 0.4);
+	bottom: 0;
+	color: rgba(255, 255, 255, 0.4);
+	display: none;
+	left: 0;
+	position: absolute;
+	right: 0; 
+	top: 0;
+	text-align: center;
+	vertical-align: center;
 }
 
 br.clear {
