@@ -7,6 +7,8 @@ var START_Y = 0;
 var DRAG_TOP = -650;
 var DRAG_BOTTOM = 50;
 
+var ANNOTATION_LINE_HEIGHT = 15;
+
 /* ULTIMATE CONSTANTS */
 var ULTIMATE_WIDTH = 40;
 var ULTIMATE_HEIGHT = 120;
@@ -1433,22 +1435,16 @@ function createAnnotation(annotation) {
 		draggable: true
 	});
 	
-	var annotationBox = new Kinetic.Rect({
-		width: (annotation.width + 1) * SCALE, // + 1 to account for padding
-		height: (annotation.height + 1) * SCALE,
-		fill: "white",
-		name: "annotationBox",
-		alpha: 0.1,
-	});
+	var annotationBox = createAnnotationBox(annotation);
 	
 	var annotationText = new Kinetic.Shape({
 		drawFunc: function(context) {
 			context.beginPath();
 			context.closePath(); 			
  			context.fillStyle = "black";
- 			context.font = "15px Arial";
+ 			context.font = ANNOTATION_LINE_HEIGHT + "px Arial";
  			context.textAlign = "left";
-			wrapText(context, annotation.text, 0, 0, 200, 15);
+			wrapText(context, annotation.text, 0, 0, 200, ANNOTATION_LINE_HEIGHT);
 		},
 		name: "annotationText",
 		offset: {
@@ -1475,6 +1471,16 @@ function createAnnotation(annotation) {
 	annotationGroup.add(annotationXHover);
 	
 	return annotationGroup;
+}
+
+function createAnnotationBox(annotation) {
+	return new Kinetic.Rect({
+		width: (annotation.width + 1) * SCALE, // + 1 to account for padding
+		height: (annotation.height + 1) * SCALE,
+		fill: "white",
+		name: "annotationBox",
+		alpha: 0.1,
+	});
 }
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {

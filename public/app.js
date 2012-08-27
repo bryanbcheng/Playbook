@@ -875,6 +875,7 @@ $(function() {
 		template: $("#annotation-template").html(),
 		
 		events: {
+			"keyup .annotation-edit"	: "checkSize",
 			"click .annotation-save"	: "saveAnnotation",
 			"click .annotation-cancel"	: "closeEdit",
 		},
@@ -928,7 +929,7 @@ $(function() {
 				// Calculate size (item size - padding size)
 				view.$el.find(".annotation-edit").css({
 					width: (view.model.get("width")) * SCALE,
-					height: (view.model.get("height")) * SCALE
+// 					height: (view.model.get("height")) * SCALE
 				});
 				
 				view.$el.find(".annotation-edit").focus();
@@ -973,17 +974,36 @@ $(function() {
 			
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 		},
+		
+		renderBackground: function(height) {
+			this.shape.remove(this.shape.get(".annotationBox")[0]);
+			this.shape.add(createAnnotationBox({width: this.model.get("width"), height: height}));
+			this.layer.draw();
+		},
 
-		saveAnnotation: function() {
-			this.model.save({text: this.$el.find(".annotation-edit").text()});
+		checkSize: function(e) {
+			var divHeight = $(e.target).height() / SCALE;
+			if (divHeight !== this.model.get("height")) {
+				this.renderBackground(divHeight);
+			}
+		},
+
+		saveAnnotation: function(e) {
+			this.model.save({
+				text: this.$el.find(".annotation-edit").text(),
+				height: this.$el.find(".annotation-edit").height() / SCALE
+			});
 			
 			this.$el.detach();
 		},
 		
-		closeEdit: function() {
-			// Hide text
+		closeEdit: function(e) {
+			// Show text
 			this.shape.get(".annotationText")[0].show();
 			this.layer.draw();
+			
+			// Reset background size
+			this.renderBackground(this.model.get("height"));
 		
 			//Reset textarea's data
 			this.$el.find(".annotation-edit").html(this.model.get("text"));

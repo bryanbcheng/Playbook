@@ -1010,6 +1010,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 
 #annotation .annotation-edit {
 	background: transparent;
+	cursor: text;
 	font-family: Arial;
 	font-size: 15px;
 	line-height: 15px;
@@ -1029,25 +1030,32 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #annotation .annotation-controls a {
+	background-color: rgba(255,255,255,0);
+	cursor: pointer;
 	display: block;
 	height: 20px;
 	line-height: 20px;
 	text-align: center;
+	text-shadow: -1px 0 rgba(255,255,255,0.1), 0 1px rgba(255,255,255,0.1), 1px 0 rgba(255,255,255,0.1), 0 -1px rgba(255,255,255,0.1);
 	width: 16px;
+	
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
-#annotation .annotation-controls div:hover {
-	background-color: rgba(255,255,255,0.1);
+#annotation .annotation-controls a:hover {
+	background-color: rgba(255,255,255,0.1) !important;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #annotation a.annotation-save:hover {
 	color: green;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #annotation a.annotation-cancel:hover {
 	color: red;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #article {
