@@ -1701,13 +1701,12 @@ $(function() {
 			var count = 0, numSets = this.model.get("sets").length;
 			this.model.get("sets").each(function(set) {
 				var path;
+				// If x, y provided, then using formation and need to adjust
+				// If no x, y provided, then add to middle of canvas
 				var point = {
-					x: x != null ? x : stage.get(".fieldLayer")[0].get(".playingField")[0].getWidth() / 2 - START_X,
-					y: y != null ? y : stage.get(".fieldLayer")[0].get(".playingField")[0].getHeight() / 2 - START_Y
+					x: x != null ? x + stage.get(".fieldLayer")[0].get(".fieldGroup")[0].getX() : CANVAS_WIDTH / 2 - stage.current.getX(),
+					y: y != null ? y + stage.get(".fieldLayer")[0].get(".fieldGroup")[0].getY(): CANVAS_HEIGHT / 2 - stage.current.getY()
 				};
-				
-				point.x += stage.get(".fieldLayer")[0].get(".fieldGroup")[0].getX();
-				point.y += stage.get(".fieldLayer")[0].get(".fieldGroup")[0].getY();
 				
 				if (set.get("number") === 1)
 					path = new $.playbook.Path({
