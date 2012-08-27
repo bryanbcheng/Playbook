@@ -192,14 +192,17 @@ $(function() {
 		defaults: function() {
 			return {
 				text: "text",
-				x: CANVAS_WIDTH / 2,
-				y: CANVAS_HEIGHT / 2,
 				width: 20,
 				height: 3,
 			}
 		},
 		
 		initialize: function() {
+			if (!this.get("x") || !this.get("y")) {
+				this.set("x", CANVAS_WIDTH / 2 - stage.current.getX() - (20 * SCALE / 2));
+				this.set("y", CANVAS_HEIGHT / 2 - stage.current.getY() - (3 * SCALE / 2));
+			}
+		
 			_.bindAll(this, 'serverChange', 'serverDelete');
 			if (!this.isNew()) {
 				this.ioBind('update', this.serverChange, this);
