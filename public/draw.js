@@ -1434,27 +1434,27 @@ function createAnnotation(annotation) {
 	});
 	
 	var annotationBox = new Kinetic.Rect({
-		width: (annotation.width + 1) * SCALE,
+		width: (annotation.width + 1) * SCALE, // + 1 to account for padding
 		height: (annotation.height + 1) * SCALE,
 		fill: "white",
 		name: "annotationBox",
 		alpha: 0.1,
 	});
 	
-	var annotationText = new Kinetic.Text({
-		text: annotation.text,
-		//fontSize: 12,
-		fontFamily: "Helvetica",
-		textFill: "black",
-		//textStrokeWidth: 1,
-		width: annotation.width * SCALE,
-		height: annotation.height * SCALE,
-		//lineHeight: 1.2,
+	var annotationText = new Kinetic.Shape({
+		drawFunc: function(context) {
+			context.beginPath();
+			context.closePath(); 			
+ 			context.fillStyle = "black";
+ 			context.font = "15px Arial";
+ 			context.textAlign = "left";
+			wrapText(context, annotation.text, 0, 0, 200, 15);
+		},
 		name: "annotationText",
 		offset: {
-			x: -0.5 * SCALE,
-			y: -0.5 * SCALE
-		}
+			x: -5, // manually calculated to align as close as possible
+			y: -18
+		},
 	});
 	
 	var annotationX = createX({
@@ -1475,6 +1475,25 @@ function createAnnotation(annotation) {
 	annotationGroup.add(annotationXHover);
 	
 	return annotationGroup;
+}
+
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+	var words = text.split(" ");
+	var line = "";
+	
+	for(var n = 0; n < words.length; n++) {
+		var testLine = line + words[n] + " ";
+		var metrics = context.measureText(testLine);
+		var testWidth = metrics.width;
+		if(testWidth > maxWidth) {
+			context.fillText(line, x, y);
+			line = words[n] + " ";
+			y += lineHeight;
+		} else {
+			line = testLine;
+		}
+	}
+	context.fillText(line, x, y);
 }
 
 function createX(cross) {

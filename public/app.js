@@ -922,13 +922,13 @@ $(function() {
 				console.log($("#annotation").offset());
 				// Calculate offset (canvas DOM + layer offset + item location)
 				view.$el.css({
-					left:  - $("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x"),
-					top: -$("#annotation").offset().top + $("#canvas").offset().top + stage.current.getY() + view.model.get("y"),
+					left:  -$("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x") + 1, // + 1 for slight offset
+					top: -$("#annotation").offset().top + $("#canvas").offset().top + stage.current.getY() + view.model.get("y") + 1,
 				});
 				// Calculate size (item size - padding size)
 				view.$el.find(".annotation-edit").css({
-					width: (view.model.get("width") + 1) * SCALE - 10,
-					height: (view.model.get("height") + 1) * SCALE - 6
+					width: (view.model.get("width")) * SCALE,
+					height: (view.model.get("height")) * SCALE
 				});
 				
 				view.$el.find(".annotation-edit").focus();
