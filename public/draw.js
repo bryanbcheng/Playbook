@@ -1488,12 +1488,13 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 	var line = "";
 	
 	for(var n = 0; n < words.length; n++) {
-		var testLine = line + words[n] + " ";
+		var testLine = line.length ? line + " " + words[n] : line + words[n];
 		var metrics = context.measureText(testLine);
 		var testWidth = metrics.width;
 		if(testWidth > maxWidth) {
 			context.fillText(line, x, y);
-			line = words[n] + " ";
+			//TODO: Check for break word, for now assume user will not type anything longer than 200px
+			line = words[n];
 			y += lineHeight;
 		} else {
 			line = testLine;

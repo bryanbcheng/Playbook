@@ -520,11 +520,6 @@ $(function() {
 			if (index !== -1) this.paths.splice(index, 1);
 		},
 		
-// 		show: function() {
-// 			this.$el.siblings().removeClass("selected");
-// 			this.$el.addClass("selected");
-// 		},
-		
 		editLabel: function(e) {
 			this.$el.find(".label").focus();
 			setCaretPosition(this.$el.find(".label")[0], 3); // 3 will ensure always at end
