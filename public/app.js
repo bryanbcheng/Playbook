@@ -1613,9 +1613,10 @@ $(function() {
 					$(this).off("mouseout");
 				});
 			});
-			var currSpeed = $(".animation-speed").slider("value");
+			
+			var currSpeed = $(".animation-speed").length ? $(".animation-speed").slider("value") : 1.5;
 			htmlObj.find(".animation-speed").slider({
-				value: currSpeed ? currSpeed : 1.5,
+				value: currSpeed,
 				min: 0.5,
 				max: 2.5,
 				step: 0.5,
