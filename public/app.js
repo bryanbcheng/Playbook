@@ -1962,6 +1962,8 @@ $(function() {
 		show_play : function(_id) {
 			// clear previous divs
 			clearDivs();
+			
+			$("#left-panel").attr("class", "play");
 		
 			var play = new $.playbook.Play({_id: _id});
 			
