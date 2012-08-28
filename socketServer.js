@@ -62,12 +62,14 @@ io.sockets.on('connection', function(socket) {
 			}
 		};
 		
+		// Makes the query much smaller and faster -path not needed, but for extra safety
+		var selectFields = "name description fieldType -fieldSize -teamColors -teamShapes -articles -sets -privacy categories";
 		if(!_.isEmpty(data)) {
 			// Find based on query
-// 			Play.find({'_id': data._id}, send_result);
-			Play.find({privacy: "public"}, send_result);
+// 			Play.find({'_id': data._id}, selectFields, send_result);
+			Play.find({privacy: "public"}, selectFields, send_result);
 		} else {
-			Play.find({privacy: "public"}, send_result);
+			Play.find({privacy: "public"}, selectFields, send_result);
 		}
 	});
 
@@ -80,7 +82,8 @@ io.sockets.on('connection', function(socket) {
 			fieldType: data.fieldType,
 			fieldSize: data.fieldSize,
 			teamColors: data.teamColors,
-			teamShapes: data.teamShapes
+			teamShapes: data.teamShapes,
+			privacy: data.privacy,
 		});
 		newPlay.save();
 		

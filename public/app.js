@@ -2030,13 +2030,13 @@ $(function() {
 		home: function() {
 			clearDivs();
 			
-			$("#left-panel").attr("class", "home");
+			$("#playbook").attr("class", "home");
 		},
 		
 		show_plays: function() {
 			clearDivs();
 			
-			$("#left-panel").attr("class", "plays");
+			$("#playbook").attr("class", "plays");
 			
 			var plays = new $.playbook.PlayCollection();
 			
@@ -2047,7 +2047,7 @@ $(function() {
 			// clear previous divs
 			clearDivs();
 			
-			$("#left-panel").attr("class", "play");
+			$("#playbook").attr("class", "play");
 		
 			var play = new $.playbook.Play({_id: _id});
 			
@@ -2069,7 +2069,7 @@ $(function() {
 		
 		$("#new-play").click(function() {
 			var play = new $.playbook.Play({});
-			
+			console.log(play);
 			play.save({}, {
 				silent: true,
 				wait: true,

@@ -161,18 +161,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	display: none;
 }
 
-#left-panel.home #home-container {
-	display: block;
-}
-
-#left-panel.plays #plays-container {
-	display: block;
-}
-
-#left-panel.play #play-container {
-	display: block;
-}
-
 #home-container .home-action {
 	background: rgb(255,255,255); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(243,243,243,1) 100%); /* FF3.6+ */
@@ -406,6 +394,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 250px;
 }
 
+#right-panel div.right-container {
+	display: none;
+}
+
+#playbook.home #home-container, #playbook.home #home-panel, #playbook.plays #plays-container, #playbook.plays #plays-panel, #playbook.play #play-container, #playbook.play #play-panel {
+	display: block;
+}
 
 #play {
 	margin-left: 2px;
