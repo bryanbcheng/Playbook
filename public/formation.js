@@ -1237,8 +1237,10 @@ function threeFiveThreeNickelDefense() {
 function formationBasketball(formationType) {
 	if (formationType === "threeOutTwoIn") {
 		return threeOutTwoIn();
-	} else if (formationType === "") {
-		return;
+	} else if (formationType === "oneTwoTwoZone") {
+		return oneTwoTwoZone();
+	} else if (formationType === "twoThreeZone") {
+		return twoThreeZone();
 	}
 }
 
@@ -1248,33 +1250,113 @@ function threeOutTwoIn() {
 		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS + 5) * SCALE,
 		type: "player",
 		label: "PG",
-		team: "team1"
+		team: "team0"
 	}, {
 		x: (BASKETBALL_WIDTH / 2 - 20) * SCALE,
 		y: (BASKETBALL_KEY_HEIGHT + 6) * SCALE,
 		type: "player",
 		label: "SG",
-		team: "team1"
+		team: "team0"
 	}, {
 		x: (BASKETBALL_WIDTH / 2 + 20) * SCALE,
 		y: (BASKETBALL_KEY_HEIGHT + 4) * SCALE,
 		type: "player",
 		label: "SF",
-		team: "team1"
+		team: "team0"
 	}, {
 		x: ((BASKETBALL_WIDTH + BASKETBALL_OUTER_KEY_WIDTH) / 2 + 3) * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + 3) * SCALE,
 		type: "player",
 		label: "PF",
-		team: "team1"
+		team: "team0"
 	}, {
 		x: ((BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 - 2) * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + 3) * SCALE,
 		type: "player",
 		label: "C",
-		team: "team1"
+		team: "team0"
 	}, {
 		x: (BASKETBALL_WIDTH / 2 + 2) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS + 3) * SCALE,
+		type: "ball",
+		label: "",
+		team: ""
+	}];
+}
+
+function oneTwoTwoZone() {
+	return [{
+		x: (BASKETBALL_WIDTH / 2) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS - 2) * SCALE,
+		type: "player",
+		label: "PG",
+		team: "team1"
+	}, {
+		x: (BASKETBALL_WIDTH / 2 - 13) * SCALE,
+		y: (BASKETBALL_KEY_HEIGHT + 2) * SCALE,
+		type: "player",
+		label: "SG",
+		team: "team1"
+	}, {
+		x: (BASKETBALL_WIDTH / 2 + 13) * SCALE,
+		y: (BASKETBALL_KEY_HEIGHT + 1) * SCALE,
+		type: "player",
+		label: "SF",
+		team: "team1"
+	}, {
+		x: ((BASKETBALL_WIDTH + BASKETBALL_OUTER_KEY_WIDTH) / 2 - 1) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + 3) * SCALE,
+		type: "player",
+		label: "PF",
+		team: "team1"
+	}, {
+		x: ((BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 + 2) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + 3) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team1"
+	}, {
+		x: (BASKETBALL_WIDTH / 2) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS + 3) * SCALE,
+		type: "ball",
+		label: "",
+		team: ""
+	}];
+}
+
+function twoThreeZone() {
+	return [{
+		x: ((BASKETBALL_WIDTH + BASKETBALL_OUTER_KEY_WIDTH) / 2 + 1) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS - 4) * SCALE,
+		type: "player",
+		label: "PG",
+		team: "team1"
+	}, {
+		x: ((BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 - 1) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS - 4) * SCALE,
+		type: "player",
+		label: "SG",
+		team: "team1"
+	}, {
+		x: ((BASKETBALL_WIDTH + BASKETBALL_OUTER_KEY_WIDTH) / 2 + 7) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + 5) * SCALE,
+		type: "player",
+		label: "SF",
+		team: "team1"
+	}, {
+		x: ((BASKETBALL_WIDTH + BASKETBALL_OUTER_KEY_WIDTH) / 2 - 1) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + 3) * SCALE,
+		type: "player",
+		label: "PF",
+		team: "team1"
+	}, {
+		x: ((BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 - 4) * SCALE,
+		y: (BASKETBALL_BACKBOARD_OFFSET + 4) * SCALE,
+		type: "player",
+		label: "C",
+		team: "team1"
+	}, {
+		x: (BASKETBALL_WIDTH / 2) * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET + BASKETBALL_THREE_POINT_RADIUS + 3) * SCALE,
 		type: "ball",
 		label: "",
