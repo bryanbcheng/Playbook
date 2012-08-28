@@ -409,6 +409,7 @@ $(function() {
 				fieldSize: $("#field-size").data("value") ? $("#field-size").data("value") : "full",
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
+				privacy: "public", // public for now, changed to protected later
 			};
 		},
 		
@@ -1980,6 +1981,7 @@ $(function() {
 		tagName: "div",
 		className: "play-collection-view",
 	
+		template: $("#play-collection-template").html(),
 		listTemplate: $("#play-list-template").html(),
 		
 // 		events:
@@ -2000,14 +2002,20 @@ $(function() {
 			
 			$("#plays-container").html("");
 			
+			this.$el.html(Mustache.render(this.template, this.collection.toJSON()));
+			
+			$("#plays-container").append(this.el);
+			
+			$("#play-list").html("");
+			
 			this.collection.each(function(play) {
 				var html = Mustache.render(view.listTemplate, play.toJSON()),
 					htmlObj = $(html);
-				
+				console.log(html);
 				htmlObj.find(".link").on("click", function(e) {
 					$.playbook.app.navigate("play/" + play.get("_id"), {trigger: true});
 				});
-				$("#plays-container").append(htmlObj);
+				$("#play-list").append(htmlObj);
 			});
 		},
 	});

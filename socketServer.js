@@ -65,9 +65,9 @@ io.sockets.on('connection', function(socket) {
 		if(!_.isEmpty(data)) {
 			// Find based on query
 // 			Play.find({'_id': data._id}, send_result);
-			Play.find({}, send_result);
+			Play.find({privacy: "public"}, send_result);
 		} else {
-			Play.find({}, send_result);
+			Play.find({privacy: "public"}, send_result);
 		}
 	});
 

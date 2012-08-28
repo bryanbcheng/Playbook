@@ -57,7 +57,11 @@ var Play = new Schema({
   , teamShapes	: [String]
   , articles	: [Article]
   , sets		: [Set]
+  , privacy		: { type : String, enum: ['public', 'protected', 'private'], required: true }
+  , categories	: [String]
 }, { strict: true });
+
+// validate teamColors, teamShapes length == 2
 
 /**
  * Models
