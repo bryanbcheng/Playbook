@@ -36,26 +36,34 @@
 	
 	<div id="playbook-container">
 		<div id="playbook">
-			<!-- <button id="new-play">New Play</button> -->
 			<div class="right-back">
 				<div class="left-back">
-					<div id="left-panel" class="home">
-						<div id="home">
+					<div id="left-panel">
+						<div id="home-container" class="left-container">
 							<div id="new-play" class="home-action">
 								<div class="icon"></div>
 								<span>New Play</span>
 								<br class="clear" />
 							</div>
+							<div id="view-plays" class="home-action">
+								<div class="icon"></div>
+								<span>View Plays</span>
+								<br class="clear" />
+							</div>
 						</div>
-						<div id="play"></div>
-						<div id="canvas"></div>
-						<div id="instructions">
-							Instructions:<br>
-							1. Add players to the play or use a preset formation template.<br>
-							1a. No need to worry about saving, everything is saved automatically!<br>
-							2. Click the next step and adjust the object positions to show movement.<br>
-							3. Modify further sets to continue the play's progression.<br>
-							4. Animate and practice your play!
+						<div id="plays-container" class="left-container">
+						</div>
+						<div id="play-container" class="left-container">
+							<div id="play"></div>
+							<div id="canvas"></div>
+							<div id="instructions">
+								Instructions:<br>
+								1. Add players to the play or use a preset formation template.<br>
+								1a. No need to worry about saving, everything is saved automatically!<br>
+								2. Click the next step and adjust the object positions to show movement.<br>
+								3. Modify further sets to continue the play's progression.<br>
+								4. Animate and practice your play!
+							</div>
 						</div>
 					</div>
 					<div id="right-panel">
@@ -74,6 +82,21 @@
 	<div id="blackout">Configuring print settings...</div>
 	
 	<!-- Templates -->
+	
+	<script type="text/template" id="play-list-template">
+		<li id="{{_id}}">
+			<div class="sport {{fieldType}}" title="Play Sport"></div>
+			<div class="attr-container">
+				<div class="name" title="Play Name">
+					<h2>{{name}}</h2>
+				</div>
+				<div class="desc" title="Play Description">
+					<p>{{description}}</p>
+				</div>
+			</div>
+			<div class="link">Go To Play</div>
+		</li>
+	</script>
 	
 	<script type="text/template" id="play-template">
 		<div class="actions">

@@ -453,6 +453,25 @@ $(function() {
 		},
 	});
 	
+	$.playbook.PlayCollection = Backbone.Collection.extend({
+		model: $.playbook.Play,
+		
+		initialize: function() {
+			_.bindAll(this, 'serverCreate');
+// 			if (!this.isNew()) {
+				this.ioBind('create', this.serverCreate, this);
+// 			}
+		},
+		
+		url: "plays",
+		
+		socket: socket,
+		
+		serverCreate: function(data) {
+		
+		},
+	});
+	
 	$.playbook.ArticleView = Backbone.View.extend({
 		tagName: "div",
 		className: "article-view",
@@ -1066,7 +1085,9 @@ $(function() {
 		render: function() {
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			
-			this.model.get("play").trigger("change");
+			if (this.model.changedAttributes()) {
+				this.model.get("play").trigger("change");
+			}
 			
 			return this;
 		},
@@ -1954,12 +1975,66 @@ $(function() {
 		},
 	});
 	
+	$.playbook.PlayCollectionView = Backbone.View.extend({
+		tagName: "div",
+		className: "play-collection-view",
+	
+		listTemplate: $("#play-list-template").html(),
+		
+// 		events:
+		
+		initialize: function() {
+			this.collection.on('init', this.render, this);
+			
+			var view = this;
+			this.collection.fetch({
+				success: function(collection, response) {
+					collection.trigger('init');
+				}
+			});
+		},
+		
+		render: function() {
+			var view = this;	
+			
+			$("#plays-container").html("");
+			
+			this.collection.each(function(play) {
+				var html = Mustache.render(view.listTemplate, play.toJSON()),
+					htmlObj = $(html);
+				
+				htmlObj.find(".link").on("click", function(e) {
+					$.playbook.app.navigate("play/" + play.get("_id"), {trigger: true});
+				});
+				$("#plays-container").append(htmlObj);
+			});
+		},
+	});
+	
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
+			"":				"home",
+			"plays":		"show_plays",
 			"play/:_id":	"show_play",
 		},
 		
-		show_play : function(_id) {
+		home: function() {
+			clearDivs();
+			
+			$("#left-panel").attr("class", "home");
+		},
+		
+		show_plays: function() {
+			clearDivs();
+			
+			$("#left-panel").attr("class", "plays");
+			
+			var plays = new $.playbook.PlayCollection();
+			
+			var playsView = new $.playbook.PlayCollectionView({collection: plays});
+		},
+		
+		show_play: function(_id) {
 			// clear previous divs
 			clearDivs();
 			
@@ -1979,6 +2054,10 @@ $(function() {
 		$.playbook.app = new $.playbook.Router();
 		Backbone.history.start({pushState: true});
 		
+		$("#header").click(function() {
+			$.playbook.app.navigate("/", {trigger: true});
+		});
+		
 		$("#new-play").click(function() {
 			var play = new $.playbook.Play({});
 			
@@ -1989,6 +2068,10 @@ $(function() {
 					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
 				}
 			});
+		});
+		
+		$("#view-plays").click(function() {
+			$.playbook.app.navigate("plays", {trigger: true});
 		});
 		
 		$(window).keypress(changeSet);
@@ -2022,6 +2105,8 @@ function changeSet(e) {
 }
 
 function clearDivs() {
+	$("#plays-container").html("");
+	
 	$("#play").html("");
 	$("#play-contents").html("");
 	$("#set").html("");

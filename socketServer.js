@@ -48,6 +48,29 @@ var mongoose = require('mongoose')
 /* Socket.io Connections */
 
 io.sockets.on('connection', function(socket) {
+	// plays:read
+	socket.on('plays:read', function(data, callback) {
+		var send_result = function(err, plays) {
+			if (err) {
+				return callback(err);
+			}
+			
+			if(plays) {
+				callback(null, plays);
+			} else {
+				return callback(new Error("Could not find plays"));
+			}
+		};
+		
+		if(!_.isEmpty(data)) {
+			// Find based on query
+// 			Play.find({'_id': data._id}, send_result);
+			Play.find({}, send_result);
+		} else {
+			Play.find({}, send_result);
+		}
+	});
+
 
 	// play:create
 	socket.on('play:create', function(data, callback) {
@@ -435,6 +458,9 @@ io.sockets.on('connection', function(socket) {
 /* Routes */
 
 app.get('/', function(req, res) {
+	res.sendfile(__dirname + '/public/index.html');
+});
+app.get('/plays', function(req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 });
 app.get('/play/:_id', function(req, res) {
