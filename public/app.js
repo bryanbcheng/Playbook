@@ -1368,6 +1368,7 @@ $(function() {
 			
 			// Cover screen to prevent touching
 			coverScreen();
+			$("#whiteout").html("Configuring print settings...");
 		
 			// Reset #playbook-print
 			$("#playbook-print").html("");
@@ -2067,16 +2068,49 @@ $(function() {
 			$.playbook.app.navigate("/", {trigger: true});
 		});
 		
+		var play;
 		$("#new-play").click(function() {
-			var play = new $.playbook.Play({});
-			console.log(play);
-			play.save({}, {
+			play = new $.playbook.Play({});
+			
+			coverScreen();
+			$("#new-play-container").find("new-play-page").hide();
+			$("#new-play-container").show();
+			$("#new-play-field-type").show();
+		});
+		
+		$("#new-play-field-type").find(".choice").on("click", function(e) {
+			play.set("fieldType", $(e.target).closest(".choice").data("value"));
+			
+			$("#new-play-field-type").hide();
+			$("#new-play-field-size").show();
+		});
+		
+		$("#new-play-field-size").find(".choice").on("click", function(e) {
+			play.set("fieldSize", $(e.target).closest(".choice").data("value"));
+			
+			$("#new-play-field-size").hide();
+			$("#new-play-options").show();
+		});
+		
+		$("#new-play-options").find(".choice").on("click", function(e) {
+			if ($(e.target).closest(".choice").data("value") === "blank") {
+				$("#new-play-options").hide();
+				
+				play.save({}, {
 				silent: true,
 				wait: true,
 				success: function(model, response) {
+					uncoverScreen();
 					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
 				}
 			});
+			} else if ($(e.target).closest(".choice").data("value") === "template") {
+				$("#new-play-options").hide();
+				$("#new-play-templates").find("ul").hide();
+				$("#new-play-templates").show();
+				$("#new-play-templates").find("." + play.get("fieldType") + "-formations").show();
+				
+			}
 		});
 		
 		$("#view-plays").click(function() {
@@ -2093,12 +2127,12 @@ $(function() {
 
 function coverScreen() {
 	// show div that covers entire screen
-	$("#blackout").show();
+	$("#whiteout").show();
 }
 
 function uncoverScreen() {
 	// hide that div
-	$("#blackout").hide();
+	$("#whiteout").hide();
 }
 
 function changeSet(e) {

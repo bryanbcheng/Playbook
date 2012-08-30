@@ -9,3 +9,6 @@ http://www.adventuredrop.com/
 
 // future arrow
 http://www.dbp-consulting.com/tutorials/canvas/CanvasArcTo.html
+
+// future scroll bars
+http://www.webkit.org/blog/363/styling-scrollbars/

@@ -1555,13 +1555,172 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 19px;
 }
 
+#new-play-container {
+	display: none;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	z-index: 10001;
+}
+
+/* New Play Flow Views */
+
+#new-play-container .new-play-page {
+	background: white;
+	border: 1px solid #CDCDCD;
+	border-radius: 5px;
+	box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	display: none;
+	height: 400px;
+	left: 50%;
+	margin-left: -301px;
+	margin-top: -251px;
+	padding: 50px;
+	position: absolute;
+	width: 500px;
+}
+
+#new-play-container .header {
+	float: left;
+	line-height: 20px;
+	margin-top: -20px;
+	text-align: center;
+	width: 500px;
+}
+
+#new-play-field-type .choice, #new-play-field-size .choice, #new-play-options .choice, #new-play-templates .choice {
+	border: 1px solid #CDCDCD;
+	border-radius: 5px;
+	cursor: pointer;
+	float: left;
+	font-size: 24px;
+	height: 168px;
+	line-height: 60px;
+	margin-top: 30px;
+	text-align: center;
+	width: 232px;
+	
+	transition: all 0.35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
+}
+
+#new-play-field-type .choice:nth-child(even) {
+	margin-right: 30px;
+}
+
+#new-play-field-type .choice:hover, #new-play-field-size .choice:hover, #new-play-options .choice:hover, #new-play-templates .choice:hover {
+	background-color: rgba(59, 191, 206, 0.25);
+	border-color: rgba(59, 191, 206, 0.75);
+}
+
+#new-play-field-type .choice:active, #new-play-field-size .choice:active, #new-play-options .choice:active, #new-play-templates .choice:active {
+	background-color: rgba(59, 191, 206, 0.1) !important;
+	border-color: rgba(47, 170, 184, 0.75);
+}
+
+#new-play-field-type .icon {
+	background-image: url("/images/sportIconSet.png");
+	height: 100px;
+	margin: 0 auto;
+	width: 100px;
+}
+
+#new-play-field-type .ultimate .icon {
+	background-position: -100px -200px;
+}
+
+#new-play-field-type .soccer .icon {
+	background-position: 0 -200px;
+}
+
+#new-play-field-type .football .icon {
+	background-position: -100px 0;
+}
+
+#new-play-field-type .basketball .icon {
+	background-position: -200px 0;
+}
+
+#new-play-field-size .choice {
+	height: 368px;
+	margin-left: 28px;
+	width: 144px;
+}
+
+#new-play-field-size .left {
+	margin-left: 0 !important;
+}
+
+/* 
+#new-play-field-size .icon {
+	background-image: url("/images/sportIconSet.png");
+	height: 100px;
+	margin: 0 auto;
+	width: 100px;
+}
+ */
+
+#new-play-field-size .full .icon {
+/* 	background-position: -100px -200px; */
+}
+
+#new-play-field-size .half .icon {
+/* 	background-position: 0 -200px; */
+}
+
+#new-play-field-size .empty .icon {
+/* 	background-position: -100px 0; */
+}
+
+#new-play-options .choice {
+	height: 368px;
+	width: 223px;
+}
+
+#new-play-options .left {
+	margin-right: 50px;
+}
+
+#new-play-options .text {
+	display: block;
+	line-height: 36px;
+	margin-top: 145px;
+}
+
+#new-play-options .subtext {
+	display: block;
+	font-size: 14px;
+	line-height: 24px;
+}
+
+#new-play-templates .formations ul {
+	display: none;
+	height: 400px;
+/* 	overflow-y: scroll; DON'T NEED FOR NOW */
+	width: 500px;
+}
+
+#new-play-templates .choice {
+	height: 60px;
+}
+
+#new-play-templates .choice:nth-child(odd) {
+	margin-right: 30px;
+}
+
+/* Print */
+
 #playbook-print {
 	display: none;
 }
 
-#blackout {
-	background: rgba(0, 0, 0, 0.5);
-	color: rgba(255, 255, 255, 0.5);
+#whiteout {
+	background: rgba(255, 255, 255, 0.5);
+	color: rgba(0, 0, 0, 0.5);
 	display: none;
 	left: 0;
 	height: 100%;
@@ -1572,6 +1731,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 100%;
 	z-index: 10000;
 }
+
+/* Misc */
 
 br.clear {
 	clear: both;
