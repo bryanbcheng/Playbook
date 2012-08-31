@@ -1191,7 +1191,7 @@ $(function() {
 		
 		addAll: function() {
 			var tempModel = this.model;
-			console.log(this.model.get("paths"));
+			
 			this.model.get("paths").each(function(path) {
 				tempModel.trigger('addPath', path);
 			});
@@ -1337,7 +1337,6 @@ $(function() {
 		},
 		
 		printPlay: function(e) {
-			console.log(this.model);
 			var view = this;
 			
 			// Cover screen to prevent touching
