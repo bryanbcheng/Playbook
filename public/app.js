@@ -2075,31 +2075,31 @@ $(function() {
 			coverScreen();
 			$("#whiteout").on("click", function() {
 				$("#whiteout").off("click");
-				$("#new-play-container").hide();
+				$("#new-play-container").fadeOut(350, "swing");
 				uncoverScreen();
 			});
 			$("#new-play-container").find(".new-play-page").hide();
-			$("#new-play-container").show();
-			$("#new-play-field-type").show();
+			$("#new-play-field-type").fadeIn(350, "swing");
+			$("#new-play-container").fadeIn(350, "swing");
 		});
 		
 		$("#new-play-field-type").find(".choice").on("click", function(e) {
 			play.set("fieldType", $(e.target).closest(".choice").data("value"));
 			
-			$("#new-play-field-type").hide();
-			$("#new-play-field-size").show();
+			$("#new-play-field-type").fadeOut(350, "swing");
+			$("#new-play-field-size").fadeIn(350, "swing");
 		});
 		
 		$("#new-play-field-size").find(".choice").on("click", function(e) {
 			play.set("fieldSize", $(e.target).closest(".choice").data("value"));
 			
-			$("#new-play-field-size").hide();
-			$("#new-play-options").show();
+			$("#new-play-field-size").fadeOut(350, "swing");
+			$("#new-play-options").fadeIn(350, "swing");
 		});
 		
 		$("#new-play-options").find(".choice").on("click", function(e) {
 			if ($(e.target).closest(".choice").data("value") === "blank") {
-				$("#new-play-options").hide();
+				$("#new-play-options").fadeOut(350, "swing");
 				
 				play.save({}, {
 				silent: true,
@@ -2110,10 +2110,10 @@ $(function() {
 				}
 			});
 			} else if ($(e.target).closest(".choice").data("value") === "template") {
-				$("#new-play-options").hide();
+				$("#new-play-options").fadeOut(350, "swing");
 				$("#new-play-templates").find("ul").hide();
-				$("#new-play-templates").show();
-				$("#new-play-templates").find("." + play.get("fieldType") + "-formations").show();
+				$("#new-play-templates").fadeIn(350, "swing");
+				$("#new-play-templates").find("." + play.get("fieldType") + "-formations").fadeIn(350, "swing");
 				
 			}
 		});
@@ -2125,13 +2125,13 @@ $(function() {
 		$("#new-play-container").find(".back").on("click", function(e) {
 			var currPage = $(e.target).closest(".new-play-page");
 			
-			currPage.hide();
-			currPage.prev().show();
+			currPage.fadeOut(350, "swing");
+			currPage.prev().fadeIn(350, "swing");
 		});
 		
 		$("#new-play-container").find(".close").on("click", function(e) {
 			$("#whiteout").off("click");
-			$("#new-play-container").hide();
+			$("#new-play-container").fadeOut(350, "swing");
 			uncoverScreen();
 		});
 		
@@ -2149,12 +2149,12 @@ $(function() {
 
 function coverScreen() {
 	// show div that covers entire screen
-	$("#whiteout").show();
+	$("#whiteout").fadeIn(350, "swing");
 }
 
 function uncoverScreen() {
 	// hide that div
-	$("#whiteout").hide();
+	$("#whiteout").fadeOut(350, "swing");
 }
 
 function changeSet(e) {
