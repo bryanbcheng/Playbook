@@ -51,6 +51,7 @@ io.sockets.on('connection', function(socket) {
 	// plays:read
 	socket.on('plays:read', function(data, callback) {
 		var send_result = function(err, plays) {
+			console.log(plays);
 			if (err) {
 				return callback(err);
 			}
@@ -63,7 +64,8 @@ io.sockets.on('connection', function(socket) {
 		};
 		
 		// Makes the query much smaller and faster -path not needed, but for extra safety
-		var selectFields = "name description fieldType -fieldSize -teamColors -teamShapes -articles -sets -privacy categories";
+// 		var selectFields = "name description fieldType -fieldSize -teamColors -teamShapes -articles -sets -privacy categories";
+		var selectFields = "name description fieldType categories";
 		if(!_.isEmpty(data)) {
 			// Find based on query
 // 			Play.find({'_id': data._id}, selectFields, send_result);
@@ -91,6 +93,11 @@ io.sockets.on('connection', function(socket) {
 		var set_2 = new Set({name: "Set_2", number: 2, comments: ""});
 		var set_3 = new Set({name: "Set_3", number: 3, comments: ""});
 		newPlay.sets.push(set_1, set_2, set_3);
+		
+		if (data.formation) {
+			console.log("YAY ADD FORMATION\n\n\n\n");
+		}
+		
 		newPlay.save();
 		
 		//socket.emit('play:create', newPlay);

@@ -2091,13 +2091,13 @@ $(function() {
 				$("#new-play-options").fadeOut(350, "swing");
 				
 				play.save({}, {
-				silent: true,
-				wait: true,
-				success: function(model, response) {
-					uncoverScreen();
-					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
-				}
-			});
+					silent: true,
+					wait: true,
+					success: function(model, response) {
+						uncoverScreen();
+						$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
+					}
+				});
 			} else if ($(e.target).closest(".choice").data("value") === "template") {
 				$("#new-play-options").fadeOut(350, "swing");
 				$("#new-play-templates").find("ul").hide();
@@ -2109,6 +2109,51 @@ $(function() {
 		
 		$("#new-play-templates").find(".choice").on("click", function(e) {
 			// Create play with that formation
+			
+			var formationType = $(e.target).data("value");
+			var fieldType = play.get("fieldType");
+			
+			var formationData = formation(fieldType, formationType);
+			for (var index in formationData) {
+				var data = formationData[index];
+				data.color = data.team ? data.team === "team0" ? play.get("teamColors")[0] : play.get("teamColors")[1] : data.type === "ball" ? "white" : "orange";
+				data.shape = data.team ? data.team === "team0" ? play.get("teamShapes")[0] : play.get("teamShapes")[1] : data.type === "ball" ? "circle" : "triangle";
+				
+				// var article = new $.playbook.Article({
+// 					type: data.type,
+// 					color: color,
+// 					shape: shape,
+// 					label: data.label,
+// 					team: data.team,
+// 					play: this.model.get("_id"),
+// 					tempX: data.x,
+// 					tempY: data.y
+// 				});
+// 				
+				// article.save({}, {
+// 					silent: true,
+// 					wait: true,
+// 					success: function(model, response) {
+// 						model.trigger("addIoBind");
+// 						model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
+// 						model.unset("tempX");
+// 						model.unset("tempY");
+// 					}
+// 				});
+			}
+			
+			play.set("formation", formationData);
+			
+			$("#new-play-templates").fadeOut(350, "swing");
+			
+			play.save({}, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					uncoverScreen();
+					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
+				}
+			});
 		});
 		
 		$("#new-play-container").find(".back").on("click", function(e) {
