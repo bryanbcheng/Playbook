@@ -951,7 +951,6 @@ $(function() {
 					$("#annotation").append(view.el);
 				view.$el.addClass("editing");
 				
-				console.log($("#annotation").offset());
 				// Calculate offset (canvas DOM + layer offset + item location)
 				view.$el.css({
 					left:  -$("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x") + 1, // + 1 for slight offset
@@ -1620,15 +1619,7 @@ $(function() {
 				$(fieldLayer.getCanvas().element).remove();
 			}
 			
-			if (fieldType === "ultimate") {
-				fieldLayer = ultimateField(fieldSize, currX, currY);
-			} else if (fieldType === "soccer") {
-				fieldLayer = soccerField(fieldSize, currX, currY);
-			} else if (fieldType === "football") {
-				fieldLayer = footballField(fieldSize, currX, currY);
-			} else if (fieldType === "basketball") {
-				fieldLayer = basketballField(fieldSize, currX, currY);
-			}
+			fieldLayer = createField(fieldType, fieldSize, currX, currY);
 			
 			this.addFieldEvents(fieldLayer);
 			stage.add(fieldLayer);
@@ -2001,7 +1992,6 @@ $(function() {
 			this.collection.each(function(play) {
 				var html = Mustache.render(view.listTemplate, play.toJSON()),
 					htmlObj = $(html);
-				console.log(html);
 				htmlObj.find(".link").on("click", function(e) {
 					$.playbook.app.navigate("play/" + play.get("_id"), {trigger: true});
 				});
@@ -2118,32 +2108,10 @@ $(function() {
 				var data = formationData[index];
 				data.color = data.team ? data.team === "team0" ? play.get("teamColors")[0] : play.get("teamColors")[1] : data.type === "ball" ? "white" : "orange";
 				data.shape = data.team ? data.team === "team0" ? play.get("teamShapes")[0] : play.get("teamShapes")[1] : data.type === "ball" ? "circle" : "triangle";
-				
-				// var article = new $.playbook.Article({
-// 					type: data.type,
-// 					color: color,
-// 					shape: shape,
-// 					label: data.label,
-// 					team: data.team,
-// 					play: this.model.get("_id"),
-// 					tempX: data.x,
-// 					tempY: data.y
-// 				});
-// 				
-				// article.save({}, {
-// 					silent: true,
-// 					wait: true,
-// 					success: function(model, response) {
-// 						model.trigger("addIoBind");
-// 						model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
-// 						model.unset("tempX");
-// 						model.unset("tempY");
-// 					}
-// 				});
 			}
 			
 			play.set("formation", formationData);
-			
+			play.set("offset", fieldOffset(fieldType));
 			$("#new-play-templates").fadeOut(350, "swing");
 			
 			play.save({}, {

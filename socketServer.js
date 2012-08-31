@@ -51,7 +51,6 @@ io.sockets.on('connection', function(socket) {
 	// plays:read
 	socket.on('plays:read', function(data, callback) {
 		var send_result = function(err, plays) {
-			console.log(plays);
 			if (err) {
 				return callback(err);
 			}
@@ -95,7 +94,46 @@ io.sockets.on('connection', function(socket) {
 		newPlay.sets.push(set_1, set_2, set_3);
 		
 		if (data.formation) {
-			console.log("YAY ADD FORMATION\n\n\n\n");
+			for (var index in data.formation) {
+				var item = data.formation[index];
+				
+				var newArticle = new Article({
+					type: item.type,
+					color: item.color,
+					shape: item.shape,
+					label: item.label,
+					team: item.team
+				});
+				newPlay.articles.push(newArticle);
+				
+				// for each set, add the path
+				for (var i = 0; i < newPlay.sets.length; i++) {
+					var set = newPlay.sets[i];
+					var newPath;
+					if (set.number === 1) {
+						newPath = new Path({
+							prevX: null,
+							prevY: null,
+							currX: item.x + data.offset.x,
+							currY: item.y + data.offset.y,
+							nextX: item.x + data.offset.x,
+							nextY: item.y + data.offset.y,
+							articleId: newArticle._id
+						});
+					} else {
+						newPath = new Path({
+							prevX: item.x + data.offset.x,
+							prevY: item.y + data.offset.y,
+							currX: item.x + data.offset.x,
+							currY: item.y + data.offset.y,
+							nextX: item.x + data.offset.x,
+							nextY: item.y + data.offset.y,
+							articleId: newArticle._id
+						});
+					}
+					set.paths.push(newPath);
+				}
+			}
 		}
 		
 		newPlay.save();

@@ -55,6 +55,18 @@ var BASKETBALL_THREE_POINT_RADIUS = 285 / 12;
 
 /* Fields */
 
+function createField(fieldType, fieldSize, currX, currY) {
+	if (fieldType === "ultimate") {
+		return ultimateField(fieldSize, currX, currY);
+	} else if (fieldType === "soccer") {
+		return soccerField(fieldSize, currX, currY);
+	} else if (fieldType === "football") {
+		return footballField(fieldSize, currX, currY);
+	} else if (fieldType === "basketball") {
+		return basketballField(fieldSize, currX, currY);
+	}
+}
+
 function ultimateField(size, startX, startY) {
 	if (size === "full") return ultimateFieldFull(startX, startY);
 	else if (size === "half") return ultimateFieldHalf(startX, startY);
@@ -1245,6 +1257,30 @@ function blankBackground(width, height) {
 		y: 0,
 		name: "blankBackground"
 	});
+}
+
+function fieldOffset(fieldType) {
+	if (fieldType === "ultimate") {
+		return {
+			x: (CANVAS_WIDTH - ULTIMATE_WIDTH * SCALE) / 2,
+			y: 0
+		};
+	} else if (fieldType === "soccer") {
+		return {
+			x: (CANVAS_WIDTH - SOCCER_WIDTH * SCALE) / 2,
+			y: 0
+		};
+	} else if (fieldType === "football") {
+		return {
+			x: (CANVAS_WIDTH - FOOTBALL_WIDTH * SCALE) / 2,
+			y: 0
+		};
+	} else if (fieldType === "basketball") {
+		return {
+			x: (CANVAS_WIDTH - BASKETBALL_WIDTH * SCALE) / 2,
+			y: 0
+		};
+	}
 }
 
 /* Articles */
