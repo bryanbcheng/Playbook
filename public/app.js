@@ -2073,7 +2073,12 @@ $(function() {
 			play = new $.playbook.Play({});
 			
 			coverScreen();
-			$("#new-play-container").find("new-play-page").hide();
+			$("#whiteout").on("click", function() {
+				$("#whiteout").off("click");
+				$("#new-play-container").hide();
+				uncoverScreen();
+			});
+			$("#new-play-container").find(".new-play-page").hide();
 			$("#new-play-container").show();
 			$("#new-play-field-type").show();
 		});
@@ -2114,7 +2119,7 @@ $(function() {
 		});
 		
 		$("#new-play-templates").find(".choice").on("click", function(e) {
-			
+			// Create play with that formation
 		});
 		
 		$("#new-play-container").find(".back").on("click", function(e) {
@@ -2122,6 +2127,12 @@ $(function() {
 			
 			currPage.hide();
 			currPage.prev().show();
+		});
+		
+		$("#new-play-container").find(".close").on("click", function(e) {
+			$("#whiteout").off("click");
+			$("#new-play-container").hide();
+			uncoverScreen();
 		});
 		
 		$("#view-plays").click(function() {

@@ -1582,26 +1582,58 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	width: 500px;
 }
 
-#new-play-container .back {
+#new-play-container .back, #new-play-container .close {
 	border: 1px solid #CDCDCD;
 	border-radius: 5px;
 	cursor: pointer;
-	height: 30px;
-	line-height: 30px;
 	margin-top: -30px;
+	overflow: hidden;
+	padding: 0 10px;
 	position: absolute;
-	text-align: center;
-	width: 60px;
+	width: 65px;
+	
+	transition: all 0.35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
-#new-play-container .back:hover {
+#new-play-container .back:hover, #new-play-container .close:hover {
 	background-color: rgba(59, 191, 206, 0.25);
 	border-color: rgba(59, 191, 206, 0.75);
 }
 
-#new-play-container .back:active {
+#new-play-container .back:active, #new-play-container .close:active {
 	background-color: rgba(59, 191, 206, 0.1) !important;
 	border-color: rgba(47, 170, 184, 0.75);
+}
+
+#new-play-container .close {
+	right: 50px;
+}
+
+#new-play-container .back span, #new-play-container .close span {
+	display: inline-block;
+	float: left;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	width: 45px;
+}
+
+#new-play-container .back .icon, #new-play-container .close .icon {
+	background-image: url("/images/iconSet.png");
+	float: left;
+	height: 30px;
+	width: 20px;
+}
+
+#new-play-container .back .icon {
+	background-position: -442px -88px;
+}
+
+#new-play-container .close .icon {
+	background-position: -132px -88px;
 }
 
 #new-play-container .header {
@@ -1622,7 +1654,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	line-height: 60px;
 	margin-top: 30px;
 	text-align: center;
-	width: 232px;
+	width: 233px;
 	
 	transition: all 0.35s ease;
 	-moz-transition: all .35s ease;
@@ -1630,7 +1662,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	-o-transition: all .35s ease;
 }
 
-#new-play-field-type .choice:nth-child(even) {
+#new-play-field-type .choice:nth-child(odd) {
 	margin-right: 30px;
 }
 
@@ -1670,7 +1702,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 #new-play-field-size .choice {
 	height: 368px;
 	margin-left: 28px;
-	width: 144px;
+	width: 146px;
 }
 
 #new-play-field-size .left {
