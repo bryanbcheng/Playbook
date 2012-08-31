@@ -2113,6 +2113,17 @@ $(function() {
 			}
 		});
 		
+		$("#new-play-templates").find(".choice").on("click", function(e) {
+			
+		});
+		
+		$("#new-play-container").find(".back").on("click", function(e) {
+			var currPage = $(e.target).closest(".new-play-page");
+			
+			currPage.hide();
+			currPage.prev().show();
+		});
+		
 		$("#view-plays").click(function() {
 			$.playbook.app.navigate("plays", {trigger: true});
 		});
