@@ -12,5 +12,6 @@ http://www.dbp-consulting.com/tutorials/canvas/CanvasArcTo.html
 
 // future scroll bars
 http://www.webkit.org/blog/363/styling-scrollbars/
+http://www.html5canvastutorials.com/labs/html5-canvas-simple-scrollbars-with-kineticjs/
 
 http://net.tutsplus.com/tutorials/javascript-ajax/quick-tip-private-variables-in-javascript/

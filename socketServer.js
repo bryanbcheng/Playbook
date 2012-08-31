@@ -196,7 +196,7 @@ io.sockets.on('connection', function(socket) {
 		callback(null, json);
 	});
 	
-	// custom events
+	// custom play events
 	// play:reset
 	socket.on('play:reset', function(data) {
 		Play.findOne({'_id' :data._id}, function(err, play) {
@@ -219,6 +219,92 @@ io.sockets.on('connection', function(socket) {
 			
 			socket.emit('play/' + data._id + ':reset', play);
 			socket.broadcast.emit('play/' + data._id + ':reset', play);
+// 			callback(null, play);
+		});
+	});
+	
+	// play:formation
+	socket.on('play:formation', function(data) {
+		Play.findOne({'_id' :data._id}, function(err, play) {
+			/*
+			if (err)
+				return callback(err);
+			else if (!play) {
+				return callback(new Error("Could not find play with _id=" + data._id));
+			}
+			*/
+			
+			var newArticles = new Array();
+			
+			for (var index in data.formation) {
+				var item = data.formation[index];
+				
+				var newArticle = new Article({
+					type: item.type,
+					color: item.color,
+					shape: item.shape,
+					label: item.label,
+					team: item.team
+				});
+				
+				// hack to add back so set can use id
+				item._id = newArticle._id;
+				
+				newArticles.push(newArticle);
+			}
+			play.articles = newArticles;
+			
+			var newSets = new Array();
+			
+			// for each set, duplicate and add paths
+			for (var i = 0; i < play.sets.length; i++) {
+				var newSet = new Set({
+					name: play.sets[i].name,
+					number: play.sets[i].number,
+					comments: play.sets[i].comments,
+					annotations: play.sets[i].annotations
+				});
+				var newPaths = new Array();
+				
+				for (var index in data.formation) {
+					var item = data.formation[index];
+					
+					var newPath;
+					if (newSet.number === 1) {
+							newPath = new Path({
+							prevX: null,
+							prevY: null,
+							currX: item.x + data.offset.x,
+							currY: item.y + data.offset.y,
+							nextX: item.x + data.offset.x,
+							nextY: item.y + data.offset.y,
+							articleId: item._id
+						});
+					} else {
+						newPath = new Path({
+							prevX: item.x + data.offset.x,
+							prevY: item.y + data.offset.y,
+							currX: item.x + data.offset.x,
+							currY: item.y + data.offset.y,
+							nextX: item.x + data.offset.x,
+							nextY: item.y + data.offset.y,
+							articleId: item._id
+						});
+					}
+					
+					newPaths.push(newPath);
+				}
+				
+				newSet.paths = newPaths;
+				newSets.push(newSet);
+			}
+			
+			play.sets = newSets;
+			
+			play.save();
+			
+			socket.emit('play/' + data._id + ':formation', play);
+			socket.broadcast.emit('play/' + data._id + ':formation', play);
 // 			callback(null, play);
 		});
 	});

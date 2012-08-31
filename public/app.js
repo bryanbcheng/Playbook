@@ -463,7 +463,9 @@ $(function() {
 		},
 		
 		serverFormation: function(data) {
+			this.set(data, {silent: true});
 		
+			this.trigger("resetPlayView");
 		},
 	});
 	
@@ -1080,11 +1082,12 @@ $(function() {
 			
 			this.model.on('change', this.render, this);
 			this.model.on('clear', this.clear, this);
-			this.model.on('clearAll', this.clearAll, this);
+// 			this.model.on('clearAll', this.clearAll, this);
 			this.model.on('addPath', this.addPath, this);
 			this.model.on('addAnnotation', this.addAnnotation, this);
 			this.model.on('addNewAnnotation', this.addNewAnnotation, this);
 			this.model.on('show', this.show, this);
+			this.model.on('undelegate', this.undelegateEve, this);
 			this.model.on('init', this.addAll, this);
 			
 			// Animation events
@@ -1158,20 +1161,20 @@ $(function() {
 		},
 		
 		// Only called from reset all
-		clearAll: function() {
-			// Remove layer from canvas
-			this.layer.clear();
-			stage.remove(this.layer);
-			$(this.layer.getCanvas().element).remove();
-			
-			// Remove set DOM
-			this.remove();
-			$("#" + this.model.get("_id")).remove();
-			
-			// Delete model
-			this.model.off();
-			this.model.destroy({wait: true});
-		},
+// 		clearAll: function() {
+// 			// Remove layer from canvas
+// 			this.layer.clear();
+// 			stage.remove(this.layer);
+// 			$(this.layer.getCanvas().element).remove();
+// 			
+// 			// Remove set DOM
+// 			this.remove();
+// 			$("#" + this.model.get("_id")).remove();
+// 			
+// 			// Delete model
+// 			this.model.off();
+// 			this.model.destroy({wait: true});
+// 		},
 		
 		addPath: function(item) {
 			var pathView = new $.playbook.PathView({model: item, layer: this.layer});
@@ -1188,6 +1191,7 @@ $(function() {
 		
 		addAll: function() {
 			var tempModel = this.model;
+			console.log(this.model.get("paths"));
 			this.model.get("paths").each(function(path) {
 				tempModel.trigger('addPath', path);
 			});
@@ -1333,6 +1337,7 @@ $(function() {
 		},
 		
 		printPlay: function(e) {
+			console.log(this.model);
 			var view = this;
 			
 			// Cover screen to prevent touching
@@ -1419,42 +1424,22 @@ $(function() {
 		
 		useFormation: function(e) {
 			if (confirm("Selecting a formation removes all items currently in your play. Are you sure you want to continue?")) {
-				var articles = this.model.get("articles")
-				while (!articles.isEmpty()) {
-					articles.shift().trigger("clear");
-				}
 				var formationType = $(e.target).data("value");
+				var fieldType = $("#field-type").data("value");
 				
-				// Formation sport is same as field sport
-				var sportType = $("#field-type").data("value");
-				
-				var formationData = formation(sportType, formationType);
+				var formationData = formation(fieldType, formationType);
 				for (var index in formationData) {
 					var data = formationData[index];
-					var color = data.team ? data.team === "team0" ? $("#color0").val() : $("#color1").val() : data.type === "ball" ? "white" : "orange";
-					var shape = data.team ? data.team === "team0" ? $("#shape0").val() : $("#shape1").val() : data.type === "ball" ? "circle" : "triangle";
-					var article = new $.playbook.Article({
-						type: data.type,
-						color: color,
-						shape: shape,
-						label: data.label,
-						team: data.team,
-						play: this.model.get("_id"),
-						tempX: data.x,
-						tempY: data.y
-					});
-					
-					article.save({}, {
-						silent: true,
-						wait: true,
-						success: function(model, response) {
-							model.trigger("addIoBind");
-							model.get("play").trigger("addNewArticle", model, model.get("tempX"), model.get("tempY"));
-							model.unset("tempX");
-							model.unset("tempY");
-						}
-					});
+					data.color = data.team ? data.team === "team0" ? $("#color0").val() : $("#color1").val() : data.type === "ball" ? "white" : "orange";
+					data.shape = data.team ? data.team === "team0" ? $("#shape0").val() : $("#shape1").val() : data.type === "ball" ? "circle" : "triangle";
 				}
+				
+				this.model.set("formation", formationData);
+				this.model.set("offset", fieldOffset(fieldType));
+				
+				var io = this.model.socket;
+				
+				io.emit("play:formation", this.model.toJSON());
 			} else {
 				console.log("Cancelled formation selection");
 			}
@@ -1740,6 +1725,7 @@ $(function() {
 		addAll: function() {
 			// may not be needed
 			var tempModel = this.model;
+			
 			this.model.get("articles").each(function(article) {
 				tempModel.trigger("addArticle", article);
 			});
