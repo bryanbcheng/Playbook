@@ -151,6 +151,33 @@ io.sockets.on('connection', function(socket) {
 		callback(null, json);
 	});
 	
+	// custom events
+	// play:reset
+	socket.on('play:reset', function(data) {
+		Play.findOne({'_id' :data._id}, function(err, play) {
+			/*
+			if (err)
+				return callback(err);
+			else if (!play) {
+				return callback(new Error("Could not find play with _id=" + data._id));
+			}
+			*/
+			play.articles = new Array();
+			
+			var newSets = new Array();
+			var set_1 = new Set({name: "Set_1", number: 1, comments: ""});
+			var set_2 = new Set({name: "Set_2", number: 2, comments: ""});
+			var set_3 = new Set({name: "Set_3", number: 3, comments: ""});
+			newSets.push(set_1, set_2, set_3);
+			play.sets = newSets;
+			play.save();
+			
+			socket.emit('play/' + data._id + ':reset', play);
+			socket.broadcast.emit('play/' + data._id + ':reset', play);
+// 			callback(null, play);
+		});
+	});
+	
 	// set:create
 	socket.on('set:create', function(data, callback) {
 		Play.findOne({_id: data.play}, function(err, play) {

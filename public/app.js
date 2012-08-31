@@ -414,13 +414,16 @@ $(function() {
 		},
 		
 		initialize: function() {
-			_.bindAll(this, 'serverChange', 'serverDelete', 'serverCreateSet', 'serverCreateArticle');
+			_.bindAll(this, 'serverChange', 'serverDelete', 'serverCreateSet', 'serverCreateArticle', 'serverReset', 'serverFormation');
 			if (!this.isNew()) {
 				this.ioBind('update', this.serverChange, this);
 				this.ioBind('delete', this.serverDelete, this);
 				
 				this.ioBind('createSet', this.serverCreateSet, this);
 				this.ioBind('createArticle', this.serverCreateArticle, this);
+				
+				this.ioBind('reset', this.serverReset, this);
+				this.ioBind('formation', this.serverFormation, this);
 			}
 		},
 		
@@ -451,6 +454,16 @@ $(function() {
 			var newArticle = new $.playbook.Article($.extend(data, {play: this}));
 			
 			this.trigger("addArticle", newArticle);
+		},
+		
+		serverReset: function(data) {
+			this.set(data, {silent: true});
+		
+			this.trigger("resetPlayView");
+		},
+		
+		serverFormation: function(data) {
+		
 		},
 	});
 	
@@ -1258,7 +1271,6 @@ $(function() {
 		
 		events: {
 			"blur .name"		: "updateName",
-// 			"keypress .name"	: "updateCloseName",
 			"blur .desc"		: "updateDescription",
 			"click .new-play"	: "newPlay",
 			"click .reset-play"	: "resetPlay",
@@ -1273,9 +1285,11 @@ $(function() {
 			this.model.on('change', this.render, this);
 		},
 		
-		render: function() {
+		render: function(bindEvents) {
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			$("#play").append(this.el);
+			
+			if (bindEvents) this.delegateEvents();
 			return this;
 		},
 		
@@ -1286,11 +1300,6 @@ $(function() {
 				this.model.save({name: newValue});
 			}
 		},
-		
-// 		updateCloseName: function(e) {
-// 			if (e.type === "keypress" && e.keyCode != 13) return;
-// 			$(e.target).blur();
-// 		},
 		
 		updateDescription: function(e) {
 			// Check if changed
@@ -1314,53 +1323,16 @@ $(function() {
 		
 		resetPlay: function() {
 			if (confirm("Resetting this play will remove all work done so far on this play. Are you sure you want to continue?")) {				
-				// Remove all articles
-				var articles = this.model.get("articles")
-				while (!articles.isEmpty()) {
-					articles.shift().trigger("clear");
-				}
+				var io = this.model.socket;
 				
-				// Remove all sets
-				var sets = this.model.get("sets")
-				while (!sets.isEmpty()) {
-					sets.pop().trigger("clearAll");
-				}
-				
-				// Add three new sets
-				var newSet1 = new $.playbook.Set({number: 1,  play: this.model});
-				var newSet2 = new $.playbook.Set({number: 2,  play: this.model});
-				var newSet3 = new $.playbook.Set({number: 3,  play: this.model});
-				
-				newSet1.save({}, {
-					wait: true,
-					success: function(model, response) {
-						model.trigger("addIoBind");
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-						$(".first-set").click(); // Hack to select first set after reset
-					}
-				});
-				newSet2.save({}, {
-					wait: true,
-					success: function(model, response) {
-						model.trigger("addIoBind");
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-						$(".first-set").click();
-					}
-				});
-				newSet3.save({}, {
-					wait: true,
-					success: function(model, response) {
-						model.trigger("addIoBind");
-						model.get("play").trigger("change");
-						model.get("play").trigger("addNewSet", model);
-						$(".first-set").click();
-					}
-				});
+				io.emit("play:reset", this.model.toJSON());
 			} else {
 				console.log("Cancelled reset");
 			}
+		},
+		
+		resetPlayView: function() {
+			clearDivs();
 		},
 		
 		printPlay: function(e) {
@@ -1538,6 +1510,7 @@ $(function() {
 			this.model.on('addArticle', this.addArticle, this);
 			this.model.on('addNewArticle', this.addNewArticle, this);
 			this.model.on('animate', this.animate, this);
+			this.model.on('resetPlayView', this.resetPlayView, this);
 			this.model.on('init', this.addAll, this);
 			
 			var view = this;
@@ -1548,7 +1521,7 @@ $(function() {
 			});
 		},
 		
-		render: function() {
+		render: function(bindEvents) {
 			// Sort set list
 			var sortedSets = this.model.get("sets").sortBy(function(set) {
 				return set.get("number");
@@ -1632,6 +1605,8 @@ $(function() {
 			this.$el.html(htmlObj);
 			
 			$("#play-contents").append(this.el);
+			
+			if (bindEvents) this.delegateEvents();
 			
 			return this;
 		},
@@ -1975,6 +1950,22 @@ $(function() {
 				// simulate animate press
 				view.model.trigger("animate", nextSet, initialSet);
 			});
+		},
+		
+		resetPlayView: function() {
+			// Remove previous stage if necessary
+			if (stage) {
+				$(stage.getDOM()).remove();
+			}
+			// create stage
+			stage = new Kinetic.Stage({
+				container: "canvas",
+				width: CANVAS_WIDTH,
+				height: CANVAS_HEIGHT,
+			});
+			
+			this.model.trigger("change"); // Renders both PlayView and PlayContentsView
+			this.model.trigger("init");
 		},
 	});
 	
