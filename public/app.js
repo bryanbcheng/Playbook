@@ -1309,15 +1309,17 @@ $(function() {
 		},
 		
 		newPlay: function() {
-			var play = new $.playbook.Play({});
+			$.playbook.NewPlay.newPlay();
 			
-			play.save({}, {
-				silent: true,
-				wait: true,
-				success: function(model, response) {
-					$.playbook.app.navigate("play/" + model.get("_id"), {trigger: true});
-				}
+			coverScreen();
+			$("#whiteout").on("click", function() {
+				$("#whiteout").off("click");
+				$("#new-play-container").fadeOut(350, "swing");
+				uncoverScreen();
 			});
+			$("#new-play-container").find(".new-play-page").hide();
+			$("#new-play-field-type").fadeIn(350, "swing");
+			$("#new-play-container").fadeIn(350, "swing");
 		},
 		
 		resetPlay: function() {
@@ -2000,6 +2002,20 @@ $(function() {
 		},
 	});
 	
+	$.playbook.NewPlay = function() {
+		var play;
+		
+		return {
+			newPlay: function() {
+				play = new $.playbook.Play({});
+			},
+			
+			play: function() {
+				return play;
+			}
+		}
+	}(); // execute function when NewPlay initialized
+	
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
 			"":				"home",
@@ -2047,9 +2063,8 @@ $(function() {
 			$.playbook.app.navigate("/", {trigger: true});
 		});
 		
-		var play;
-		$("#new-play").click(function() {
-			play = new $.playbook.Play({});
+		$("#new-play").on("click", function() {
+			$.playbook.NewPlay.newPlay();
 			
 			coverScreen();
 			$("#whiteout").on("click", function() {
@@ -2063,14 +2078,14 @@ $(function() {
 		});
 		
 		$("#new-play-field-type").find(".choice").on("click", function(e) {
-			play.set("fieldType", $(e.target).closest(".choice").data("value"));
+			$.playbook.NewPlay.play().set("fieldType", $(e.target).closest(".choice").data("value"));
 			
 			$("#new-play-field-type").fadeOut(350, "swing");
 			$("#new-play-field-size").fadeIn(350, "swing");
 		});
 		
 		$("#new-play-field-size").find(".choice").on("click", function(e) {
-			play.set("fieldSize", $(e.target).closest(".choice").data("value"));
+			$.playbook.NewPlay.play().set("fieldSize", $(e.target).closest(".choice").data("value"));
 			
 			$("#new-play-field-size").fadeOut(350, "swing");
 			$("#new-play-options").fadeIn(350, "swing");
@@ -2080,7 +2095,7 @@ $(function() {
 			if ($(e.target).closest(".choice").data("value") === "blank") {
 				$("#new-play-options").fadeOut(350, "swing");
 				
-				play.save({}, {
+				$.playbook.NewPlay.play().save({}, {
 					silent: true,
 					wait: true,
 					success: function(model, response) {
@@ -2092,29 +2107,27 @@ $(function() {
 				$("#new-play-options").fadeOut(350, "swing");
 				$("#new-play-templates").find("ul").hide();
 				$("#new-play-templates").fadeIn(350, "swing");
-				$("#new-play-templates").find("." + play.get("fieldType") + "-formations").fadeIn(350, "swing");
+				$("#new-play-templates").find("." + $.playbook.NewPlay.play().get("fieldType") + "-formations").fadeIn(350, "swing");
 				
 			}
 		});
 		
 		$("#new-play-templates").find(".choice").on("click", function(e) {
 			// Create play with that formation
-			
 			var formationType = $(e.target).data("value");
-			var fieldType = play.get("fieldType");
+			var fieldType = $.playbook.NewPlay.play().get("fieldType");
 			
 			var formationData = formation(fieldType, formationType);
 			for (var index in formationData) {
 				var data = formationData[index];
-				data.color = data.team ? data.team === "team0" ? play.get("teamColors")[0] : play.get("teamColors")[1] : data.type === "ball" ? "white" : "orange";
-				data.shape = data.team ? data.team === "team0" ? play.get("teamShapes")[0] : play.get("teamShapes")[1] : data.type === "ball" ? "circle" : "triangle";
+				data.color = data.team ? data.team === "team0" ? $.playbook.NewPlay.play().get("teamColors")[0] : $.playbook.NewPlay.play().get("teamColors")[1] : data.type === "ball" ? "white" : "orange";
+				data.shape = data.team ? data.team === "team0" ? $.playbook.NewPlay.play().get("teamShapes")[0] : $.playbook.NewPlay.play().get("teamShapes")[1] : data.type === "ball" ? "circle" : "triangle";
 			}
 			
-			play.set("formation", formationData);
-			play.set("offset", fieldOffset(fieldType));
+			$.playbook.NewPlay.play().set("formation", formationData);
+			$.playbook.NewPlay.play().set("offset", fieldOffset(fieldType));
 			$("#new-play-templates").fadeOut(350, "swing");
-			
-			play.save({}, {
+			$.playbook.NewPlay.play().save({}, {
 				silent: true,
 				wait: true,
 				success: function(model, response) {
