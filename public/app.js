@@ -1331,10 +1331,6 @@ $(function() {
 			}
 		},
 		
-		resetPlayView: function() {
-			clearDivs();
-		},
-		
 		printPlay: function(e) {
 			var view = this;
 			
@@ -1953,6 +1949,8 @@ $(function() {
 		},
 		
 		resetPlayView: function() {
+			clearDivs();
+		
 			// Remove previous stage if necessary
 			if (stage) {
 				$(stage.getDOM()).remove();
@@ -1964,7 +1962,7 @@ $(function() {
 				height: CANVAS_HEIGHT,
 			});
 			
-			this.model.trigger("change"); // Renders both PlayView and PlayContentsView
+			this.model.trigger("change", true); // Renders both PlayView and PlayContentsView
 			this.model.trigger("init");
 		},
 	});
