@@ -1617,10 +1617,20 @@ $(function() {
 			var view = this;
 			
 			fieldLayer.on('dragmove', function(e) {
-				var tempLayer = fieldLayer;
+				//var tempLayer = fieldLayer;
 				$.each(stage.getChildren(), function(index, value) {
-					if (value.getName() !== "fieldLayer") {
+					if (value.getName() !== "fieldLayer" && value.getName() !== "dragLayer") {
 						value.setPosition(fieldLayer.getPosition());
+						value.draw();
+					} else if (value.getName() === "dragLayer") {
+						var bb = stage.get(".blankBackground")[0];
+						var dragBar = value.get(".dragBar")[0];
+						var dragPanel = value.get(".dragPanel")[0];
+						
+						var dY = fieldLayer.getY() / (bb.getHeight() - CANVAS_HEIGHT);
+						var scaledY = -dY * (dragPanel.getHeight() - dragBar.getHeight());
+						
+						dragBar.setY(scaledY);
 						value.draw();
 					}
 				});
@@ -1645,6 +1655,49 @@ $(function() {
 				});
 				
 				$(".annotation-cancel").click();
+			});
+			
+			fieldLayer.on('mouseover', function(e) {
+				// lazily create dragLayer
+				if (stage.get(".dragLayer")[0]) {
+					stage.get(".dragLayer")[0].show();
+					stage.get(".dragLayer")[0].draw();
+				} else {
+					var bb = stage.get(".blankBackground")[0];
+					stage.add(createDragLayer(bb.getWidth(), bb.getHeight()));
+					
+					var dragBar = stage.get(".dragBar")[0];
+					if (dragBar) {
+						dragBar.on("dragmove", function(e) {
+							//this.getY() === 0, setY === 0
+							// get change of Y over entire bar scale to change for entire canvas
+							var dragPanel = stage.get(".dragPanel")[0];
+							var dY = this.getY() / (dragPanel.getHeight() - dragBar.getHeight());
+							var scaledY = -dY * (bb.getHeight() - CANVAS_HEIGHT);
+							
+							$.each(stage.getChildren(), function(index, value) {
+								if (value.getName() !== "dragLayer") {
+									value.setY(scaledY);
+									value.draw();
+								}
+							});
+						});
+					}
+				}
+			});
+			
+			fieldLayer.on('mouseout', function(e) {
+				//console.log(e);
+				//console.log(e.relatedTarget);
+				//console.log($(e.relatedTarget).parent("#canvas"));
+				//console.log($(e.relatedTarget).parents("#canvas"));
+				//console.log($(e.relatedTarget).parentsUntil("#canvas"));
+				// Still in canvas
+				// BUG: first condition doesn't always work, if mouse moved too fast
+				if ((!e.relatedTarget && e.currentTarget) || $(e.relatedTarget).parent("#canvas").length) return;
+
+				stage.get(".dragLayer")[0].hide();
+				stage.get(".dragLayer")[0].draw();
 			});
 		},
 		

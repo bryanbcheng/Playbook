@@ -4,8 +4,12 @@ var CANVAS_WIDTH = 800;
 var CANVAS_HEIGHT = 700;
 var START_X = 0;
 var START_Y = 0;
-var DRAG_TOP = -550;
-var DRAG_BOTTOM = 50;
+//var DRAG_TOP = -550;
+//var DRAG_BOTTOM = 50;
+// changed for sake of drag bar
+var DRAG_TOP = -500;
+var DRAG_BOTTOM = 0;
+
 
 var ANNOTATION_LINE_HEIGHT = 15;
 
@@ -163,7 +167,7 @@ function ultimateFieldFull(startX, startY) {
 	fieldGroup.add(brick1);
 	fieldGroup.add(brick2);
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, ULTIMATE_HEIGHT * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, ULTIMATE_HEIGHT * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -225,7 +229,7 @@ function ultimateFieldHalf(startX, startY) {
 	fieldGroup.add(endLine1);
 	fieldGroup.add(brick1);
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, ULTIMATE_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, ULTIMATE_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -379,7 +383,7 @@ function soccerFieldFull(startX, startY) {
 	fieldGroup.add(midfieldLine);
 	fieldGroup.add(centerCircle);
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -467,7 +471,7 @@ function soccerFieldHalf(startX, startY) {
 	fieldGroup.add(goalBox1);
 	fieldGroup.add(centerCircle);
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -612,7 +616,7 @@ function footballFieldFull(startX, startY) {
 		}
 	}
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -741,7 +745,7 @@ function footballFieldHalf(startX, startY) {
 		}
 	}
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -1041,7 +1045,7 @@ function basketballFieldFull(startX, startY) {
 	fieldGroup.add(midcourtLine);
 	fieldGroup.add(midcourtCircle);
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, BASKETBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, BASKETBALL_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -1218,7 +1222,7 @@ function basketballFieldHalf(startX, startY) {
 	fieldGroup.add(threePointLine1);
 	fieldGroup.add(midcourtCircle);
 	
-	fieldLayer.add(blankBackground(CANVAS_WIDTH, BASKETBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, BASKETBALL_HEIGHT / 2 * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -1227,7 +1231,7 @@ function basketballFieldHalf(startX, startY) {
 function blankField(startX, startY) {
 	var fieldLayer = createFieldLayer(startX, startY);
 	
-	fieldLayer.add(blankBackground());
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, CANVAS_HEIGHT));
 	
 	return fieldLayer;
 }
@@ -1246,16 +1250,71 @@ function createFieldLayer(startX, startY) {
 	});
 }
 
-function blankBackground(width, height) {
+function createBlankBackground(width, height) {
 	return new Kinetic.Rect({
-		width: width >= CANVAS_WIDTH ? width : CANVAS_WIDTH,
-		height: height >= CANVAS_HEIGHT ? height : CANVAS_HEIGHT,
+		width: width,
+		height: height,
 		fill: "white",
 		//stroke: "black",
 		//strokeWidth: 1,
 		x: 0,
 		y: 0,
 		name: "blankBackground"
+	});
+}
+
+function createDragLayer(width, height) {
+	var dragLayer = new Kinetic.Layer({
+		x: 0,
+		y: 0,
+		name: "dragLayer",
+		zIndex: 9999
+	});
+	
+	if (height > CANVAS_HEIGHT) {
+		var dragGroup = createDragGroup(width, height);
+		
+		dragGroup.add(createDragPanel());
+		dragGroup.add(createDragBar(width, height));
+		
+		dragLayer.add(dragGroup);
+	}
+	
+	return dragLayer;
+}
+
+function createDragGroup(width, height) {
+	return new Kinetic.Group({
+		x: CANVAS_WIDTH - 2 * SCALE,
+		y: 1 * SCALE
+	});
+}
+
+function createDragPanel() {
+	return new Kinetic.Rect({
+		width: 1 * SCALE,
+		height: CANVAS_HEIGHT - 2 * SCALE,
+		fill: "black",
+		
+		name: "dragPanel",
+		alpha: 0.1 // fix this
+	});
+}
+
+function createDragBar(width, height) {
+	var size = (CANVAS_HEIGHT / height) * (CANVAS_HEIGHT - 2 * SCALE)
+	return new Kinetic.Rect({
+		width: 1 * SCALE,
+		height: size,
+		fill: "black",
+		name: "dragBar",
+		draggable: true,
+		dragConstraint: "vertical",
+		dragBounds: {
+			top: 1 * SCALE,
+			bottom: CANVAS_HEIGHT - 1 * SCALE - size
+		},
+		alpha: 0.3
 	});
 }
 
