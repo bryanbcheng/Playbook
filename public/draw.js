@@ -383,7 +383,7 @@ function soccerFieldFull(startX, startY) {
 	fieldGroup.add(midfieldLine);
 	fieldGroup.add(centerCircle);
 	
-	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, SOCCER_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, SOCCER_HEIGHT * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -616,7 +616,7 @@ function footballFieldFull(startX, startY) {
 		}
 	}
 	
-	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, FOOTBALL_HEIGHT * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -1045,7 +1045,7 @@ function basketballFieldFull(startX, startY) {
 	fieldGroup.add(midcourtLine);
 	fieldGroup.add(midcourtCircle);
 	
-	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, BASKETBALL_HEIGHT / 2 * SCALE));
+	fieldLayer.add(createBlankBackground(CANVAS_WIDTH, BASKETBALL_HEIGHT * SCALE));
 	fieldLayer.add(fieldGroup);
 	
 	return fieldLayer;
@@ -1295,9 +1295,8 @@ function createDragPanel() {
 		width: 1 * SCALE,
 		height: CANVAS_HEIGHT - 2 * SCALE,
 		fill: "black",
-		
 		name: "dragPanel",
-		alpha: 0.1 // fix this
+		alpha: 0.1
 	});
 }
 
@@ -1314,7 +1313,7 @@ function createDragBar(width, height) {
 			top: 1 * SCALE,
 			bottom: CANVAS_HEIGHT - 1 * SCALE - size
 		},
-		alpha: 0.3
+		alpha: 0.25
 	});
 }
 

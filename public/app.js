@@ -1485,6 +1485,9 @@ $(function() {
 				height: CANVAS_HEIGHT,
 			});
 			
+			// For hidden scroll effect
+			$("#canvas").css("width", CANVAS_WIDTH + getScrollbarWidth());
+			
 			this.model.on('change', this.render, this);
 			this.model.on('addSet', this.addSet, this);
 			this.model.on('addNewSet', this.addNewSet, this);
@@ -1609,8 +1612,83 @@ $(function() {
 			
 			this.addFieldEvents(fieldLayer);
 			stage.add(fieldLayer);
-			fieldLayer.moveToBottom();
+			// TODO: remove check after kinetic update???
+			if (fieldLayer.getParent().getChildren().length > 1) {
+				fieldLayer.moveToBottom();
+			}
+			// TODO: fixed in kinetic 4.0 but layer hide and draw doesn't work yet
 			$("#canvas .kineticjs-content").prepend($(fieldLayer.getCanvas().element).detach());
+			
+			var dragLayer = stage.get(".dragLayer")[0];
+			
+			if (dragLayer) {
+				dragLayer.clear();
+				stage.remove(dragLayer);
+				$(dragLayer.getCanvas().element).remove();
+				
+				//$("#canvas").off("scroll");
+			}
+			
+			var bb = stage.get(".blankBackground")[0];
+			stage.add(createDragLayer(bb.getWidth(), bb.getHeight()));
+			
+			var dragBar = stage.get(".dragBar")[0];
+			if (dragBar) {
+				dragBar.on("mouseover", function() {
+					this.setFill("rgb(59, 191, 206)");
+					//this.setFill("#3BBFCE");
+					this.setAlpha(0.25);
+					this.getLayer().draw();
+				
+					document.body.style.cursor = "pointer";
+				});
+				
+				dragBar.on("mouseout", function() {
+					this.setFill("#000");
+					this.setAlpha(0.25);
+					this.getLayer().draw();
+				
+					document.body.style.cursor = "default";
+				});
+				
+				dragBar.on("mousedown dragstart", function() {
+					this.setFill("rgb(59, 191, 206)");
+					this.setAlpha(0.75);
+					this.getLayer().draw();
+					
+					document.body.style.cursor = "pointer";
+				});
+				
+				dragBar.on("mouseup dragend", function(e) {
+					if (this.intersects({x: e.layerX, y: e.layerY})) {
+						this.setFill("rgb(59, 191, 206)");
+					} else {
+						this.setFill("#000");
+					}
+					this.setAlpha(0.25);
+					this.getLayer().draw();
+					
+					document.body.style.cursor = "pointer";
+				});
+				
+				dragBar.on("dragmove", function(e) {
+					//this.getY() === 0, setY === 0
+					// get change of Y over entire bar scale to change for entire canvas
+					var dragPanel = stage.get(".dragPanel")[0];
+					var dY = this.getY() / (dragPanel.getHeight() - dragBar.getHeight());
+					var scaledY = -dY * (bb.getHeight() - CANVAS_HEIGHT);
+					
+					$.each(stage.getChildren(), function(index, value) {
+						if (value.getName() !== "dragLayer") {
+							value.setY(scaledY);
+							value.draw();
+						}
+					});
+				});
+				
+				// even does not trigger since element is exact size
+				// $("#canvas").on("scroll", function(e) {	});
+			}
 		},
 		
 		addFieldEvents: function(fieldLayer) {
@@ -1658,44 +1736,23 @@ $(function() {
 			});
 			
 			fieldLayer.on('mouseover', function(e) {
-				// lazily create dragLayer
-				if (stage.get(".dragLayer")[0]) {
-					stage.get(".dragLayer")[0].show();
-					stage.get(".dragLayer")[0].draw();
-				} else {
-					var bb = stage.get(".blankBackground")[0];
-					stage.add(createDragLayer(bb.getWidth(), bb.getHeight()));
-					
-					var dragBar = stage.get(".dragBar")[0];
-					if (dragBar) {
-						dragBar.on("dragmove", function(e) {
-							//this.getY() === 0, setY === 0
-							// get change of Y over entire bar scale to change for entire canvas
-							var dragPanel = stage.get(".dragPanel")[0];
-							var dY = this.getY() / (dragPanel.getHeight() - dragBar.getHeight());
-							var scaledY = -dY * (bb.getHeight() - CANVAS_HEIGHT);
-							
-							$.each(stage.getChildren(), function(index, value) {
-								if (value.getName() !== "dragLayer") {
-									value.setY(scaledY);
-									value.draw();
-								}
-							});
-						});
-					}
-				}
+				stage.get(".dragLayer")[0].show();
+				stage.get(".dragLayer")[0].draw();
 			});
 			
 			fieldLayer.on('mouseout', function(e) {
-				//console.log(e);
-				//console.log(e.relatedTarget);
-				//console.log($(e.relatedTarget).parent("#canvas"));
-				//console.log($(e.relatedTarget).parents("#canvas"));
-				//console.log($(e.relatedTarget).parentsUntil("#canvas"));
 				// Still in canvas
-				// BUG: first condition doesn't always work, if mouse moved too fast
 				if ((!e.relatedTarget && e.currentTarget) || $(e.relatedTarget).parent("#canvas").length) return;
 
+				stage.get(".dragLayer")[0].hide();
+				stage.get(".dragLayer")[0].draw();
+			});
+			
+			$("#canvas-container").off("mouseleave");
+			// To catch the edge cases
+			$("#canvas-container").on("mouseleave", function(e) {
+				console.log(e);
+				console.log(stage.get(".dragLayer"));
 				stage.get(".dragLayer")[0].hide();
 				stage.get(".dragLayer")[0].draw();
 			});
@@ -2263,4 +2320,29 @@ function setCaretPosition(ctrl, pos){
 		range.moveStart('character', pos);
 		range.select();
 	}
+}
+
+/**
+ * Gets the width of the OS scrollbar
+ */
+function getScrollbarWidth() {
+	var scrollbarWidth = 0;
+	if ( !scrollbarWidth ) {
+		if ( $.browser.msie ) {
+			var $textarea1 = $('<textarea cols="10" rows="2"></textarea>')
+					.css({ position: 'absolute', top: -1000, left: -1000 }).appendTo('body'),
+				$textarea2 = $('<textarea cols="10" rows="2" style="overflow: hidden;"></textarea>')
+					.css({ position: 'absolute', top: -1000, left: -1000 }).appendTo('body');
+			scrollbarWidth = $textarea1.width() - $textarea2.width();
+			$textarea1.add($textarea2).remove();
+		} else {
+			var $div = $('<div />')
+				.css({ width: 100, height: 100, overflow: 'auto', position: 'absolute', top: -1000, left: -1000 })
+				.prependTo('body').append('<div />').find('div')
+					.css({ width: '100%', height: 200 });
+			scrollbarWidth = 100 - $div.width();
+			$div.parent().remove();
+		}
+	}
+	return scrollbarWidth;
 }

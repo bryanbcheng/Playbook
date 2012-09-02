@@ -573,9 +573,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 	display: block;
 }
 
-#canvas {
+#canvas-container {
 	border: 1px solid #CDCDCD;
+	overflow: hidden;
 	width: 800px;
+}
+
+#canvas {
+	overflow-y: scroll;
+/* 	width: 820px; */
 }
 
 #canvas .print {
