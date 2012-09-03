@@ -580,8 +580,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #canvas {
-	overflow-y: scroll;
+	border: 1px solid #CDCDCD;
+/* 	overflow-y: scroll; */
 /* 	width: 820px; */
+	width: 800px;
 }
 
 #canvas .print {

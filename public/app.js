@@ -955,8 +955,8 @@ $(function() {
 				
 				// Calculate offset (canvas DOM + layer offset + item location)
 				view.$el.css({
-					left:  -$("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x"), // + 1 was for border
-					top: -$("#annotation").offset().top + $("#canvas").offset().top + stage.current.getY() + view.model.get("y"),
+					left:  -$("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x") + 1, // + 1 was for border
+					top: -$("#annotation").offset().top + $("#canvas").offset().top + stage.current.getY() + view.model.get("y") + 1,
 				});
 				// Calculate size (item size - padding size)
 				view.$el.find(".annotation-edit").css({
@@ -1705,11 +1705,13 @@ $(function() {
 						var dragBar = value.get(".dragBar")[0];
 						var dragPanel = value.get(".dragPanel")[0];
 						
-						var dY = fieldLayer.getY() / (bb.getHeight() - CANVAS_HEIGHT);
-						var scaledY = -dY * (dragPanel.getHeight() - dragBar.getHeight());
-						
-						dragBar.setY(scaledY);
-						value.draw();
+						if (dragBar && dragPanel) {
+							var dY = fieldLayer.getY() / (bb.getHeight() - CANVAS_HEIGHT);
+							var scaledY = -dY * (dragPanel.getHeight() - dragBar.getHeight());
+							
+							dragBar.setY(scaledY);
+							value.draw();
+						}
 					}
 				});
 			});
