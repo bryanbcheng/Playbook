@@ -955,8 +955,8 @@ $(function() {
 				
 				// Calculate offset (canvas DOM + layer offset + item location)
 				view.$el.css({
-					left:  -$("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x") + 1, // + 1 for slight offset
-					top: -$("#annotation").offset().top + $("#canvas").offset().top + stage.current.getY() + view.model.get("y") + 1,
+					left:  -$("#annotation").offset().left + $("#canvas").offset().left + stage.current.getX() + view.model.get("x"), // + 1 was for border
+					top: -$("#annotation").offset().top + $("#canvas").offset().top + stage.current.getY() + view.model.get("y"),
 				});
 				// Calculate size (item size - padding size)
 				view.$el.find(".annotation-edit").css({
@@ -1630,7 +1630,7 @@ $(function() {
 			}
 			
 			var bb = stage.get(".blankBackground")[0];
-			stage.add(createDragLayer(bb.getWidth(), bb.getHeight()));
+			stage.add(createDragLayer(bb.getWidth(), bb.getHeight(), currX, currY));
 			
 			var dragBar = stage.get(".dragBar")[0];
 			if (dragBar) {
@@ -1751,8 +1751,6 @@ $(function() {
 			$("#canvas-container").off("mouseleave");
 			// To catch the edge cases
 			$("#canvas-container").on("mouseleave", function(e) {
-				console.log(e);
-				console.log(stage.get(".dragLayer"));
 				stage.get(".dragLayer")[0].hide();
 				stage.get(".dragLayer")[0].draw();
 			});

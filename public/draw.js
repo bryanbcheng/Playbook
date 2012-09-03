@@ -1263,58 +1263,58 @@ function createBlankBackground(width, height) {
 	});
 }
 
-function createDragLayer(width, height) {
+function createDragLayer(width, height, startX, startY) {
 	var dragLayer = new Kinetic.Layer({
 		x: 0,
 		y: 0,
+		visible: false,
 		name: "dragLayer",
 		zIndex: 9999
 	});
 	
 	if (height > CANVAS_HEIGHT) {
-		var dragGroup = createDragGroup(width, height);
+		var dragGroup = new Kinetic.Group({
+			x: CANVAS_WIDTH - 2 * SCALE,
+			y: 1 * SCALE
+		});
 		
-		dragGroup.add(createDragPanel());
-		dragGroup.add(createDragBar(width, height));
+		var dragWidth = 1 * SCALE,
+			dragPanelHeight = CANVAS_HEIGHT - 2 * SCALE;
+			
+		var dragPanel = new Kinetic.Rect({
+			width: dragWidth,
+			height: dragPanelHeight,
+			fill: "black",
+			name: "dragPanel",
+			alpha: 0.1
+		});
+		
+		var dragBarHeight = (CANVAS_HEIGHT / height) * (dragPanelHeight),
+			dragX = startX != null ? startX : 0,
+			dragY = startY != null ? -startY * (dragPanelHeight - dragBarHeight) / (height - CANVAS_HEIGHT) : 0;
+		var dragBar = new Kinetic.Rect({
+			width: dragWidth,
+			height: dragBarHeight,
+			fill: "black",
+			x: dragX,
+			y: dragY,
+			name: "dragBar",
+			draggable: true,
+			dragConstraint: "vertical",
+			dragBounds: {
+				top: 1 * SCALE,
+				bottom: CANVAS_HEIGHT - 1 * SCALE - dragBarHeight
+			},
+			alpha: 0.25
+		});
+		
+		dragGroup.add(dragPanel);
+		dragGroup.add(dragBar);
 		
 		dragLayer.add(dragGroup);
 	}
 	
 	return dragLayer;
-}
-
-function createDragGroup(width, height) {
-	return new Kinetic.Group({
-		x: CANVAS_WIDTH - 2 * SCALE,
-		y: 1 * SCALE
-	});
-}
-
-function createDragPanel() {
-	return new Kinetic.Rect({
-		width: 1 * SCALE,
-		height: CANVAS_HEIGHT - 2 * SCALE,
-		fill: "black",
-		name: "dragPanel",
-		alpha: 0.1
-	});
-}
-
-function createDragBar(width, height) {
-	var size = (CANVAS_HEIGHT / height) * (CANVAS_HEIGHT - 2 * SCALE)
-	return new Kinetic.Rect({
-		width: 1 * SCALE,
-		height: size,
-		fill: "black",
-		name: "dragBar",
-		draggable: true,
-		dragConstraint: "vertical",
-		dragBounds: {
-			top: 1 * SCALE,
-			bottom: CANVAS_HEIGHT - 1 * SCALE - size
-		},
-		alpha: 0.25
-	});
 }
 
 function fieldOffset(fieldType) {
