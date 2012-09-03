@@ -1750,9 +1750,9 @@ $(function() {
 				stage.get(".dragLayer")[0].draw();
 			});
 			
-			$("#canvas-container").off("mouseleave");
+			$("#canvas").off("mouseleave");
 			// To catch the edge cases
-			$("#canvas-container").on("mouseleave", function(e) {
+			$("#canvas").on("mouseleave", function(e) {
 				stage.get(".dragLayer")[0].hide();
 				stage.get(".dragLayer")[0].draw();
 			});
