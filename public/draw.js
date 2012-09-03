@@ -1498,6 +1498,31 @@ function createArrow(arrow) {
 			name: "arrowLine"
 	});
 	
+	// New arrow with quadratic curve
+	var arrowHead = new Kinetic.Shape({
+		drawFunc: function(context) {
+			context.beginPath();
+			//context.arc(SCALE, SCALE, Math.sqrt(2) * SCALE, 0, 2 * Math.PI);
+			context.moveTo(0, -0.75  * SCALE);
+			context.lineTo(0.75 * Math.sqrt(3) / 2 * SCALE, 0.75 / 2 * SCALE);
+			//context.moveTo(0, 2 * SCALE);
+			//context.lineTo(-0.75 * Math.sqrt(3) / 2 * SCALE, 0.75 / 2 * SCALE);
+			context.quadraticCurveTo(0, 0, -0.75 * Math.sqrt(3) / 2 * SCALE, 0.75 / 2 * SCALE);
+			context.closePath();
+			this.fill(context);
+            this.stroke(context);
+		},
+		fill: "black",
+		stroke: "black",
+		strokeWidth: 1,
+		x: arrow.points[2],
+		y: arrow.points[3],
+		name: "arrowHead",
+		rotation: rotationAngle(arrow.points),
+		draggable: true
+	});
+	
+	/* Old triangle arrow
 	var arrowHead = new Kinetic.RegularPolygon({
 		sides: 3,
 		radius: 0.75 * SCALE,
@@ -1510,7 +1535,7 @@ function createArrow(arrow) {
 		rotation: rotationAngle(arrow.points),
 		draggable: true
 	});
-	
+	*/
 	arrowGroup.add(arrowLine);
 	arrowGroup.add(arrowHead);
 	

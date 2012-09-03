@@ -161,10 +161,11 @@ $(function() {
 				return path.get("articleId") === articleId;
 			});
 			
-			nextPath.save({currX: x, currY: y});
+			nextPath.moveTo(x, y);
+			nextPath.trigger("change");
 			
 			// Saving current set
-			this.save({nextX: x, nextY: y});
+			//this.save({nextX: x, nextY: y});
 		},
 		
 		link: function(path) {
@@ -836,7 +837,6 @@ $(function() {
 				});
 				
 				var arrowHead = this.arrow.get(".arrowHead")[0];
-				
 				arrowHead.on('dragmove', function(e) {
 					view.layer.remove(view.arrow);
 					view.arrow = createArrow({points: [view.model.get("currX"), view.model.get("currY"), this.getX(), this.getY()]});
