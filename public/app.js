@@ -1486,7 +1486,7 @@ $(function() {
 			});
 			
 			// For hidden scroll effect
-			$("#canvas").css("width", CANVAS_WIDTH + getScrollbarWidth());
+			//$("#canvas").css("width", CANVAS_WIDTH + getScrollbarWidth());
 			
 			this.model.on('change', this.render, this);
 			this.model.on('addSet', this.addSet, this);
