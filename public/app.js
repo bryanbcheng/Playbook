@@ -1636,7 +1636,8 @@ $(function() {
 			if (dragBar) {
 				dragBar.on("mouseover", function() {
 					this.setFill("rgb(59, 191, 206)");
-					//this.setFill("#3BBFCE");
+					//this.setStrokeWidth(1);
+					//this.setStroke("#2faab8");
 					this.setAlpha(0.25);
 					this.getLayer().draw();
 				
@@ -1645,6 +1646,7 @@ $(function() {
 				
 				dragBar.on("mouseout", function() {
 					this.setFill("#000");
+					//this.setStrokeWidth(0);
 					this.setAlpha(0.25);
 					this.getLayer().draw();
 				
@@ -1664,6 +1666,7 @@ $(function() {
 						this.setFill("rgb(59, 191, 206)");
 					} else {
 						this.setFill("#000");
+						//this.setStrokeWidth(0);
 					}
 					this.setAlpha(0.25);
 					this.getLayer().draw();
