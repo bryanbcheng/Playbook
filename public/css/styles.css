@@ -1791,18 +1791,122 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#56aa04', end
 }
 
 #new-play-templates .formations ul {
+	border: 1px solid #CDCDCD;
+	border-radius: 5px 5px 5px 5px;
 	display: none;
-	height: 400px;
-/* 	overflow-y: scroll; DON'T NEED FOR NOW */
-	width: 500px;
+	height: 338px;
+	margin-top: 30px;
+	overflow-y: scroll;
+	padding: 15px;
+	width: 470px;
 }
 
 #new-play-templates .choice {
-	height: 60px;
+	font-size: 20px;
+	height: 137px;
+	line-height: 34px;
+	margin: 15px;
+	width: 195px;
 }
 
-#new-play-templates .choice:nth-child(odd) {
-	margin-right: 30px;
+#new-play-templates .icon {
+	background-image: url("/images/formationsSet.png");
+	height: 100px;
+	margin: 0 auto;
+	width: 100px;
+}
+
+/* Ultimate formations */
+#new-play-templates .vertical .icon {
+	background-position: 0 0;
+}
+
+#new-play-templates .horizontal .icon {
+	background-position: -100px 0;
+}
+
+#new-play-templates .side .icon {
+	background-position: -200px 0;
+}
+
+#new-play-templates .split .icon {
+	background-position: -300px 0;
+}
+
+#new-play-templates .l .icon {
+	background-position: -400px 0;
+}
+
+/* Soccer formations */
+
+#new-play-templates .fourFourTwo .icon {
+	background-position: 0 -100px;
+}
+
+#new-play-templates .fourThreeThree .icon {
+	background-position: -100px -100px;
+}
+
+#new-play-templates .threeFourThree .icon {
+	background-position: -200px -100px;
+}
+
+#new-play-templates .threeFiveTwo .icon {
+	background-position: -300px -100px;
+}
+
+/* Football formations */
+#new-play-templates .football-formations .icon {
+	width: 125px;
+}
+
+#new-play-templates .i .icon {
+	background-position: 0 -200px;
+}
+
+#new-play-templates .pro .icon {
+	background-position: -125px -200px;
+}
+
+#new-play-templates .shotgun .icon {
+	background-position: -250px -200px;
+}
+
+#new-play-templates .spread .icon {
+	background-position: -375px -200px;
+}
+
+#new-play-templates .fourThree .icon {
+	background-position: 0 -300px;
+}
+
+#new-play-templates .threeFour .icon {
+	background-position: -125px -300px;
+}
+
+#new-play-templates .fourTwoFive .icon {
+	background-position: -250px -300px;
+}
+
+#new-play-templates .threeFiveThree .icon {
+	background-position: -375px -300px;
+}
+
+/* Basketball formations */
+#new-play-templates .basketball-formations .icon {
+	width: 125px;
+}
+
+#new-play-templates .threeOutTwoIn .icon {
+	background-position: 0 -400px;
+}
+
+#new-play-templates .oneTwoTwoZone .icon {
+	background-position: -125px -400px;
+}
+
+#new-play-templates .twoThreeZone .icon {
+	background-position: -250px -400px;
 }
 
 /* Print */

@@ -1354,6 +1354,7 @@ $(function() {
 			// Save the current layer position
 			var currPosition = stage.current.getPosition();
 		
+			// TODO: use deep clone and copy layer attributes
 			var tempStage = stage.clone({height: 1200});
 			$(tempStage.getDOM()).addClass("print");
 			while(stage.getChildren().length > 0) {
@@ -1373,6 +1374,7 @@ $(function() {
 				function(callback) {
 					tempStage.toImage({
 						callback: function(image) {
+							console.log(image);
 							// put play and set info
 							$("#playbook-print").append(Mustache.render($("#play-print-template").html(), view.model.toJSON()));
 							var thisSet = view.model.get("sets").find(function(set) {
@@ -2204,6 +2206,11 @@ $(function() {
 			} else if ($(e.target).closest(".choice").data("value") === "template") {
 				$("#new-play-options").fadeOut(350, "swing");
 				$("#new-play-templates").find("ul").hide();
+				
+				// Adjust for the scrollbar
+// 				var scrollbarWidth = getScrollbarWidth();
+// 				$("#new-play-templates").find(".choice").css("width", );
+				
 				$("#new-play-templates").fadeIn(350, "swing");
 				$("#new-play-templates").find("." + $.playbook.NewPlay.play().get("fieldType") + "-formations").fadeIn(350, "swing");
 				
