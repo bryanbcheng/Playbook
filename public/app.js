@@ -1374,7 +1374,6 @@ $(function() {
 				function(callback) {
 					tempStage.toImage({
 						callback: function(image) {
-							console.log(image);
 							// put play and set info
 							$("#playbook-print").append(Mustache.render($("#play-print-template").html(), view.model.toJSON()));
 							var thisSet = view.model.get("sets").find(function(set) {
@@ -1751,15 +1750,19 @@ $(function() {
 				// Still in canvas
 				if ((!e.relatedTarget && e.currentTarget) || $(e.relatedTarget).parent("#canvas").length) return;
 
-				stage.get(".dragLayer")[0].hide();
-				stage.get(".dragLayer")[0].draw();
+				if (stage.get(".dragLayer")[0]) {
+					stage.get(".dragLayer")[0].hide();
+					stage.get(".dragLayer")[0].draw();
+				}
 			});
 			
 			$("#canvas").off("mouseleave");
 			// To catch the edge cases
 			$("#canvas").on("mouseleave", function(e) {
-				stage.get(".dragLayer")[0].hide();
-				stage.get(".dragLayer")[0].draw();
+				if (stage.get(".dragLayer")[0]) {
+					stage.get(".dragLayer")[0].hide();
+					stage.get(".dragLayer")[0].draw();
+				}
 			});
 		},
 		
@@ -2061,35 +2064,33 @@ $(function() {
 	});
 	
 	$.playbook.PlayCollectionView = Backbone.View.extend({
+		el: $("#plays-container"),
+	
 		tagName: "div",
 		className: "play-collection-view",
 	
 		template: $("#play-collection-template").html(),
 		listTemplate: $("#play-list-template").html(),
 		
-// 		events:
+		events: {
+			"click .prev"	: "previousPage",
+			"click .next" 	: "nextPage",
+		},
 		
 		initialize: function() {
+			 _.bindAll(this, 'fetch', 'setPageInfo', 'previousPage', 'nextPage');
 			this.collection.on('init', this.render, this);
 			
 			var view = this;
-			this.collection.fetch({
-				success: function(collection, response) {
-					collection.trigger('init');
-				}
-			});
+			
+			var io = this.collection.socket;
+			io.emit("plays:info", {}, this.setPageInfo);
 		},
 		
 		render: function() {
-			var view = this;	
+			var view = this;
 			
-			$("#plays-container").html("");
-			
-			this.$el.html(Mustache.render(this.template, this.collection.toJSON()));
-			
-			$("#plays-container").append(this.el);
-			
-			$("#play-list").html("");
+			this.$el.html(Mustache.render(this.template, $.extend({}, this.collection.toJSON(), this.info)));
 			
 			this.collection.each(function(play) {
 				var html = Mustache.render(view.listTemplate, play.toJSON()),
@@ -2099,6 +2100,49 @@ $(function() {
 				});
 				$("#play-list").append(htmlObj);
 			});
+		},
+		
+		fetch: function() {
+			this.collection.fetch({
+				data: {page : this.info.page - 1},
+				success: function(collection, response) {
+					collection.trigger('init');
+				}
+			});
+		},
+		
+		setPageInfo: function(err, data) {
+			this.info = data;
+			this.info.page = 1;
+			
+			this.info.prev = this.info.page > 1;
+			this.info.next = this.info.page < this.info.pages;
+			
+			this.fetch();
+		},
+		
+		previousPage: function() {
+			if (this.info.prev) {
+			  // load previous page
+			  this.info.page = this.info.page - 1;
+			  
+			  this.info.next = true;
+			  this.info.prev = this.info.page > 1;
+			  
+			  this.fetch();
+			}
+		},
+		
+		nextPage: function() {
+			if (this.info.next) {
+			  // load next page
+			  this.info.page = this.info.page + 1;
+			  
+			  this.info.prev = true;
+			  this.info.next = this.info.page < this.info.pages;
+			  
+			  this.fetch();
+			}
 		},
 	});
 	
@@ -2219,10 +2263,11 @@ $(function() {
 		
 		$("#new-play-templates").find(".choice").on("click", function(e) {
 			// Create play with that formation
-			var formationType = $(e.target).data("value");
+			var formationType = $(e.target).closest(".choice").data("value");
 			var fieldType = $.playbook.NewPlay.play().get("fieldType");
 			
 			var formationData = formation(fieldType, formationType);
+			
 			for (var index in formationData) {
 				var data = formationData[index];
 				data.color = data.team ? data.team === "team0" ? $.playbook.NewPlay.play().get("teamColors")[0] : $.playbook.NewPlay.play().get("teamColors")[1] : data.type === "ball" ? "white" : "orange";

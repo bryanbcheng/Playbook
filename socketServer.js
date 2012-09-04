@@ -46,7 +46,7 @@ var mongoose = require('mongoose')
   , Article = require('./models.js').Article(db);
 
 /* Socket.io Connections */
-
+var playLimit = 8;
 io.sockets.on('connection', function(socket) {
 	// plays:read
 	socket.on('plays:read', function(data, callback) {
@@ -62,18 +62,41 @@ io.sockets.on('connection', function(socket) {
 			}
 		};
 		
-		// Makes the query much smaller and faster -path not needed, but for extra safety
-// 		var selectFields = "name description fieldType -fieldSize -teamColors -teamShapes -articles -sets -privacy categories";
+		// Makes the query much smaller and faster
 		var selectFields = "name description fieldType categories";
 		if(!_.isEmpty(data)) {
 			// Find based on query
 // 			Play.find({'_id': data._id}, selectFields, send_result);
-			Play.find({privacy: "public"}, selectFields, send_result);
+			Play.find({privacy: "public"}, selectFields, {limit: playLimit, skip: data.page * playLimit}, send_result);
 		} else {
-			Play.find({privacy: "public"}, selectFields, send_result);
+			Play.find({privacy: "public"}, selectFields, {limit: playLimit}, send_result);
 		}
 	});
 
+	// custom plays events
+	// plays:info - get info about all the public plays
+	socket.on('plays:info', function(data, callback) {
+		var send_result = function(err, count) {
+			if (err) {
+				return callback(err);
+			}
+			
+			var info = {
+				total: count,
+				perPage: playLimit,
+				pages: Math.ceil(count / playLimit)
+			}
+			callback(null, info);
+		};
+		
+		if(!_.isEmpty(data)) {
+			// Find based on query
+// 			Play.find({'_id': data._id}, selectFields, send_result);
+			Play.count({privacy: "public"}, send_result);
+		} else {
+			Play.count({privacy: "public"}, send_result);
+		}
+	});
 
 	// play:create
 	socket.on('play:create', function(data, callback) {
