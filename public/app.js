@@ -1627,72 +1627,14 @@ $(function() {
 				stage.remove(dragLayer);
 				$(dragLayer.getCanvas().element).remove();
 				
-				//$("#canvas").off("scroll");
+				$("#canvas").off("mousewheel");
 			}
 			
 			var bb = stage.get(".blankBackground")[0];
-			stage.add(createDragLayer(bb.getWidth(), bb.getHeight(), currX, currY));
+			dragLayer = createDragLayer(bb.getWidth(), bb.getHeight(), currX, currY)
+			stage.add(dragLayer);
 			
-			var dragBar = stage.get(".dragBar")[0];
-			if (dragBar) {
-				dragBar.on("mouseover", function() {
-					this.setFill("rgb(59, 191, 206)");
-					//this.setStrokeWidth(1);
-					//this.setStroke("#2faab8");
-					this.setAlpha(0.25);
-					this.getLayer().draw();
-				
-					document.body.style.cursor = "pointer";
-				});
-				
-				dragBar.on("mouseout", function() {
-					this.setFill("#000");
-					//this.setStrokeWidth(0);
-					this.setAlpha(0.25);
-					this.getLayer().draw();
-				
-					document.body.style.cursor = "default";
-				});
-				
-				dragBar.on("mousedown dragstart", function() {
-					this.setFill("rgb(59, 191, 206)");
-					this.setAlpha(0.75);
-					this.getLayer().draw();
-					
-					document.body.style.cursor = "pointer";
-				});
-				
-				dragBar.on("mouseup dragend", function(e) {
-					if (this.intersects({x: e.layerX, y: e.layerY})) {
-						this.setFill("rgb(59, 191, 206)");
-					} else {
-						this.setFill("#000");
-						//this.setStrokeWidth(0);
-					}
-					this.setAlpha(0.25);
-					this.getLayer().draw();
-					
-					document.body.style.cursor = "pointer";
-				});
-				
-				dragBar.on("dragmove", function(e) {
-					//this.getY() === 0, setY === 0
-					// get change of Y over entire bar scale to change for entire canvas
-					var dragPanel = stage.get(".dragPanel")[0];
-					var dY = this.getY() / (dragPanel.getHeight() - dragBar.getHeight());
-					var scaledY = -dY * (bb.getHeight() - CANVAS_HEIGHT);
-					
-					$.each(stage.getChildren(), function(index, value) {
-						if (value.getName() !== "dragLayer") {
-							value.setY(scaledY);
-							value.draw();
-						}
-					});
-				});
-				
-				// even does not trigger since element is exact size
-				// $("#canvas").on("scroll", function(e) {	});
-			}
+			this.addDragEvents(dragLayer, bb);
 		},
 		
 		addFieldEvents: function(fieldLayer) {
@@ -1755,6 +1697,99 @@ $(function() {
 					stage.get(".dragLayer")[0].draw();
 				}
 			});
+		},
+		
+		addDragEvents: function(dragLayer, bb) {
+			var dragBar = dragLayer.get(".dragBar")[0],
+				dragPanel = dragLayer.get(".dragPanel")[0];
+			
+			if (dragBar) {
+				dragBar.on("mouseover", function() {
+					this.setFill("rgb(59, 191, 206)");
+					//this.setStrokeWidth(1);
+					//this.setStroke("#2faab8");
+					this.setAlpha(0.25);
+					this.getLayer().draw();
+				
+					document.body.style.cursor = "pointer";
+				});
+				
+				dragBar.on("mouseout", function() {
+					this.setFill("#000");
+					//this.setStrokeWidth(0);
+					this.setAlpha(0.25);
+					this.getLayer().draw();
+				
+					document.body.style.cursor = "default";
+				});
+				
+				dragBar.on("mousedown dragstart", function() {
+					this.setFill("rgb(59, 191, 206)");
+					this.setAlpha(0.75);
+					this.getLayer().draw();
+					
+					document.body.style.cursor = "pointer";
+				});
+				
+				dragBar.on("mouseup dragend", function(e) {
+					if (this.intersects({x: e.layerX, y: e.layerY})) {
+						this.setFill("rgb(59, 191, 206)");
+					} else {
+						this.setFill("#000");
+						//this.setStrokeWidth(0);
+					}
+					this.setAlpha(0.25);
+					this.getLayer().draw();
+					
+					document.body.style.cursor = "pointer";
+				});
+				
+				dragBar.on("dragmove dragend", function(e) {
+					//this.getY() === 0, setY === 0
+					// get change of Y over entire bar scale to change for entire canvas
+					var dragPanel = stage.get(".dragPanel")[0];
+					var dY = this.getY() / (dragPanel.getHeight() - dragBar.getHeight());
+					var scaledY = -dY * (bb.getHeight() - CANVAS_HEIGHT);
+					
+					$.each(stage.getChildren(), function(index, value) {
+						if (value.getName() !== "dragLayer") {
+							value.setY(scaledY);
+							value.draw();
+						}
+					});
+				});
+				
+				$("#canvas").on("mousewheel", function(e, delta, deltaX, deltaY) {
+					// assume deltaY in terms of the scrollbar
+					var dragBounds = dragBar.getDragBounds();
+					
+					// allow default scroll if at edge, should only prevent when actually scrolling
+					if ((dragBar.getY() === dragBounds.top && deltaY > 0) || 
+						(dragBar.getY() === dragBounds.bottom && deltaY < 0))
+						return;
+					e.preventDefault();
+					
+					var newY = dragBar.getY() - deltaY;
+					// check boundaries
+					if (newY < dragBounds.top) newY = dragBounds.top;
+					else if (newY > dragBounds.bottom) newY = dragBounds.bottom;
+					
+					console.log(newY);
+					
+					// scaledY for change in Y for canvas
+					var scaledY = -newY * (bb.getHeight() - CANVAS_HEIGHT) / (dragPanel.getHeight() - dragBar.getHeight());
+					
+					$.each(stage.getChildren(), function(index, value) {
+						if (value.getName() !== "dragLayer") {
+							value.setY(scaledY);
+							value.draw();
+						} else if (value.getName() === "dragLayer") {
+							dragBar.setY(newY);
+							value.draw();
+						}
+					});
+				});
+			}
 			
 			$("#canvas").off("mouseleave");
 			// To catch the edge cases
@@ -2402,7 +2437,7 @@ $(function() {
 			$.playbook.app.navigate("plays", {trigger: true});
 		});
 		
-		$(window).keypress(changeSet);
+		$(window).keypress(keyboardShortcut);
 	}
 	
 	$.playbook.bootstrap();
@@ -2420,13 +2455,17 @@ function uncoverScreen() {
 	$("#whiteout").fadeOut(350, "swing");
 }
 
-function changeSet(e) {
+// TODO: only active inside play menu
+function keyboardShortcut(e) {
 	if (e.target.tagName === "BODY") {
 		if (e.keyCode === 37 || e.keyCode === 38) {
+			e.preventDefault();
 			$(".prev-set").click();
 		} else if (e.keyCode === 39 || e.keyCode === 40) {
+			e.preventDefault();
 			$(".next-set").click();
 		} else if (e.charCode === 32) {
+			e.preventDefault();
 			$(".animate").click();
 		}
 	}

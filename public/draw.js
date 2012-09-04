@@ -10,7 +10,6 @@ var START_Y = 0;
 var DRAG_TOP = -500;
 var DRAG_BOTTOM = 0;
 
-
 var ANNOTATION_LINE_HEIGHT = 15;
 
 /* ULTIMATE CONSTANTS */
@@ -1273,11 +1272,6 @@ function createDragLayer(width, height, startX, startY) {
 	});
 	
 	if (height > CANVAS_HEIGHT) {
-		var dragGroup = new Kinetic.Group({
-			x: CANVAS_WIDTH - 2 * SCALE,
-			y: 1 * SCALE
-		});
-		
 		var dragWidth = 1 * SCALE,
 			dragPanelHeight = CANVAS_HEIGHT - 2 * SCALE;
 			
@@ -1285,6 +1279,8 @@ function createDragLayer(width, height, startX, startY) {
 			width: dragWidth,
 			height: dragPanelHeight,
 			fill: "black",
+			x: CANVAS_WIDTH - 2 * SCALE,
+			y: 1 * SCALE,
 			name: "dragPanel",
 			alpha: 0.1
 		});
@@ -1292,12 +1288,13 @@ function createDragLayer(width, height, startX, startY) {
 		var dragBarHeight = (CANVAS_HEIGHT / height) * (dragPanelHeight),
 			dragX = startX != null ? startX : 0,
 			dragY = startY != null ? -startY * (dragPanelHeight - dragBarHeight) / (height - CANVAS_HEIGHT) : 0;
+		
 		var dragBar = new Kinetic.Rect({
 			width: dragWidth,
 			height: dragBarHeight,
 			fill: "black",
-			x: dragX,
-			y: dragY,
+			x: CANVAS_WIDTH - 2 * SCALE + dragX,
+			y: 1 * SCALE + dragY,
 			name: "dragBar",
 			draggable: true,
 			dragConstraint: "vertical",
@@ -1308,10 +1305,8 @@ function createDragLayer(width, height, startX, startY) {
 			alpha: 0.25
 		});
 		
-		dragGroup.add(dragPanel);
-		dragGroup.add(dragBar);
-		
-		dragLayer.add(dragGroup);
+		dragLayer.add(dragPanel);
+		dragLayer.add(dragBar);
 	}
 	
 	return dragLayer;
