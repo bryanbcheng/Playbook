@@ -2201,7 +2201,7 @@ $(function() {
 		},
 		
 		hideFilterOptions: function(e) {
-			if ($(e.relatedTarget).closest(".filter").attr("id") == $(e.target).closest(".filter").attr("id")) return;
+			if ($(e.relatedTarget).closest(".filter").data("type") == $(e.target).closest(".filter").data("type")) return;
 			
 			$(e.target).closest(".filter").find("ul").fadeOut(350, "swing");
 		},
