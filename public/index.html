@@ -72,9 +72,7 @@
 						<div id="home-panel" class="right-container">
 							Welcome to Playbook!
 						</div>
-						<div id="plays-panel" class="right-container">
-							Search Filters
-						</div>
+						<div id="plays-panel" class="right-container"></div>
 						<div id="play-panel" class="right-container">
 							<div id="play-contents"></div>
 							<div id="set"></div>
@@ -287,6 +285,38 @@
 			</div>
 			<div class="link">Go To Play</div>
 		</li>
+	</script>
+	
+	<script type="text/template" id="plays-filter-template">
+		<h3>Search Filters</h3>
+		<div class="filter" data-type="fieldType" data-value="{{fieldType}}">
+			<li class="selected">
+				<div class="field-icon {{fieldType}}"></div>
+				<span>{{fieldType}}</span>
+			</li>
+			<ul>
+				<li class="option" data-value="">
+					<div class="field-icon"></div>
+					<span>All Sports</span>
+				</li>
+				<li class="option" data-value="ultimate">
+					<div class="field-icon ultimate"></div>
+					<span>Ultimate</span>
+				</li>
+				<li class="option" data-value="soccer">
+					<div class="field-icon soccer"></div>
+					<span>Soccer</span>
+				</li>
+				<li class="option" data-value="football">
+					<div class="field-icon football"></div>
+					<span>Football</span>
+				</li>
+				<li class="option" data-value="basketball">
+					<div class="field-icon basketball"></div>
+					<span>Basketball</span>
+				</li>
+			</ul>
+		</div>
 	</script>
 	
 	<script type="text/template" id="play-template">

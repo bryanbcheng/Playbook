@@ -2078,13 +2078,11 @@ $(function() {
 		},
 		
 		initialize: function() {
-			 _.bindAll(this, 'fetch', 'setPageInfo', 'previousPage', 'nextPage');
-			this.collection.on('init', this.render, this);
+			 _.bindAll(this, 'fetch', 'pagination', 'previousPage', 'nextPage');
+			this.collection.on('refresh', this.render, this);
+			this.collection.on('filter', this.filter, this);
 			
-			var view = this;
-			
-			var io = this.collection.socket;
-			io.emit("plays:info", {}, this.setPageInfo);
+			this.collection.trigger("filter");
 		},
 		
 		render: function() {
@@ -2103,15 +2101,24 @@ $(function() {
 		},
 		
 		fetch: function() {
+			this.data.page = this.info.page - 1;
+			
 			this.collection.fetch({
-				data: {page : this.info.page - 1},
+				data: this.data,
 				success: function(collection, response) {
-					collection.trigger('init');
+					collection.trigger('refresh');
 				}
 			});
 		},
 		
-		setPageInfo: function(err, data) {
+		filter: function(options) {
+			this.data = _.extend({}, options);
+			
+			var io = this.collection.socket;
+			io.emit("plays:info", this.data, this.pagination);
+		},
+		
+		pagination: function(err, data) {
 			this.info = data;
 			this.info.page = 1;
 			
@@ -2144,6 +2151,96 @@ $(function() {
 			  this.fetch();
 			}
 		},
+	});
+	
+	$.playbook.PlaysFilterView = Backbone.View.extend({
+		el: $("#plays-panel"),
+	
+		tagName: "div",
+		className: "plays-filter-view",
+	
+		template: $("#plays-filter-template").html(),
+		
+		events: {
+			"mouseover .filter"	: "showFilterOptions",
+			"mouseout .filter"	: "hideFilterOptions",
+			"mouseover .option"	: "fadeFilter",
+			"mouseout .option"	: "unfadeFilter",
+			"click .option"		: "applyFilter",
+		},
+		
+		initialize: function() {
+// 			 _.bindAll(this, 'fetch', 'setPageInfo', 'previousPage', 'nextPage');
+			this.collection.on('init', this.render, this);
+			
+			// Default options
+			this.options = {
+				fieldType: "",
+			}
+			
+			this.collection.trigger('init');
+		},
+		
+		render: function() {
+			var html = Mustache.render(this.template, $.extend({}, this.collection.toJSON(), this.options)),
+				htmlObj = $(html);
+			
+			// Display correct words
+			if (htmlObj.find(".selected span").html() === "") {
+				htmlObj.find(".selected span").html("all sports");	
+			}
+			
+			this.$el.html(htmlObj);
+			
+			return this;
+		},
+		
+		showFilterOptions: function(e) {
+			var filter = $(e.target).closest(".filter");
+			filter.find("ul").css({left: -1, top: filter.height()}).fadeIn(350, "swing");
+		},
+		
+		hideFilterOptions: function(e) {
+			if ($(e.relatedTarget).closest(".filter").attr("id") == $(e.target).closest(".filter").attr("id")) return;
+			
+			$(e.target).closest(".filter").find("ul").fadeOut(350, "swing");
+		},
+		
+		fadeFilter: function(e) {
+			$(e.target).closest(".filter").addClass("filter-faded");
+		},
+		
+		unfadeFilter: function(e) {
+			$(e.target).closest(".filter").removeClass("filter-faded");
+		},
+		
+		applyFilter: function(e) {
+			var filter = $(e.target).closest(".filter");
+			var option = $(e.target).closest(".option");
+			
+			if (filter.data("value") !== option.data("value")) {
+				filter.data("value", option.data("value"));
+				if (option.data("value")) {
+					this.options[filter.data("type")] = option.data("value");
+				} else {
+					delete this.options[filter.data("type")];
+				}
+				
+				this.collection.trigger("init");
+				
+				// fetch
+				this.collection.trigger("filter", this.options);
+			}
+		},
+		
+		// fetch: function() {
+// 			this.collection.fetch({
+// 				data: {page : this.info.page - 1},
+// 				success: function(collection, response) {
+// 					collection.trigger('init');
+// 				}
+// 			});
+// 		},
 	});
 	
 	$.playbook.NewPlay = function() {
@@ -2181,6 +2278,7 @@ $(function() {
 			var plays = new $.playbook.PlayCollection();
 			
 			var playsView = new $.playbook.PlayCollectionView({collection: plays});
+			var playsFilterView = new $.playbook.PlaysFilterView({collection: plays});
 		},
 		
 		show_play: function(_id) {

@@ -66,8 +66,12 @@ io.sockets.on('connection', function(socket) {
 		var selectFields = "name description fieldType categories";
 		if(!_.isEmpty(data)) {
 			// Find based on query
-// 			Play.find({'_id': data._id}, selectFields, send_result);
-			Play.find({privacy: "public"}, selectFields, {limit: playLimit, skip: data.page * playLimit}, send_result);
+			var skip = data.page * playLimit;
+			delete data.page;
+			
+			_.extend(data, {privacy: "public"});
+			
+			Play.find(data, selectFields, {skip: skip, limit: playLimit}, send_result);
 		} else {
 			Play.find({privacy: "public"}, selectFields, {limit: playLimit}, send_result);
 		}
@@ -91,8 +95,9 @@ io.sockets.on('connection', function(socket) {
 		
 		if(!_.isEmpty(data)) {
 			// Find based on query
-// 			Play.find({'_id': data._id}, selectFields, send_result);
-			Play.count({privacy: "public"}, send_result);
+			_.extend(data, {privacy: "public"});
+			
+			Play.count(data, send_result);
 		} else {
 			Play.count({privacy: "public"}, send_result);
 		}
