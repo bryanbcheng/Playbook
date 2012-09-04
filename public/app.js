@@ -1770,7 +1770,7 @@ $(function() {
 					e.preventDefault();
 					
 					// Speed up scroll
-					var dY = 3 * deltaY;
+					var dY = 5 * deltaY;
 					var newY = dragBar.getY() - dY;
 					// check boundaries
 					if (newY < dragBounds.top) newY = dragBounds.top;
