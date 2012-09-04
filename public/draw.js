@@ -1294,15 +1294,19 @@ function createDragLayer(width, height, startX, startY) {
 			height: dragBarHeight,
 			fill: "black",
 			x: CANVAS_WIDTH - 2 * SCALE + dragX,
-			y: 1 * SCALE + dragY,
+			y: dragY,
 			name: "dragBar",
 			draggable: true,
 			dragConstraint: "vertical",
 			dragBounds: {
-				top: 1 * SCALE,
-				bottom: CANVAS_HEIGHT - 1 * SCALE - dragBarHeight
+				top: 0,
+				bottom: CANVAS_HEIGHT - 2 * SCALE - dragBarHeight
 			},
-			alpha: 0.25
+			alpha: 0.25,
+			offset: {
+				x: 0,
+				y: -1 * SCALE
+			}
 		});
 		
 		dragLayer.add(dragPanel);
