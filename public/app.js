@@ -1703,7 +1703,7 @@ $(function() {
 			var dragBar = dragLayer.get(".dragBar")[0],
 				dragPanel = dragLayer.get(".dragPanel")[0];
 			
-			if (dragBar) {
+			if (dragBar && dragPanel) {
 				dragBar.on("mouseover", function() {
 					this.setFill("rgb(59, 191, 206)");
 					//this.setStrokeWidth(1);
@@ -1794,7 +1794,7 @@ $(function() {
 			$("#canvas").off("mouseleave");
 			// To catch the edge cases
 			$("#canvas").on("mouseleave", function(e) {
-				if (stage.get(".dragLayer")[0]) {
+				if (dragBar && dragPanel) {
 					stage.get(".dragLayer")[0].hide();
 					stage.get(".dragLayer")[0].draw();
 				}

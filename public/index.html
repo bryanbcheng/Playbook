@@ -4,7 +4,8 @@
 <head>
 	<meta charset="utf-8">
 	<title>Playbook</title>
-	<link rel="stylesheet" href="/css/styles.css"/>
+	<link rel="stylesheet" href="/css/styles.css" />
+	<link rel="stylesheet" href="/css/icons.css" />
 	<link rel="stylesheet" href="/css/colorPicker.css" />
 	<link rel="stylesheet" href="/css/jquery-ui-1.8.23.css" />
 	<link rel="stylesheet" href="/css/print.css" media="print" />
@@ -42,12 +43,12 @@
 					<div id="left-panel">
 						<div id="home-container" class="left-container">
 							<div id="new-play" class="home-action">
-								<div class="icon"></div>
+								<div class="icon-file"></div>
 								<span>New Play</span>
 								<br class="clear" />
 							</div>
 							<div id="view-plays" class="home-action">
-								<div class="icon"></div>
+								<div class="icon-book"></div>
 								<span>View Plays</span>
 								<br class="clear" />
 							</div>
@@ -86,13 +87,16 @@
 			<br class="clear" />
 		</div>
 	</div>
+	<div id="footer">
+		Blah
+	</div>
 	
 	<div id="new-play-container">
 		<div id="new-play-field-type" class="new-play-page">
 			<span class="header">Choose a sport...</span>
 			<div class="close">
 				<span>Close</span>
-				<div class="icon"></div>
+				<div class="icon-half-remove-2"></div>
 			</div>
 			<div class="choice ultimate" data-value="ultimate">
 				<span>Ultimate</span>
@@ -114,13 +118,13 @@
 		</div>
 		<div id="new-play-field-size" class="new-play-page">
 			<div class="back">
-				<div class="icon"></div>
+				<div class="icon-half-delete-point"></div>
 				<span>Back</span>
 			</div>
 			<span class="header">Choose a field size...</span>
 			<div class="close">
 				<span>Close</span>
-				<div class="icon"></div>
+				<div class="icon-half-remove-2"></div>
 			</div>
 			<div class="choice full left" data-value="full">
 				<span>Full Field</span>
@@ -138,13 +142,13 @@
 		</div>
 		<div id="new-play-options" class="new-play-page">
 			<div class="back">
-				<div class="icon"></div>
+				<div class="icon-half-delete-point"></div>
 				<span>Back</span>
 			</div>
 			<span class="header">Starting option...</span>
 			<div class="close">
 				<span>Close</span>
-				<div class="icon"></div>
+				<div class="icon-half-remove-2"></div>
 			</div>
 			<div class="choice left" data-value="blank">
 				<span class="text">Blank</span>
@@ -157,13 +161,13 @@
 		</div>
 		<div id="new-play-templates" class="new-play-page">
 			<div class="back">
-				<div class="icon"></div>
+				<div class="icon-half-delete-point"></div>
 				<span>Back</span>
 			</div>
 			<span class="header">Choose a template...</span>
 			<div class="close">
 				<span>Close</span>
-				<div class="icon"></div>
+				<div class="icon-half-remove-2"></div>
 			</div>
 			<div class="formations">
 				<ul class="ultimate-formations">
@@ -268,8 +272,8 @@
 		<h2>Plays</h2>
 		<div id="play-list"></div>
 		<div id="pagination">
-			{{#prev}}<div class="button prev"></div>{{/prev}}
-			{{#next}}<div class="button next"></div>{{/next}}
+			{{#prev}}<div class="button prev icon-thin-arrow-left"></div>{{/prev}}
+			{{#next}}<div class="button next icon-thin-right-arrow"></div>{{/next}}
 		</div>
 	</script>
 	
@@ -452,20 +456,21 @@
 				</table>
 			</div>
 			<div class="set-action-container">
-				<div class="set-action add-set" title="Add New Set">+</div>
-				<div class="set-action remove-set" title="Delete Selected Set">-</div>
-				<div class="set-action first-set" title="Go To First Set"></div>
-				<div class="set-action prev-set" title="Go To Previous Set"></div>
-				<div class="set-action animate" title="Animate"></div>
+				<div class="set-action add-set" title="Add New Set"><div class="icon-half-circle-plus"></div></div>
+				<div class="set-action remove-set" title="Delete Selected Set"><div class="icon-half-circle-minus"></div></div>
+				<div class="set-action first-set" title="Go To First Set"><div class="icon-half-step-backward"></div></div>
+				<div class="set-action prev-set" title="Go To Previous Set"><div class="icon-half-left-arrow"></div></div>
+				<div class="set-action animate" title="Animate"><div class="icon-half-play"></div></div>
 				<div class="set-action animate-control" title="Animatation Speed">
+					<div class="icon-half-stopwatch"></div>
 					<div class="animation">
 						<div class="animation-speed"></div>
 						<label class="animation-speed-display"></label>
 						<br class="clear"/>
 					</div>
 				</div>
-				<div class="set-action next-set" title="Go To Next Set"></div>
-				<div class="set-action last-set" title="Go To Last Set"></div>
+				<div class="set-action next-set" title="Go To Next Set"><div class="icon-half-right-arrow"></div></div>
+				<div class="set-action last-set" title="Go To Last Set"><div class="icon-half-step-forward"></div></div>
 				<br class="clear"/>
 			</div>
 		</div>

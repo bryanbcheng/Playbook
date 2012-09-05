@@ -160,7 +160,7 @@ body {
     cursor: pointer;
     margin: 150px auto;
     padding: 6px 50px;
-    width: 150px;
+    width: 160px;
 }
 
 #home-container .home-action:hover {
@@ -194,34 +194,14 @@ body {
 	text-shadow: 0 1px 0 rgba(85, 196, 51, 0.4);
 }
 
-#home-container .icon {
-	background-image: url("/images/iconSet.png");
-	display: inline-block !important;
-	float: left;
-	height: 30px;
-	width: 30px;
-}
-
-#new-play .icon {
-	background-position: 0 -170px;
-}
-
-#new-play:hover .icon, #new-play:active .icon {
-	background-position: -186px -170px;
-}
-
-#view-plays .icon {
-	background-position: -589px -334px;
-}
-
-#view-plays:hover .icon, #view-plays:active .icon {
-	background-position: -558px -334px;
+#new-play:hover > div, #new-play:active > div, #view-plays:hover > div, #view-plays:active > div {
+	background-image: url("/images/glyphicons-white.png");
 }
 
 #home-container span {
-	float: left;
+	float: right;
     font-size: 24px;
-    line-height: 30px;
+    line-height: 36px;
     text-align: center;
     width: 120px;
 }
@@ -372,14 +352,11 @@ body {
 }
 
 #pagination .button {
-	background-image: url("/images/iconSet.png");
 	border: 1px solid #CDCDCD;
 	border-top: none;
 	border-radius: 0 0 5px 5px;
 	float: left;
-	height: 24px;
 	margin-right: 15px;
-	width: 24px;
 	
 	transition: all .35s ease;
 	-moz-transition: all .35s ease;
@@ -391,14 +368,6 @@ body {
 	background-color: rgba(59, 191, 206, 0.25);
 	border-color: rgba(59, 191, 206, 0.75);
 	cursor: pointer;
-}
-
-#pagination .prev {
-	background-position: -98px -8px;
-}
-
-#pagination .next {
-	background-position: -67px -8px;
 }
 
 #plays-panel {
@@ -1048,12 +1017,12 @@ body {
 }
 
 #play-contents .set-action {
-	background-image: url("/images/iconSet.png");
+/* 	background-image: url("/images/iconSet.png"); */
 	border-left: 1px dotted #DADADA;
 	cursor: pointer;
 	display: block;
 	float: left;
-	font-family: Trebuchet MS;
+/* 	font-family: Trebuchet MS; */
 	font-size: 18px;
 	font-weight: bold;
 	height: 24px;
@@ -1068,6 +1037,10 @@ body {
 	-o-transition: all .35s ease;
 }
 
+#play-contents .set-action > div[class^="icon-half-"] {
+	margin: 3px 6px;
+}
+
 #play-contents .set-action:first-child {
 	border-left: none;
 }
@@ -1078,14 +1051,6 @@ body {
 
 #play-contents .set-action:active {
 	background-color: #c3c3c3;
-}
-
-#play-contents div.add-set {
-	background-image: none;
-}
-
-#play-contents div.remove-set {
-	background-image: none;
 }
 
 #play-contents div.first-set {
@@ -1830,11 +1795,9 @@ body {
 	width: 45px;
 }
 
-#new-play-container .back .icon, #new-play-container .close .icon {
-	background-image: url("/images/iconSet.png");
+#new-play-container .back > div[class^="icon-half-"], #new-play-container .close > div[class^="icon-half-"] {
 	float: left;
-	height: 30px;
-	width: 20px;
+	margin: 6px 0;
 }
 
 #new-play-container .back .icon {
