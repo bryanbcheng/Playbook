@@ -46,7 +46,7 @@ var mongoose = require('mongoose')
   , Article = require('./models.js').Article(db);
 
 /* Socket.io Connections */
-var playLimit = 8;
+var pageSize = 8;
 io.sockets.on('connection', function(socket) {
 	// plays:read
 	socket.on('plays:read', function(data, callback) {
@@ -62,20 +62,34 @@ io.sockets.on('connection', function(socket) {
 			}
 		};
 		
-		// Makes the query much smaller and faster
-		var selectFields = "name description fieldType categories";
+		// Makes the result of the query much smaller and faster
+		var selectFields = "name description fieldType categories privacy";
 		if(!_.isEmpty(data)) {
 			// Find based on query
-			var skip = data.page * playLimit;
-			delete data.page;
+			var jump = data.jump;
+			if (jump != null) delete data.jump;
 			
 			_.extend(data, {privacy: "public"});
 			
-			Play.find(data, selectFields, {skip: skip, limit: playLimit}, send_result);
+			Play.find(data, selectFields, {sort: {_id : -1}, skip: jump * pageSize, limit: pageSize}, send_result);
 		} else {
-			Play.find({privacy: "public"}, selectFields, {limit: playLimit}, send_result);
+			Play.find({privacy: "public"}, selectFields, {sort: {_id : -1}, limit: pageSize}, send_result);
 		}
 	});
+
+// var current_id; // id of first record on current page.
+// 
+// // go to page current+N
+// db.collection.find({_id: {$gt: current_id}}).
+//               skip(N * page_size).
+//               limit(page_size).
+//               sort({_id: 1});
+// 
+// // go to page current-N
+// db.collection.find({_id: {$lt: current_id}}).
+//               skip((N-1)*page_size).
+//               limit(page_size).
+//               sort({_id: 1});
 
 	// custom plays events
 	// plays:info - get info about all the public plays
@@ -87,8 +101,8 @@ io.sockets.on('connection', function(socket) {
 			
 			var info = {
 				total: count,
-				perPage: playLimit,
-				pages: Math.ceil(count / playLimit)
+				perPage: pageSize,
+				pages: Math.ceil(count / pageSize)
 			}
 			callback(null, info);
 		};

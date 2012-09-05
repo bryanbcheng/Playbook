@@ -1776,8 +1776,6 @@ $(function() {
 					if (newY < dragBounds.top) newY = dragBounds.top;
 					else if (newY > dragBounds.bottom) newY = dragBounds.bottom;
 					
-					console.log(newY);
-					
 					// scaledY for change in Y for canvas
 					var scaledY = -newY * (bb.getHeight() - CANVAS_HEIGHT) / (dragPanel.getHeight() - dragBar.getHeight());
 					
@@ -2138,8 +2136,6 @@ $(function() {
 		},
 		
 		fetch: function() {
-			this.data.page = this.info.page - 1;
-			
 			this.collection.fetch({
 				data: this.data,
 				success: function(collection, response) {
@@ -2165,7 +2161,7 @@ $(function() {
 			this.fetch();
 		},
 		
-		previousPage: function() {
+		previousPage: function(jump) {
 			if (this.info.prev) {
 			  // load previous page
 			  this.info.page = this.info.page - 1;
@@ -2173,19 +2169,25 @@ $(function() {
 			  this.info.next = true;
 			  this.info.prev = this.info.page > 1;
 			  
+			  // Calibrate data options
+			  this.data._id = {$gt: this.collection.first().get("_id")};
+			  this.data.jump = this.info.page - 1;
 			  this.fetch();
 			}
 		},
 		
-		nextPage: function() {
+		nextPage: function(jump) {
 			if (this.info.next) {
-			  // load next page
-			  this.info.page = this.info.page + 1;
-			  
-			  this.info.prev = true;
-			  this.info.next = this.info.page < this.info.pages;
-			  
-			  this.fetch();
+				// load next page
+				this.info.page = this.info.page + 1;
+				
+				this.info.prev = true;
+				this.info.next = this.info.page < this.info.pages;
+				
+				// Calibrate data options
+				this.data._id = {$lt: this.collection.last().get("_id")};
+				this.data.jump = 0; // can configure for multiple page jumps later
+				this.fetch();
 			}
 		},
 	});
