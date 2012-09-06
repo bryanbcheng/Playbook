@@ -633,26 +633,7 @@ body {
 }
 
 #play .action-icon {
-	background-image: url("/images/iconSet.png");
-	height: 42px;
-	margin: 0 9px;
-	width: 32px;
-}
-
-#play .new-play .action-icon {
-	background-position: -31px -164px;
-}
-
-#play .new-formation .action-icon {
-	background-position: 0px -410px;
-}
-
-#play .reset-play .action-icon {
-	background-position: -248px -123px;
-}
-
-#play .print-play .action-icon {
-	background-position: -341px -410px;
+	margin: 9px 13px;
 }
 
 #play .action-name {
@@ -1017,7 +998,6 @@ body {
 }
 
 #play-contents .set-action {
-/* 	background-image: url("/images/iconSet.png"); */
 	border-left: 1px dotted #DADADA;
 	cursor: pointer;
 	display: block;
@@ -1038,7 +1018,7 @@ body {
 }
 
 #play-contents .set-action > div[class^="icon-half-"] {
-	margin: 3px 6px;
+	margin: 0 3px;
 }
 
 #play-contents .set-action:first-child {
@@ -1683,13 +1663,12 @@ body {
     cursor: pointer;
     display: block;
     float: left;
-    font-size: 13px;
     font-weight: bold;
-    height: 16px;
+    height: 24px;
     overflow: hidden;
-    padding: 6px;
+    padding: 2px 2px 1px;
     text-align: center;
-    width: 19px;
+    width: 24px;
 }
 
 #article .delete:hover {
@@ -1722,11 +1701,8 @@ body {
 	text-shadow: 0 1px 0 rgba(85, 196, 51, 0.4);
 }
 
-#article .delete-image {
-	background-image: url("/images/iconSet.png");
-	background-position: -595.5px -176px;
-	height: 20px;
-	width: 19px;
+#article .delete:hover > .icon-half-bin, #article .delete:active > .icon-half-bin {
+	background-image: url("/images/glyphicons-white.png");
 }
 
 #new-play-container {

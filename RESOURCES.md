@@ -30,3 +30,6 @@ http://net.tutsplus.com/tutorials/javascript-ajax/quick-tip-private-variables-in
 
 // authentication
 http://blog.rassemblr.com/2011/05/jquery-ajax-and-rest-http-basic-authentication-done-deal/
+
+// png compression
+http://tinypng.org/
