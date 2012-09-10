@@ -783,7 +783,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_KEY_WIDTH) / 2 * SCALE,
 		y: 0,
-		name: "key1"
+		name: "key1",
+		alpha: 0.5
 	});
 	
 	var key2 = new Kinetic.Rect({
@@ -793,7 +794,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_KEY_WIDTH) / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_KEY_HEIGHT) * SCALE,
-		name: "key2"
+		name: "key2",
+		alpha: 0.5
 	});
 	
 	var outerKey1 = new Kinetic.Rect({
@@ -803,7 +805,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 * SCALE,
 		y: 0,
-		name: "outerKey1"
+		name: "outerKey1",
+		alpha: 0.5
 	});
 	
 	var outerKey2 = new Kinetic.Rect({
@@ -813,7 +816,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_KEY_HEIGHT) * SCALE,
-		name: "outerKey2"
+		name: "outerKey2",
+		alpha: 0.5
 	});
 	
 	var keyCircle1 = new Kinetic.Shape({
@@ -832,7 +836,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_KEY_HEIGHT * SCALE,
-		name: "keyCircle1"
+		name: "keyCircle1",
+		alpha: 0.5
 	});
 	
 	var keyCircle2 = new Kinetic.Shape({
@@ -851,7 +856,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_KEY_HEIGHT) * SCALE,
-		name: "keyCircle1"
+		name: "keyCircle1",
+		alpha: 0.5
 	});
 	
 	var backboard1 = new Kinetic.Line({
@@ -860,7 +866,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_BACKBOARD_WIDTH) / 2 * SCALE,
 		y: BASKETBALL_BACKBOARD_OFFSET * SCALE,
-		name: "backboard1"
+		name: "backboard1",
+		alpha: 0.5
 	});
 	
 	var backboard2 = new Kinetic.Line({
@@ -869,7 +876,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_BACKBOARD_WIDTH) / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_BACKBOARD_OFFSET) * SCALE,
-		name: "backboard2"
+		name: "backboard2",
+		alpha: 0.5
 	});
 	
 	var rim1 = new Kinetic.Circle({
@@ -878,7 +886,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET) * SCALE,
-		name: "rim1"
+		name: "rim1",
+		alpha: 0.5
 	});
 	
 	var rim2 = new Kinetic.Circle({
@@ -887,7 +896,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_BACKBOARD_OFFSET - BASKETBALL_RIM_OFFSET) * SCALE,
-		name: "rim2"
+		name: "rim2",
+		alpha: 0.5
 	});
 	
 	var angle = Math.acos((2 * Math.pow(BASKETBALL_THREE_POINT_RADIUS, 2) - Math.pow(2 * BASKETBALL_THREE_POINT_SIDE_DISTANCE, 2)) / (2 * Math.pow(BASKETBALL_THREE_POINT_RADIUS, 2))) / 2;
@@ -902,7 +912,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET) * SCALE,
-		name: "restricted1"
+		name: "restricted1",
+		alpha: 0.5
 	});
 	
 	var restricted2 = new Kinetic.Shape({
@@ -915,19 +926,22 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_BACKBOARD_OFFSET - BASKETBALL_RIM_OFFSET) * SCALE,
-		name: "restricted2"
+		name: "restricted2",
+		alpha: 0.5
 	});
 	
 	var blocks1 = new Kinetic.Group({
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_BACKBOARD_OFFSET * SCALE,
-		name: "blocks1"
+		name: "blocks1",
+		alpha: 0.5
 	});
 	
 	var blocks2 = new Kinetic.Group({
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_HEIGHT - BASKETBALL_BACKBOARD_OFFSET) * SCALE,
-		name: "blocks2"
+		name: "blocks2",
+		alpha: 0.5
 	});
 	
 	for (var i = 1; i <= 4; i++) {
@@ -938,7 +952,7 @@ function basketballFieldFull(startX, startY) {
 				stroke: "black",
 				strokeWidth: 1,
 				x: (-BASKETBALL_OUTER_KEY_WIDTH / 2 - BASKETBALL_BLOCK_WIDTH) * SCALE,
-				y: i == 1 ? BASKETBALL_BLOCK_DISTANCE * SCALE : (BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE,
+				y: i == 1 ? BASKETBALL_BLOCK_DISTANCE * SCALE : (BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE
 			});
 			
 			var leftBlock2 = new Kinetic.Line({
@@ -947,7 +961,7 @@ function basketballFieldFull(startX, startY) {
 				stroke: "black",
 				strokeWidth: 1,
 				x: (-BASKETBALL_OUTER_KEY_WIDTH / 2 - BASKETBALL_BLOCK_WIDTH) * SCALE,
-				y: i == 1 ? -BASKETBALL_BLOCK_DISTANCE * SCALE : -(BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE,
+				y: i == 1 ? -BASKETBALL_BLOCK_DISTANCE * SCALE : -(BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE
 			});
 			
 			var rightBlock1 = new Kinetic.Line({
@@ -956,7 +970,7 @@ function basketballFieldFull(startX, startY) {
 				stroke: "black",
 				strokeWidth: 1,
 				x: (BASKETBALL_OUTER_KEY_WIDTH / 2) * SCALE,
-				y: i == 1 ? BASKETBALL_BLOCK_DISTANCE * SCALE : (BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE,
+				y: i == 1 ? BASKETBALL_BLOCK_DISTANCE * SCALE : (BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE
 			});
 			
 			var rightBlock2 = new Kinetic.Line({
@@ -965,7 +979,7 @@ function basketballFieldFull(startX, startY) {
 				stroke: "black",
 				strokeWidth: 1,
 				x: (BASKETBALL_OUTER_KEY_WIDTH / 2) * SCALE,
-				y: i == 1 ? -BASKETBALL_BLOCK_DISTANCE * SCALE : -(BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE,
+				y: i == 1 ? -BASKETBALL_BLOCK_DISTANCE * SCALE : -(BASKETBALL_BLOCK_DISTANCE * i - 2) * SCALE
 			});
 			
 			blocks1.add(leftBlock1);
@@ -987,7 +1001,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: 0,
-		name: "threePointLine1"
+		name: "threePointLine1",
+		alpha: 0.5
 	});
 	
 	var threePointLine2 = new Kinetic.Shape({
@@ -1003,7 +1018,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_HEIGHT * SCALE,
-		name: "threePointLine2"
+		name: "threePointLine2",
+		alpha: 0.5
 	});
 	
 	var midcourtLine = new Kinetic.Line({
@@ -1012,7 +1028,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: 0,
 		y: BASKETBALL_HEIGHT / 2 * SCALE,
-		name: "midcourtLine"
+		name: "midcourtLine",
+		alpha: 0.5
 	});
 	
 	var midcourtCircle = new Kinetic.Circle({
@@ -1021,7 +1038,8 @@ function basketballFieldFull(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_HEIGHT / 2 * SCALE,
-		name: "midcourtCircle"
+		name: "midcourtCircle",
+		alpha: 0.5
 	});
 	
 	fieldGroup.add(field);
@@ -1077,7 +1095,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_KEY_WIDTH) / 2 * SCALE,
 		y: 0,
-		name: "key1"
+		name: "key1",
+		alpha: 0.5
 	});
 	
 	var outerKey1 = new Kinetic.Rect({
@@ -1087,7 +1106,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_OUTER_KEY_WIDTH) / 2 * SCALE,
 		y: 0,
-		name: "outerKey1"
+		name: "outerKey1",
+		alpha: 0.5
 	});
 	
 	var keyCircle1 = new Kinetic.Shape({
@@ -1106,7 +1126,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_KEY_HEIGHT * SCALE,
-		name: "keyCircle1"
+		name: "keyCircle1",
+		alpha: 0.5
 	});
 	
 	var backboard1 = new Kinetic.Line({
@@ -1115,7 +1136,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: (BASKETBALL_WIDTH - BASKETBALL_BACKBOARD_WIDTH) / 2 * SCALE,
 		y: BASKETBALL_BACKBOARD_OFFSET * SCALE,
-		name: "backboard1"
+		name: "backboard1",
+		alpha: 0.5
 	});
 	
 	var rim1 = new Kinetic.Circle({
@@ -1124,7 +1146,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET) * SCALE,
-		name: "rim1"
+		name: "rim1",
+		alpha: 0.5
 	});
 	
 	var angle = Math.acos((2 * Math.pow(BASKETBALL_THREE_POINT_RADIUS, 2) - Math.pow(2 * BASKETBALL_THREE_POINT_SIDE_DISTANCE, 2)) / (2 * Math.pow(BASKETBALL_THREE_POINT_RADIUS, 2))) / 2;
@@ -1139,13 +1162,15 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: (BASKETBALL_BACKBOARD_OFFSET + BASKETBALL_RIM_OFFSET) * SCALE,
-		name: "restricted1"
+		name: "restricted1",
+		alpha: 0.5
 	});
 	
 	var blocks1 = new Kinetic.Group({
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_BACKBOARD_OFFSET * SCALE,
-		name: "blocks1"
+		name: "blocks1",
+		alpha: 0.5
 	});
 	
 	for (var i = 1; i <= 4; i++) {
@@ -1185,7 +1210,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: 0,
-		name: "threePointLine1"
+		name: "threePointLine1",
+		alpha: 0.5
 	});
 	
 	var midcourtLine = new Kinetic.Line({
@@ -1194,7 +1220,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: 0,
 		y: BASKETBALL_HEIGHT / 2 * SCALE,
-		name: "midcourtLine"
+		name: "midcourtLine",
+		alpha: 0.5
 	});
 	
 	var midcourtCircle = new Kinetic.Shape({
@@ -1207,7 +1234,8 @@ function basketballFieldHalf(startX, startY) {
 		strokeWidth: 1,
 		x: BASKETBALL_WIDTH / 2 * SCALE,
 		y: BASKETBALL_HEIGHT / 2 * SCALE,
-		name: "midcourtCircle"
+		name: "midcourtCircle",
+		alpha: 0.5
 	});
 	
 	fieldGroup.add(field);
