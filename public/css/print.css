@@ -57,7 +57,7 @@ body {
 /* 	display: none; */
 }
 
-#header, #playbook-container, #blackout {
+#header, #playbook-container, #whiteout {
 	display: none !important;
 }
 

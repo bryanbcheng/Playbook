@@ -17,11 +17,11 @@ http://builds.balsamiq.com/b/mockups-web-demo/
 // html css standards
 http://caniuse.com/
 
-// future arrow
+// arrow
 http://www.dbp-consulting.com/tutorials/canvas/CanvasArcTo.html
 http://www.dbp-consulting.com/tutorials/canvas/CanvasArrow.html
 
-// future scroll bars
+// scroll bars
 http://www.webkit.org/blog/363/styling-scrollbars/
 http://www.html5canvastutorials.com/labs/html5-canvas-simple-scrollbars-with-kineticjs/
 
@@ -33,3 +33,9 @@ http://blog.rassemblr.com/2011/05/jquery-ajax-and-rest-http-basic-authentication
 
 // png compression
 http://tinypng.org/
+
+// email (recover password)
+https://github.com/eleith/emailjs
+
+// date
+http://momentjs.com/

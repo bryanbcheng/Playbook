@@ -39,6 +39,7 @@ var mongourl = generate_mongo_url(mongo);
 
 var mongoose = require('mongoose')
   , db = mongoose.connect(mongourl)
+  , User = require('./models.js').User(db)
   , Play = require('./models.js').Play(db)
   , Set = require('./models.js').Set(db)
   , Path = require('./models.js').Path(db)
@@ -48,6 +49,39 @@ var mongoose = require('mongoose')
 /* Socket.io Connections */
 var pageSize = 8;
 io.sockets.on('connection', function(socket) {
+	// user:login
+	socket.on('user:login', function(data, callback) {
+		User.findOne({email: data.email}, function(err, user) {
+			if (err)
+				return callback(err);
+			else if (!user) {
+				return callback("The email or password you entered is incorrect.");
+			}
+			
+			if (user.password !== data.password) {
+				return callback("The email or password you entered is incorrect.");
+			} else {
+				var userData = _.extend({}, user);
+				delete userData[password];
+				
+				callback(null, userData);
+			}
+		});
+	});
+	
+	// user:signup
+	socket.on('user:signup', function(data, callback) {
+		var newUser = new User({
+			email: data.email,
+			name: data.name, 
+			password: data.password // HASH SOON
+		});
+		newUser.save();
+		
+		socket.broadcast.emit('users:create', newUser);
+		callback(null, newUser);
+	});
+
 	// plays:read
 	socket.on('plays:read', function(data, callback) {
 		var send_result = function(err, plays) {

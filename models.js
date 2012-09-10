@@ -9,6 +9,12 @@ var mongoose = require('mongoose')
  * Schema definition
  */
 
+var User = new Schema({
+	email		: { type: String, unique: true }
+  ,	name		: String
+  ,	password	: String // FOR NOW STORE RAW STRING...
+}, { strict: true });
+
 var Article = new Schema({
     type		: { type: String, enum: ['player', 'ball', 'cone'] }
   , color		: String
@@ -58,6 +64,7 @@ var Play = new Schema({
   , sets		: [Set]
   , privacy		: { type : String, enum: ['public', 'protected', 'private'], required: true }
   , categories	: [String]
+  , owner		: Schema.ObjectId
 }, { strict: true });
 
 // validate teamColors, teamShapes length == 2
@@ -65,6 +72,11 @@ var Play = new Schema({
 /**
  * Models
  */
+
+mongoose.model('User', User);
+exports.User = function(db) {
+	return db.model('User');
+};
 
 mongoose.model('Play', Play);
 exports.Play = function(db) {

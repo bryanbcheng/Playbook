@@ -267,6 +267,59 @@
 	
 	<!-- Templates -->
 	
+	<script type="text/template" id="login-template">
+		<div id="login-container">
+			<div id="login-page" class="login-flow-page">
+				<h3>Log In</h3>
+<!-- 				TODO integrate email type field -->
+				<hr class="divider" />
+				<span class="warning"></span>
+				<div class="field">
+					<div class="icon-envelope"></div>
+					<input class="email-field" placeholder="Email:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-lock"></div>
+					<input class="password-field" type="password" placeholder="Password:"></input>
+					<br class="clear" />
+				</div>
+				<div class="click-button login">Log In</div>
+				<label><input type="checkbox">Remember Me</input></label>
+				<br class="clear" />
+				<hr class="divider" />
+				<span>Don't have an account? <a class="link">Create An Account</a></span>
+			</div>
+			<div id="signup-page" class="login-flow-page">
+				<h3>Sign Up</h3>
+				<hr class="divider" />
+				<div class="field">
+					<div class="icon-envelope"></div>
+					<input placeholder="Email:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-vcard"></div>
+					<input placeholder="Name:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-lock"></div>
+					<input type="password" placeholder="Password:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-rotation-lock"></div>
+					<input type="password" placeholder="Confirm Password:"></input>
+					<br class="clear" />
+				</div>
+				<div class="click-button signup">Submit</div>
+				<div class="click-button cancel">Cancel</div>
+				<br class="clear" />
+			</div>
+		</div>
+	</script>
+	
 	<script type="text/template" id="play-collection-template">
 		<h2>Plays</h2>
 		<div id="play-list"></div>

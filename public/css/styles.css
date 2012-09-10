@@ -1705,7 +1705,9 @@ body {
 	background-image: url("/images/glyphicons-white.png");
 }
 
-#new-play-container {
+/* Login Flow Views */
+
+#login-container {
 	display: none;
 	position: absolute;
 	top: 50%;
@@ -1713,7 +1715,185 @@ body {
 	z-index: 10001;
 }
 
+#login-container .login-flow-page {
+	background: white;
+	border: 1px solid #CDCDCD;
+	border-radius: 5px;
+	box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	display: none;
+/* 	height: 265px; */
+	left: 50%;
+	margin-left: -251px;
+	margin-top: -201px;
+	padding: 50px;
+	position: absolute;
+	width: 400px;
+}
+
+#login-container .login-flow-page h3 {
+	font-size: 30px;
+	font-weight: bold;
+	line-height: 36px;
+}
+
+#login-container .warning {
+	color: red;
+	display: block;
+	font-weight: bold;
+	margin-bottom: 15px;
+}
+
+#login-container .field {
+	margin-bottom: 18px;
+}
+
+#login-container .field div {
+	float: left;
+}
+
+#login-container .field input {
+	border: 1px solid #CDCDCD;
+	border-radius: 3px 3px 3px 3px;
+	float: left;
+	height: 24px;
+	line-height: 24px;
+	padding: 5px;
+	width: 352px;
+	
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
+}
+
+#login-container .field input:hover {
+	background-color: rgba(59, 191, 206, 0.25);
+	border-color: rgba(59, 191, 206, 0.75);
+/* 	cursor: text; */
+}
+
+#login-container .field input:focus {
+	background-color: rgba(59, 191, 206, 0.1) !important;
+	border-color: rgba(47, 170, 184, 0.5);
+/* 	cursor: text; */
+	
+	box-shadow: 0px 0px 4px rgba(59, 191, 206, 1);
+	-moz-box-shadow: 0px 0px 4px rgba(59, 191, 206, 1);
+	-webkit-box-shadow: 0px 0px 4px rgba(59, 191, 206, 1);
+}
+
+#login-container .click-button {
+	background: rgb(255,255,255); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(243,243,243,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(243,243,243,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(243,243,243,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f3f3f3',GradientType=0 ); /* IE6-9 */
+	
+    border-color: #CECECE #CECECE #A0A0A0;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    display: block;
+    float: right;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 15px;
+    margin-left: 10px;
+    overflow: hidden;
+    padding: 6px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(180, 180, 180, 0.4);
+    width: 80px;
+}
+
+#login-container .click-button:hover {
+	background: rgb(85,196,51); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(85,196,51,1) 0%, rgba(68,156,40,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(85,196,51,1)), color-stop(100%,rgba(68,156,40,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(85,196,51,1) 0%,rgba(68,156,40,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#55c433', endColorstr='#449c28',GradientType=0 ); /* IE6-9 */
+	
+    border-color: #55C433 #4CB02D #449C28;
+    color: #FFFFFF;
+	text-shadow: 0 1px 0 rgba(94, 205, 60, 0.4);
+}
+
+#login-container .click-button:active {
+	background: rgb(79,183,47); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(79,183,47,1) 0%, rgba(62,142,37,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(79,183,47,1)), color-stop(100%,rgba(62,142,37,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(79,183,47,1) 0%,rgba(62,142,37,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4fb72f', endColorstr='#3e8e25',GradientType=0 ); /* IE6-9 */
+	
+    border-color: #4FB72F #46A22A #3E8E25;
+    color: #FFFFFF;
+	text-shadow: 0 1px 0 rgba(85, 196, 51, 0.4);
+}
+
+#login-container label {
+	cursor: pointer;
+	display: block;
+	float: right;
+	font-size: 13px;
+	line-height: 13px;
+	padding: 7px 0;
+}
+
+#login-container input[type="checkbox"] {
+	float: left;
+    height: 13px;
+    margin: 0;
+    margin-right: 5px;
+    *overflow: hidden;
+    padding: 0;
+    position: relative;
+    top: -1px;
+    vertical-align: middle;    
+    width: 13px;
+}
+
+#login-container span {
+	font-size: 14px;
+}
+
+#login-container .link {
+	color: rgba(59, 191, 206, 1);
+}
+
+#login-container .link:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+#login-container hr.divider {
+	border: 0;
+	border-top: 1px solid #CDCDCD;
+	border-bottom: 1px solid #F0F0F0;
+	margin: 18px 0;
+}
+
 /* New Play Flow Views */
+
+#new-play-container {
+	display: none;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	z-index: 10001;
+}
 
 #new-play-container .new-play-page {
 	background: white;
