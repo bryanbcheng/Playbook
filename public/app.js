@@ -5,6 +5,14 @@ var stage,
 $(function() {
 	$.playbook = {}
 	
+	/***** MODELS *****/
+	
+	$.playbook.User = Backbone.Model.extend({
+		idAttribute: "_id",
+		
+		socket: socket
+	});
+	
 	$.playbook.Article = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
@@ -486,6 +494,208 @@ $(function() {
 		
 		serverCreate: function(data) {
 		
+		},
+	});
+	
+	/***** VIEWS *****/
+	
+	$.playbook.UserView = Backbone.View.extend({
+		tagName: "div",
+		className: "user-view",
+		
+		template: $("#user-template").html(),
+		loginTemplate: $("#login-template").html(),
+		
+		events: {
+			"click .login"	: "login",
+			"click .logout"	: "logout",
+		},
+		
+		initialize: function() {
+			_.bindAll(this, 'render', 'loginScreen', 'loginCallback', 'signupCallback', 'logout');
+			// show login div
+			if (localStorage) {
+				var userData = JSON.parse(localStorage.getItem("userData"));
+				
+				if (userData) {
+					// assume logged in for now
+					this.model = new $.playbook.User(userData);
+					$.playbook.user = userData._id;
+					this.render();
+// 					socket.emit("user:login", user, loginCallback);
+				} else {
+					this.loginScreen();
+				}
+			}
+			
+			// TODO: fallback when no localstorage
+		},
+		
+		render: function() {
+			this.$el.html(Mustache.render(this.template, this.model ? this.model.toJSON() : {_id : null}));
+			$("#user-panel").html(this.el);
+			
+			this.delegateEvents();
+			
+			return this;
+		},
+		
+		loginScreen: function() {
+			var view = this;
+			
+			coverScreen();
+			
+			if ($("#login-container").length) {
+				// may not need could remove the DOM after done
+				$("#login-container").fadeIn(350, "swing");
+			} else {
+				$("body").append($("#login-template").html());
+				$("#login-container").fadeIn(350, "swing");
+				$("#login-page").fadeIn(350, "swing");
+				
+				$("#login").on("click", function(e) {
+					var user = {};
+					user.email = $("#login-page").find(".email-field").val();
+					user.password = $("#login-page").find(".password-field").val();
+					user.remember = $("#login-page").find(".remember-field").is(':checked');
+					
+					// Check conditions
+					var warnings = [];
+					if (user.email === "") {
+						warnings.push("Please enter an email.");
+					} else {
+						var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+						if (!re.test(user.email))
+							warnings.push("Not a valid email.");
+					}
+					
+					if (user.password === "") {
+						warnings.push("Please enter a password.");
+					}
+					
+					if (warnings.length) {
+						var warning = $("#login-page").find(".warning");
+						warning.html("");
+						$.each(warnings, function(index, value) {
+							warning.append("<li>" + value + "</li>");
+						});
+						return;
+					}
+					
+					socket.emit("user:login", user, view.loginCallback);
+				});
+				
+				$("#login-page").find(".link").on("click", function(e) {
+					// Potentially expand to link to other pages
+					$("#login-page").fadeOut(350, "swing");
+					$("#signup-page").fadeIn(350, "swing");
+				});
+				
+				$("#signup").on("click", function(e) {
+					var user = {};
+					user.email = $("#signup-page").find(".email-field").val();
+					user.name = $("#signup-page").find(".name-field").val();
+					user.password = $("#signup-page").find(".password-field").val();
+					user.confirm = $("#signup-page").find(".confirm-password-field").val();
+					
+					// Check conditions
+					var warnings = [];
+					if (user.email === "") {
+						warnings.push("Please enter an email.");
+					} else {
+						var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+						if (!re.test(user.email))
+							warnings.push("Not a valid email.");
+					}
+					
+					if (user.name === "") {
+						warnings.push("Please enter a name.");
+					}
+					
+					if (user.password === "" || user.confirm === "") {
+						warnings.push("Please enter a password."); // TODO: correct text enter a password and confirmation???
+					} else if (user.password !== user.confirm) {
+						warnings.push("Passwords do not match.");
+					}
+					
+					if (warnings.length) {
+						var warning = $("#signup-page").find(".warning");
+						warning.html("");
+						$.each(warnings, function(index, value) {
+							warning.append("<li>" + value + "</li>");
+						});
+						return;
+					}
+					
+					socket.emit("user:signup", user, view.signupCallback);
+				});
+				
+				$("#signup-page").find(".cancel").on("click", function(e) {
+					$("#signup-page").fadeOut(350, "swing");
+					$("#login-page").fadeIn(350, "swing");
+				});
+			}
+		},
+		
+		loginCallback: function(err, result) {
+			if (err) {
+				$("#login-page").find(".warning").html("<li>" + err + "</li>");
+			} else {
+				// Login Successful
+				// store login credentials in local storage, only if they checked remember me
+				if (result.remember) {
+					delete result.remember;
+					localStorage.setItem("userData", JSON.stringify(result));
+				}
+				
+				this.model = new $.playbook.User(result);
+				$.playbook.user = result._id;
+				this.render();
+				
+				$("#login-page").fadeOut(350, "swing", function() {
+					$("#login-container").remove();
+					uncoverScreen();
+				});
+			}
+		},
+		
+		signupCallback: function(err, result) {
+			if (err) {
+				$("#signup-page").find(".warning").html("<li>" + err + "</li>");
+			} else {
+				// Signup Successful
+				// store login credentials in local storage
+				localStorage.setItem("userData", JSON.stringify(result));
+				
+				this.model = new $.playbook.User(result);
+				$.playbook.user = result._id;
+				this.render();
+				
+				$("#signup-page").fadeOut(350, "swing", function() {
+					$("#signup-container").remove();
+					uncoverScreen();
+				});
+			}
+		},
+		
+		login: function(e) {
+			e.stopPropagation();
+			
+			this.loginScreen();
+		},
+		
+		logout: function(e) {
+			localStorage.removeItem("userData");
+			
+			this.model = null;
+			
+			this.render();
+			
+			e.stopPropagation();
+		},
+		
+		getUser: function() {
+			return this.model ? this.model.get("_id") : null;
 		},
 	});
 	
@@ -2305,14 +2515,12 @@ $(function() {
 		
 		home: function() {
 			clearDivs();
-			$.playbook.login();
 			
 			$("#playbook").attr("class", "home");
 		},
 		
 		show_plays: function() {
 			clearDivs();
-			$.playbook.login();
 			
 			$("#playbook").attr("class", "plays");
 			
@@ -2325,7 +2533,6 @@ $(function() {
 		show_play: function(_id) {
 			// clear previous divs
 			clearDivs();
-			$.playbook.login();
 			
 			$("#playbook").attr("class", "play");
 		
@@ -2342,6 +2549,9 @@ $(function() {
 	$.playbook.bootstrap = function() {
 		$.playbook.app = new $.playbook.Router();
 		Backbone.history.start({pushState: true});
+		
+		// initialize login / user details
+		var userView = new $.playbook.UserView();
 		
 		$("#header").click(function() {
 			$.playbook.app.navigate("/", {trigger: true});
@@ -2370,7 +2580,7 @@ $(function() {
 		
 		$("#new-play-field-size").find(".choice").on("click", function(e) {
 			$.playbook.NewPlay.play().set("fieldSize", $(e.target).closest(".choice").data("value"));
-			
+			console.log($.playbook.user);
 			$("#new-play-field-size").fadeOut(350, "swing");
 			$("#new-play-options").fadeIn(350, "swing");
 		});
@@ -2445,78 +2655,6 @@ $(function() {
 		});
 		
 		$(window).keypress(keyboardShortcut);
-	}
-	
-	$.playbook.login = function() {
-		var loginCallback = function(err, result) {
-			if (err) {
-				$("#login-page").find(".warning").html(err);
-			} else {
-				console.log("Login Successful");
-				$("#login-page").fadeOut(350, "swing");
-				// Need to wait for that
-// 				$("#login-container").remove();
-				uncoverScreen();
-			}
-		};
-		
-		var loginScreen = function() {
-			coverScreen();
-			
-			if ($("#login-container").length) {
-				// may not need could remove the DOM after done
-				$("#login-container").fadeIn(350, "swing");
-			} else {
-				$("body").append($("#login-template").html());
-				$("#login-container").fadeIn(350, "swing");
-				$("#login-page").fadeIn(350, "swing");
-				
-				$("#login-page").find(".login").on("click", function(e) {
-					// check email and password not blank
-					var user = {};
-					user.email = $("#login-page").find(".email-field").val();
-					
-					user.password = $("#login-page").find(".password-field").val();
-					
-					if (user.email === "" && user.password === "") {
-						$("#login-page").find(".warning").html("Please enter an email and a password.");
-						return;
-					} else if (user.email === "") {
-						$("#login-page").find(".warning").html("Please enter an email.");
-						return;
-					} else if (user.password === "") {
-						$("#login-page").find(".warning").html("Please enter a password.");
-						return;
-					}
-					
-					socket.emit("user:login", user, loginCallback);
-				});
-				
-				$("#login-page").find(".link").on("click", function(e) {
-					$("#login-page").fadeOut(350, "swing");
-					$("#signup-page").fadeIn(350, "swing");
-				});
-				
-				$("#signup-page").find(".cancel").on("click", function(e) {
-					$("#signup-page").fadeOut(350, "swing");
-					$("#login-page").fadeIn(350, "swing");
-				});
-			}
-		};
-		
-		// show login div
-		if (localStorage) {
-			var user = JSON.parse(localStorage.getItem("userData"));
-			
-			if (user) {
-				// try to log in
-				socket.emit("user:login", user, loginCallback);
-			} else {
-				loginScreen();
-			}
-		}
-		
-		// TODO: fallback when no localstorage
 	}
 	
 	$.playbook.bootstrap();

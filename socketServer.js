@@ -1,7 +1,8 @@
 /* Imports */
 var express = require('express'),
 	_ = require('underscore'),
-	util = require('util');
+	util = require('util'),
+	crypto = require('crypto');
 
 var app = express();
 var server = app.listen(process.env['app_port'] || 3000);
@@ -51,7 +52,7 @@ var pageSize = 8;
 io.sockets.on('connection', function(socket) {
 	// user:login
 	socket.on('user:login', function(data, callback) {
-		User.findOne({email: data.email}, function(err, user) {
+		User.findOne({email: data.email}, function(err, user) {			
 			if (err)
 				return callback(err);
 			else if (!user) {
@@ -61,25 +62,37 @@ io.sockets.on('connection', function(socket) {
 			if (user.password !== data.password) {
 				return callback("The email or password you entered is incorrect.");
 			} else {
-				var userData = _.extend({}, user);
-				delete userData[password];
+				var authData = {_id : user._id, name: user.name, token : user.token, remember: data.remember};
 				
-				callback(null, userData);
+				callback(null, authData);
 			}
 		});
 	});
 	
 	// user:signup
 	socket.on('user:signup', function(data, callback) {
+		// Generate remember me token
+		try {
+			var buf = crypto.randomBytes(12);
+			var token = buf.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
+		} catch (ex) {
+		  // handle error
+		}
+		
+		// Hash password
+		
 		var newUser = new User({
 			email: data.email,
 			name: data.name, 
-			password: data.password // HASH SOON
+			password: data.password, // HASH SOON
+			token: token
 		});
+		
 		newUser.save();
 		
-		socket.broadcast.emit('users:create', newUser);
-		callback(null, newUser);
+		//socket.broadcast.emit('users:create', newUser);
+		var authData = {_id : newUser._id, name: user.name, token : newUser.token};
+		callback(null, authData);
 	});
 
 	// plays:read

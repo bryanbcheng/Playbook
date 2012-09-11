@@ -34,6 +34,8 @@
 	<div id="header" title="Home">
 		<img id="icon" src="/images/playbookIcon.png" />
 		<h1>PlayBook</h1>
+		<div id="user-panel">
+		</div>
 	</div>
 	
 	<div id="playbook-container">
@@ -267,13 +269,32 @@
 	
 	<!-- Templates -->
 	
+	<script type="text/template" id="user-template">
+		<!-- Logged In -->
+		{{#_id}}
+		<!-- My teams -->
+		<!-- Account settings -->
+		<div class="button logout">
+			<div class="icon-power"></div>
+			<span>Log Out</span>
+		</div>
+		{{/_id}}
+		<!-- Not Logged In -->
+		{{^_id}}
+		<div class="button login">
+			<div class="icon-power"></div>
+			<span>Log In</span>
+		</div>
+		{{/_id}}
+	</script>
+	
 	<script type="text/template" id="login-template">
 		<div id="login-container">
 			<div id="login-page" class="login-flow-page">
 				<h3>Log In</h3>
 <!-- 				TODO integrate email type field -->
 				<hr class="divider" />
-				<span class="warning"></span>
+				<div class="warning"></div>
 				<div class="field">
 					<div class="icon-envelope"></div>
 					<input class="email-field" placeholder="Email:"></input>
@@ -284,8 +305,8 @@
 					<input class="password-field" type="password" placeholder="Password:"></input>
 					<br class="clear" />
 				</div>
-				<div class="click-button login">Log In</div>
-				<label><input type="checkbox">Remember Me</input></label>
+				<div id="login" class="click-button">Log In</div>
+				<label><input class="remember-field" type="checkbox">Remember Me</input></label>
 				<br class="clear" />
 				<hr class="divider" />
 				<span>Don't have an account? <a class="link">Create An Account</a></span>
@@ -293,27 +314,28 @@
 			<div id="signup-page" class="login-flow-page">
 				<h3>Sign Up</h3>
 				<hr class="divider" />
+				<div class="warning"></div>
 				<div class="field">
 					<div class="icon-envelope"></div>
-					<input placeholder="Email:"></input>
+					<input class="email-field" placeholder="Email:"></input>
 					<br class="clear" />
 				</div>
 				<div class="field">
 					<div class="icon-vcard"></div>
-					<input placeholder="Name:"></input>
+					<input class="name-field" placeholder="Name:"></input>
 					<br class="clear" />
 				</div>
 				<div class="field">
 					<div class="icon-lock"></div>
-					<input type="password" placeholder="Password:"></input>
+					<input class="password-field" type="password" placeholder="Password:"></input>
 					<br class="clear" />
 				</div>
 				<div class="field">
 					<div class="icon-rotation-lock"></div>
-					<input type="password" placeholder="Confirm Password:"></input>
+					<input class="confirm-password-field" type="password" placeholder="Confirm Password:"></input>
 					<br class="clear" />
 				</div>
-				<div class="click-button signup">Submit</div>
+				<div id="signup" class="click-button">Submit</div>
 				<div class="click-button cancel">Cancel</div>
 				<br class="clear" />
 			</div>

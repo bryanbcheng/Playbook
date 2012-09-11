@@ -82,6 +82,7 @@ body {
 /* 	color: #038872; */
 /* 	color: #1D2D48; */
 	cursor: pointer;
+	float: left;
 	font-size: 48px;
 	font-family: "Copperplate";
 	font-weight: bold;
@@ -89,6 +90,49 @@ body {
 /* 	margin: 0 50px; */
 /* 	text-shadow: 2px 2px 4px #038872; */
 	text-shadow: 2px 2px 4px #2b9eab;
+}
+
+#user-panel {
+	float: right;
+}
+
+#user-panel .button {
+	float: left;
+	overflow: hidden;
+	padding: 3px 5px 7px;
+	width: 50px;
+}
+
+#user-panel .button:hover {
+	background-color: rgba(255, 255, 255, 0.3);
+	cursor: pointer;
+	
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
+}
+
+#user-panel .button div {
+	display: block;
+	margin: 0 auto;
+}
+
+#user-panel .button:hover div {
+/* 	background-image: url("/images/glyphicons-white.png"); */
+}
+
+#user-panel .button span {
+	float: left;
+	font-size: 14px;
+	line-height: 14px;
+	text-align: center;
+	width: 50px;
+}
+
+#user-panel .button:hover span {
+/* 	color: white; */
+/* 	text-shadow: 0 1px 0 rgba(94, 205, 60, 0.4); */
 }
 
 #playbook-container {
@@ -190,7 +234,6 @@ body {
 	
     border-color: #4FB72F #46A22A #3E8E25;
     color: #FFFFFF;
-/*     text-shadow: 0 1px 0 rgba(102, 204, 4, 0.4); */
 	text-shadow: 0 1px 0 rgba(85, 196, 51, 0.4);
 }
 
@@ -1741,7 +1784,9 @@ body {
 #login-container .warning {
 	color: red;
 	display: block;
+	font-size: 14px;
 	font-weight: bold;
+	padding-left: 15px;
 	margin-bottom: 15px;
 }
 
