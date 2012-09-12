@@ -21,3 +21,4 @@ node_modules
 npm-debug.log
 
 public/images/formations
+*_old.png
