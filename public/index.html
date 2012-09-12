@@ -32,9 +32,11 @@
 	<script src="/app.js"></script>
 	
 	<div id="header" title="Home">
-		<img id="icon" src="/images/playbookIcon.png" />
-		<h1>PlayBook</h1>
-		<div id="user-panel">
+		<div id="header-contents">
+			<img id="icon" src="/images/playbookIcon.png" />
+			<h1>PlayBook</h1>
+			<div id="user-panel">
+			</div>
 		</div>
 	</div>
 	
@@ -292,8 +294,9 @@
 	<script type="text/template" id="login-template">
 		<div id="login-container">
 			<div id="login-page" class="login-flow-page">
+				<span class="continue">Continue without logging in...</span>
 				<h3>Log In</h3>
-<!-- 				TODO integrate email type field -->
+<!-- 				TODO integrate HTML5 email type field -->
 				<hr class="divider" />
 				<div class="warning"></div>
 				<div class="field">
@@ -313,6 +316,7 @@
 				<span>Don't have an account? <a class="link">Create An Account</a></span>
 			</div>
 			<div id="signup-page" class="login-flow-page">
+				<span class="continue">Continue without logging in...</span>
 				<h3>Sign Up</h3>
 				<hr class="divider" />
 				<div class="warning"></div>

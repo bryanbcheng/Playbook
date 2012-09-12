@@ -68,13 +68,19 @@ body {
 
 	border-bottom: 1px solid #D8E2BC;
 	height: 60px;
+	min-width: 1200px;
+}
+
+#header-contents {
+	margin: 0 auto;
+	width: 1200px;
 }
 
 #icon {
 	cursor: pointer;
 	height: 60px;
 	float: left;
-	margin: 0 20px;
+	padding-right: 20px;
 }
 
 #header h1 {
@@ -1958,6 +1964,19 @@ body {
 }
 
 #login-container .link:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+#login-container .continue {
+	color: rgba(59, 191, 206, 1);
+	font-size: 14px;
+	position: absolute;
+	right: 50px;
+	top: 25px;
+}
+
+#login-container .continue:hover {
 	cursor: pointer;
 	text-decoration: underline;
 }

@@ -512,7 +512,7 @@ $(function() {
 		},
 		
 		initialize: function() {
-			_.bindAll(this, 'render', 'loginScreen', 'loginCallback', 'signupCallback', 'logout');
+			_.bindAll(this, 'render', 'loginScreen', 'closeLoginScreen', 'loginCallback', 'signupCallback', 'logout');
 			// show login div
 			if (localStorage) {
 				var userData = JSON.parse(localStorage.getItem("userData"));
@@ -634,7 +634,22 @@ $(function() {
 					$("#signup-page").fadeOut(350, "swing");
 					$("#login-page").fadeIn(350, "swing");
 				});
+				
+				$("#login-container").find(".continue").on("click", function(e) {
+					view.closeLoginScreen();
+					
+					view.render();
+				});
 			}
+		},
+		
+		closeLoginScreen: function() {
+			$("#login-container").fadeOut(350, "swing", function() {
+				$("#login-container").remove();
+				uncoverScreen();
+			});
+			
+			this.render();
 		},
 		
 		loginCallback: function(err, result) {
@@ -650,12 +665,8 @@ $(function() {
 				
 				this.model = new $.playbook.User(result);
 				$.playbook.user = result._id;
-				this.render();
 				
-				$("#login-page").fadeOut(350, "swing", function() {
-					$("#login-container").remove();
-					uncoverScreen();
-				});
+				this.closeLoginScreen();
 			}
 		},
 		
@@ -669,12 +680,8 @@ $(function() {
 				
 				this.model = new $.playbook.User(result);
 				$.playbook.user = result._id;
-				this.render();
 				
-				$("#signup-page").fadeOut(350, "swing", function() {
-					$("#signup-container").remove();
-					uncoverScreen();
-				});
+				this.closeLoginScreen();
 			}
 		},
 		
@@ -2579,7 +2586,7 @@ $(function() {
 		// initialize login / user details
 		var userView = new $.playbook.UserView();
 		
-		$("#header").click(function() {
+		$("#header h1, #icon").on("click", function() {
 			$.playbook.app.navigate("/", {trigger: true});
 		});
 		
