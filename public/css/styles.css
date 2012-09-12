@@ -2004,7 +2004,7 @@ body {
 	overflow: hidden;
 	padding: 0 10px;
 	position: absolute;
-	width: 65px;
+	width: 70px;
 	
 	transition: all 0.35s ease;
 	-moz-transition: all .35s ease;
@@ -2029,10 +2029,11 @@ body {
 #new-play-container .back span, #new-play-container .close span {
 	display: inline-block;
 	float: left;
-	height: 30px;
-	line-height: 30px;
+	height: 24px;
+	line-height: 24px;
+	margin: 6px 0;
 	text-align: center;
-	width: 45px;
+	width: 46px;
 }
 
 #new-play-container .back > div[class^="icon-half-"], #new-play-container .close > div[class^="icon-half-"] {

@@ -688,6 +688,7 @@ $(function() {
 			localStorage.removeItem("userData");
 			
 			this.model = null;
+			$.playbook.user = null;
 			
 			this.render();
 			
@@ -2522,7 +2523,7 @@ $(function() {
 		
 		return {
 			newPlay: function() {
-				play = new $.playbook.Play({});
+				play = new $.playbook.Play({owner: $.playbook.user});
 			},
 			
 			play: function() {
