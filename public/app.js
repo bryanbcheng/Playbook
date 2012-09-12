@@ -2580,7 +2580,7 @@ $(function() {
 		
 		$("#new-play-field-size").find(".choice").on("click", function(e) {
 			$.playbook.NewPlay.play().set("fieldSize", $(e.target).closest(".choice").data("value"));
-			console.log($.playbook.user);
+			
 			$("#new-play-field-size").fadeOut(350, "swing");
 			$("#new-play-options").fadeIn(350, "swing");
 		});

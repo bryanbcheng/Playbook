@@ -96,6 +96,14 @@ body {
 	float: right;
 }
 
+#user-panel .name {
+	float: left;
+	height: 30px;
+	line-height: 30px;
+	padding: 15px 10px;
+	text-shadow: 0 1px 0 #F0F0F0;
+}
+
 #user-panel .button {
 	float: left;
 	overflow: hidden;
@@ -127,6 +135,7 @@ body {
 	font-size: 14px;
 	line-height: 14px;
 	text-align: center;
+	text-shadow: 0 1px 0 #F0F0F0;
 	width: 50px;
 }
 
@@ -139,7 +148,7 @@ body {
 	border-left: 1px solid #CDCDCD;
 	border-right: 1px solid #CDCDCD;
 	margin: 0 auto;
-	height: 100%;
+	min-height: 100%;
 	width: 1200px;
 }
 

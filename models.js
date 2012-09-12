@@ -13,7 +13,7 @@ var User = new Schema({
 	email		: { type: String, unique: true }
   ,	name		: String
   ,	password	: String // FOR NOW STORE RAW STRING...
-  , token		: String
+  ,	token		: String
 }, { strict: true });
 
 var Article = new Schema({
