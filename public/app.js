@@ -1489,9 +1489,15 @@ $(function() {
 			"click .reset-play"	: "resetPlay",
 			"click .print-play"	: "printPlay",
 			
-			"mouseover .new-formation" : "showFormations",
-			"mouseout .new-formation"  : "hideFormations",
-			"click .formation-option"  : "useFormation",
+			"mouseover .new-formation"	: "showFormations",
+			"mouseout .new-formation"	: "hideFormations",
+			"click .formation-option"	: "useFormation",
+			
+			"mouseover .play-options"	: "showOptions",
+			"mouseout .play-options"	: "hideOptions",
+			
+			"mouseover .option-menu"	: "showSuboptions",
+			"mouseout .option-menu"		: "hideSuboptions",
 		},
 		
 		initialize: function() {
@@ -1655,6 +1661,25 @@ $(function() {
 			}
 		},
 		
+		showOptions: function(e) {
+			this.$el.find(".options").fadeIn(350, "swing");
+		},
+		
+		hideOptions: function(e) {
+			if ($(e.relatedTarget).closest(".play-options").length) return;
+			
+			this.$el.find(".options").fadeOut(350, "swing");
+		},
+		
+		showSuboptions: function(e) {
+			$(e.target).closest(".option-menu").find(".submenu").fadeIn(350, "swing");
+		},
+		
+		hideSuboptions: function(e) {
+			if ($(e.relatedTarget).closest(".option-menu")[0] === $(e.target).closest(".option-menu")[0]) return;
+			
+			$(e.target).closest(".option-menu").find(".submenu").fadeOut(350, "swing");
+		},
 	});
 	
 	$.playbook.PlayContentsView = Backbone.View.extend({

@@ -184,7 +184,7 @@ body {
 #left-panel {
 	float: left;
 	left: 281px;
-	overflow: hidden;
+/* 	overflow: hidden; */
 	padding: 15px 60px 30px;
 	position: relative;
 	width: 800px;
@@ -610,7 +610,7 @@ body {
 	border-radius: 3px 3px 3px 3px;
 	float: left;
 	margin-right: 13px;
-	width: 585px;
+	width: 635px;
 	
 	transition: all .35s ease;
 	-moz-transition: all .35s ease;
@@ -664,7 +664,7 @@ body {
 
 #play .actions {
 	float: right;
-	width: 200px;
+	width: 150px;
 }
 
 #play .action-container {
@@ -696,12 +696,12 @@ body {
 	width: 50px;
 }
 
-#play .new-formation .action-name {
+#play .new-formation .action-name, #play .play-options .action-name {
 	font-size: 11px;
 	line-height: 14px;
 }
 
-#play .formations {
+#play .formations, #play .options {
 	display: none;
 	position: absolute;
 	top: 75px;
@@ -710,11 +710,22 @@ body {
 
 #play .formations ul {
 	background-color: #FFF;
+	box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	-moz-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
 	display: none;
 	width: 150px;
 }
 
-#play .formations li {
+#play .options ul {
+	background-color: #FFF;
+	box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	-moz-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	width: 100px;
+}
+
+#play .formations li, #play .options li {
 	background-color: rgba(59, 191, 206, 0.25);
 	font-size: 12px;
 	padding: 6px;
@@ -725,25 +736,52 @@ body {
 	-o-transition: all .35s ease;
 }
 
-#play .formations li:hover {
+#play .formations li:hover, #play .options li:hover {
 	background: rgba(59, 191, 206, 0.5);
 }
 
 /* Hack to show only formation of the selected field type */
-#play .ultimate .ultimate-formations {
+#play .ultimate .ultimate-formations, #play .soccer .soccer-formations, #play .football .football-formations, #play .basketball .basketball-formations {
 	display: block;
 }
 
-#play .soccer .soccer-formations {
-	display: block;
+#play .option {
+/* 	overflow: hidden; */
+	position: relative;
 }
 
-#play .football .football-formations {
-	display: block;
+#play .option-icon {
+/* 	float: left; */
+	left: 0;
+	position: absolute;
+	top: 0;	
 }
 
-#play .basketball .basketball-formations {
-	display: block;
+#play .option-title {
+	float: left;
+	margin-left: 18px;
+}
+
+#play .option-sub {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+#play .submenu {
+	display: none;
+	position: absolute;
+	left: 100px;
+	top: 0;
+	z-index: 9999;
+}
+
+#play .submenu ul {
+	background-color: #FFF;
+	box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	-moz-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
+	width: 100px;
 }
 
 #canvas-container {
@@ -769,11 +807,15 @@ body {
 }
 
 #right-panel hr {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)"; /* IE 8 */
-	filter: alpha(opacity=25); /* IE 5-7 */
-	-moz-opacity: 0.25; /* Netscape */
-	-khtml-opacity: 0.25; /* Safari 1.x */
-	opacity: 0.25; /* Good browsers */
+	border: 0;
+	border-top: 1px solid #CDCDCD;
+	border-bottom: 1px solid white;
+	
+/* 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)"; /* IE 8 */
+/* 	filter: alpha(opacity=25); /* IE 5-7 */
+/* 	-moz-opacity: 0.25; /* Netscape */
+/* 	-khtml-opacity: 0.25; /* Safari 1.x */
+/* 	opacity: 0.25; /* Good browsers */
 	
 	margin: 15px 0;
 }
@@ -981,6 +1023,8 @@ body {
 
 #play-contents .set-list-container {
 	border: 1px solid #CDCDCD;
+	border-color: #CECECE #CECECE #A0A0A0;
+	border-radius: 3px 3px 3px 3px;
 /* 	margin: 20px 0; */
 	padding-top: 20px;
 	position: relative;
@@ -1144,20 +1188,6 @@ body {
 #play-contents .animation-speed-display {
 	
 }
-
-/* 
-#play-contents .formations {
-	margin-top: 15px;
-}
-
-#play-contents .formationType {
-	width: 180px;
-}
-
-#play-contents .useForm {
-	float: right;
-}
- */
 
 #play-contents .team {
 /* 	line-height: 28px; */
