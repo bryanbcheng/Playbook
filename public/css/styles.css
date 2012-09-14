@@ -154,13 +154,13 @@ body {
 	border-left: 1px solid #CDCDCD;
 	border-right: 1px solid #CDCDCD;
 	margin: 0 auto;
-	min-height: 100%;
+	height: 100%;
 	width: 1200px;
 }
 
 #playbook {
+	display: table;
 	height: 100%;
-/* 	padding: 0 0 25px 50px; */
 }
 
 #playbook h2 {
@@ -168,36 +168,38 @@ body {
 	font-weight: bold;
 }
 
-.right-back {
-	background-color: #F0F0F0;
-	float: left;
-	height: 100%;
-	overflow: hidden;
-	position: relative;
-	width: 100%;
-}
-
-.left-back {
+#left-panel {
 	background-color: white;
 	border-right: 1px solid #CDCDCD;
-	float: left;
-	height: 100%;
-	position: relative;
-	right: 281px;
-	width: 100%;
-}
-
-#left-panel {
-	float: left;
-	left: 281px;
-/* 	overflow: hidden; */
+	display: table-cell;
 	padding: 15px 60px 30px;
 	position: relative;
+	vertical-align: top;
 	width: 800px;
 }
 
 #left-panel div.left-container {
 	display: none;
+	position: relative;
+}
+
+#right-panel {
+	background-color: #F0F0F0;
+	display: table-cell;
+	padding: 15px;
+	position: relative;
+	vertical-align: top;
+	width: 250px;
+}
+
+#right-panel div.right-container {
+	display: none;
+	position: relative;
+	width: 250px;
+}
+
+#playbook.home #home-container, #playbook.home #home-panel, #playbook.plays #plays-container, #playbook.plays #plays-panel, #playbook.play #play-container, #playbook.play #play-panel, #playbook.error #error-container, #playbook.error #error-panel {
+	display: block;
 }
 
 /* Home Page */
@@ -582,23 +584,6 @@ body {
     text-transform: capitalize;
 }
 
-#right-panel {
-	float: right;
-	left: 281px;
-/* 	overflow: hidden; */
-	padding: 15px;
-	position: relative;
-	width: 250px;
-}
-
-#right-panel div.right-container {
-	display: none;
-}
-
-#playbook.home #home-container, #playbook.home #home-panel, #playbook.plays #plays-container, #playbook.plays #plays-panel, #playbook.play #play-container, #playbook.play #play-panel, #playbook.error #error-container, #playbook.error #error-panel {
-	display: block;
-}
-
 /* Play Page */
 #play {
 	margin-left: 2px;
@@ -920,11 +905,11 @@ body {
 }
 
 #field-type ul {
-	left: 15px;
+	left: 0px;
 }
 
 #field-size ul {
-	right: 15px;
+	right: 0px;
 }
 
 #play-contents .field-prop li {
@@ -1683,11 +1668,11 @@ body {
 }
 
 #article .article-type ul {
-	left: 15px;
+	left: 0px;
 }
 
 #article .article-team ul {
-	left: 123px;
+	left: 108px;
 }
 
 #article .article-prop li {
