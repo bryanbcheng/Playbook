@@ -174,6 +174,7 @@ io.sockets.on('connection', function(socket) {
 			teamColors: data.teamColors,
 			teamShapes: data.teamShapes,
 			privacy: data.privacy,
+			owner: data.owner,
 		});
 		newPlay.save();
 		
@@ -240,7 +241,16 @@ io.sockets.on('connection', function(socket) {
 			}
 			
 			if(play) {
-				callback(null, play);
+				// Check permissions
+				if (play.privacy === "public" || play.privacy === "protected") {
+					return callback(null, play);
+				} else if (play.privacy === "private") {
+					if (play.owner == data.user) {
+						return callback(null, play);
+					} else {
+						return callback(errorResponse(401, "Permission denied."));
+					}
+				}
 			} else {
 				return callback(new Error("Could not find play"));
 			}
@@ -705,6 +715,13 @@ io.sockets.on('connection', function(socket) {
 	});
 });
 
+var errorResponse = function(status, message) {
+	return {
+		status: status,
+		message: message
+	}
+}
+
 /* Routes */
 
 app.get('/', function(req, res) {
@@ -716,4 +733,6 @@ app.get('/plays', function(req, res) {
 app.get('/play/:_id', function(req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 });
-
+app.get('/error/:status', function(req, res) {
+	res.sendfile(__dirname + '/public/index.html');
+});

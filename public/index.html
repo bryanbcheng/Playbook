@@ -21,7 +21,7 @@
 	<script src="/js/backbone.iosync.min.js"></script>
 	<script src="/js/backbone.iobind.min.js"></script>
 	<script src="/js/async.min.js"></script>
-	<script src="/js/mustache.min.js"></script>
+	<script src="/js/mustache-0.7.0.min.js"></script>
 	<script src="/js/kinetic-v3.10.5.min.js"></script>
 	<script src="/js/jquery.colorPicker.min.js"></script>
 	<script src="/js/jquery.shapePicker.min.js"></script>
@@ -73,6 +73,8 @@
 								4. Animate and practice your play!
 							</div>
 						</div>
+						<div id="error-container" class="left-container">
+						</div>
 					</div>
 					<div id="right-panel">
 						<div id="home-panel" class="right-container">
@@ -84,6 +86,8 @@
 							<div id="set"></div>
 							<div id="annotation"></div>
 							<div id="article"></div>
+						</div>
+						<div id="error-panel" class="right-container">
 						</div>
 					</div>
 					<br class="clear" />
@@ -450,33 +454,37 @@
 				
 				<div class="options">
 					<ul>
+						{{#isOwner}}
 						<li class="option option-menu privacy-play">
 							<div class="option-icon icon-half-shield"></div>
 							<span class="option-title">Privacy</span>
 							<div class="option-sub icon-half-play"></div>
 							
-							<div class="submenu">
+							<div class="submenu {{privacy}}">
 								<ul>
-									<li class="suboption option">
+									<li class="suboption option privacy-option public-option" data-value="public">
 										<div class="option-icon icon-half-globe"></div>
 										<span class="option-title">Public</span>
 										<div class="option-sub icon-half-ok-2"></div>
 										<br class="clear" />
 									</li>
-									<li class="suboption option">
+									<li class="suboption option privacy-option protected-option" data-value="protected">
 										<div class="option-icon icon-half-link"></div>
 										<span class="option-title">Protected</span>
+										<div class="option-sub icon-half-ok-2"></div>
 										<br class="clear" />
 									</li>
-									<li class="suboption option">
+									<li class="suboption option privacy-option private-option" data-value="private">
 										<div class="option-icon icon-half-lock"></div>
 										<span class="option-title">Private</span>
+										<div class="option-sub icon-half-ok-2"></div>
 										<br class="clear" />
 									</li>
 								</ul>
 							</div>
 							<br class="clear" />
 						</li>
+						{{/isOwner}}
 						<li class="option reset-play">
 							<div class="option-icon icon-half-repeat"></div>
 							<span class="option-title">Reset</span>
@@ -749,6 +757,10 @@
 			</div>
 			<br class="clear" />
 		</div>
+	</script>
+	
+	<script type="text/template" id="401-error">
+		Permission Denied. Sorry you do not have appropriate permissions to see this play.
 	</script>
 </body>
 </html>

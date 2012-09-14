@@ -595,7 +595,7 @@ body {
 	display: none;
 }
 
-#playbook.home #home-container, #playbook.home #home-panel, #playbook.plays #plays-container, #playbook.plays #plays-panel, #playbook.play #play-container, #playbook.play #play-panel {
+#playbook.home #home-container, #playbook.home #home-panel, #playbook.plays #plays-container, #playbook.plays #plays-panel, #playbook.play #play-container, #playbook.play #play-panel, #playbook.error #error-container, #playbook.error #error-panel {
 	display: block;
 }
 
@@ -788,6 +788,15 @@ body {
 	-moz-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,.3);
 	width: 140px;
+}
+
+#play .privacy-option > .option-sub {
+	display: none;
+}
+
+/* Hack to show checkmark of the selected privacy setting */
+#play .public .public-option > .option-sub, #play .protected .protected-option > .option-sub, #play .private .private-option > .option-sub {
+	display: block;
 }
 
 #canvas-container {

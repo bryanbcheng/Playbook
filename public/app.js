@@ -419,6 +419,7 @@ $(function() {
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
 				privacy: "public", // public for now, changed to protected later
+				user: $.playbook.user, // add prop
 			};
 		},
 		
@@ -1506,6 +1507,8 @@ $(function() {
 			
 			"mouseover .option-menu"	: "showSuboptions",
 			"mouseout .option-menu"		: "hideSuboptions",
+			
+			"click .privacy-option"	: "updatePrivacy",
 		},
 		
 		initialize: function() {
@@ -1513,6 +1516,9 @@ $(function() {
 		},
 		
 		render: function(bindEvents) {
+			// Check if owner
+			this.model.set("isOwner", this.model.get("owner") === $.playbook.user, {silent: true});
+		
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			$("#play").append(this.el);
 			
@@ -1688,6 +1694,17 @@ $(function() {
 			
 			$(e.target).closest(".option-menu").find(".submenu").fadeOut(350, "swing");
 		},
+		
+		updatePrivacy: function(e) {
+			// Check if changed
+			var newValue = $(e.target).closest(".privacy-option").data("value");
+			if (this.model.get("privacy") !== newValue) {
+				// close the options menu
+				$(e.target).closest(".submenu").attr("class", "submenu " + newValue);
+				
+				this.model.save({privacy: newValue}, {silent: true});
+			}
+		},
 	});
 	
 	$.playbook.PlayContentsView = Backbone.View.extend({
@@ -1745,7 +1762,11 @@ $(function() {
 			this.model.fetch({
 				success: function(model, response) {
 					model.trigger('init');
-				}
+				},
+				error: function(model, response) {
+					// navigate to error pages
+					$.playbook.app.navigate("error/" + response.status, {trigger: true});
+				},
 			});
 		},
 		
@@ -2541,9 +2562,10 @@ $(function() {
 	
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
-			"":				"home",
-			"plays":		"show_plays",
-			"play/:_id":	"show_play",
+			"":					"home",
+			"plays":			"show_plays",
+			"play/:_id":		"show_play",
+			"error/:status":	"error",
 		},
 		
 		home: function() {
@@ -2575,16 +2597,25 @@ $(function() {
 			
 			var playContentsView = new $.playbook.PlayContentsView({model: play});
 		},
+		
+		error: function(status) {
+			clearDivs();
+			
+			$("#playbook").attr("class", "error");
+			
+			var template = $("#" + status + "-error").html();
+			$("#error-container").html(template);
+		},
 	});
 	
 	$.playbook.app = null;
 	
 	$.playbook.bootstrap = function() {
-		$.playbook.app = new $.playbook.Router();
-		Backbone.history.start({pushState: true});
-		
 		// initialize login / user details
 		var userView = new $.playbook.UserView();
+	
+		$.playbook.app = new $.playbook.Router();
+		Backbone.history.start({pushState: true});
 		
 		$("#header h1, #icon").on("click", function() {
 			$.playbook.app.navigate("/", {trigger: true});
@@ -2728,6 +2759,8 @@ function clearDivs() {
 	$("#play-contents").html("");
 	$("#set").html("");
 	$("#article").html("");
+	
+	$("#error-container").html("");
 }
 
 function errorMessage(msg) {
