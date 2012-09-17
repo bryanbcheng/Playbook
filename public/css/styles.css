@@ -2290,7 +2290,7 @@ body {
 /* Popup */
 
 #popup-container {
-	display: block;
+	display: none;
 	position: absolute;
 	top: 50%;
 	width: 100%;
@@ -2320,11 +2320,16 @@ body {
 
 #popup-contents .popup-title {
 	font-size: 20px;
+	font-variant: small-caps;
 }
 
 #popup-close {
 	position: absolute;
 	right: 50px;
+}
+
+#popup-close:hover {
+	cursor: pointer;
 }
 
 #instructions {

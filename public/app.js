@@ -1717,6 +1717,26 @@ $(function() {
 			// generate popup
 			var popup = $("#popup-template").html();
 			$("body").append(Mustache.render(popup, {contents: template}));
+			
+			// Close event handlers
+			// TODO: use once?
+			$("#whiteout").on("click", function() {
+				$("#whiteout").off("click");
+				$("#popup-container").fadeOut(350, "swing", function() {
+					$("#popup-container").remove();
+				});
+				uncoverScreen();
+			});
+			
+			$("#popup-close").on("click", function(e) {
+				$("#whiteout").off("click");
+				$("#popup-container").fadeOut(350, "swing", function() {
+					$("#popup-container").remove();
+				});
+				uncoverScreen();
+			});
+			
+			$("#popup-container").fadeIn(350, "swing");
 		},
 	});
 	
