@@ -150,17 +150,13 @@ body {
 /* 	text-shadow: 0 1px 0 rgba(94, 205, 60, 0.4); */
 }
 
-#playbook-container {
+#playbook {
 	border-left: 1px solid #CDCDCD;
 	border-right: 1px solid #CDCDCD;
+	display: table;
 	margin: 0 auto;
 	height: 100%;
 	width: 1200px;
-}
-
-#playbook {
-	display: table;
-	height: 100%;
 }
 
 #playbook h2 {
@@ -695,7 +691,7 @@ body {
 #play .formations, #play .options {
 	display: none;
 	position: absolute;
-	top: 75px;
+	top: 60px;
 	z-index: 9999;
 }
 
@@ -799,11 +795,6 @@ body {
 
 #canvas .print {
 	display: none !important;
-}
-
-#instructions {
-	margin-top: 20px;
-	font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
 #right-panel hr {
@@ -2294,6 +2285,57 @@ body {
 
 #new-play-templates .twoThreeZone .icon {
 	background-position: -250px -400px;
+}
+
+/* Popup */
+
+#popup-container {
+	display: block;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	z-index: 10001;
+}
+
+#popup-window {
+	background: white;
+	border: 1px solid #CDCDCD;
+	border-radius: 5px;
+	box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
+	display: block;
+	height: 400px;
+	left: 50%;
+	margin-left: -301px;
+	margin-top: -251px;
+	padding: 50px;
+	position: absolute;
+	width: 500px;
+}
+
+#popup-contents {
+	float: left;
+}
+
+#popup-contents .popup-title {
+	font-size: 20px;
+}
+
+#popup-close {
+	position: absolute;
+	right: 50px;
+}
+
+#instructions {
+	line-height: 20px;
+}
+
+#instructions .instruction-header {
+	display: block;
+    font-style: italic;
+    margin-top: 20px;
+    text-decoration: underline;
 }
 
 /* Print */

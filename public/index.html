@@ -40,57 +40,47 @@
 		</div>
 	</div>
 	
-	<div id="playbook-container">
-		<div id="playbook">
-			<div id="left-panel">
-				<div id="home-container" class="left-container">
-					<div id="new-play" class="home-action">
-						<div class="icon-file"></div>
-						<span>New Play</span>
-						<br class="clear" />
-					</div>
-					<div id="view-plays" class="home-action">
-						<div class="icon-book"></div>
-						<span>View Plays</span>
-						<br class="clear" />
-					</div>
+	<div id="playbook">
+		<div id="left-panel">
+			<div id="home-container" class="left-container">
+				<div id="new-play" class="home-action">
+					<div class="icon-file"></div>
+					<span>New Play</span>
+					<br class="clear" />
 				</div>
-				<div id="plays-container" class="left-container">
-				</div>
-				<div id="play-container" class="left-container">
-					<div id="play"></div>
-<!-- 							<div id="canvas-container"> -->
-					<div id="canvas"></div>
-<!-- 							</div> -->
-					<div id="instructions">
-						Instructions:<br>
-						1. Add players to the play or use a preset formation template.<br>
-						1a. No need to worry about saving, everything is saved automatically!<br>
-						2. Click the next step and adjust the object positions to show movement.<br>
-						3. Modify further sets to continue the play's progression.<br>
-						4. Animate and practice your play!
-					</div>
-				</div>
-				<div id="error-container" class="left-container">
+				<div id="view-plays" class="home-action">
+					<div class="icon-book"></div>
+					<span>View Plays</span>
+					<br class="clear" />
 				</div>
 			</div>
-			<div id="right-panel">
-				<div id="home-panel" class="right-container">
-					Welcome to Playbook!
-				</div>
-				<div id="plays-panel" class="right-container"></div>
-				<div id="play-panel" class="right-container">
-					<div id="play-contents"></div>
-					<div id="set"></div>
-					<div id="annotation"></div>
-					<div id="article"></div>
-				</div>
-				<div id="error-panel" class="right-container">
-				</div>
+			<div id="plays-container" class="left-container">
 			</div>
-			<br class="clear" />
+			<div id="play-container" class="left-container">
+				<div id="play"></div>
+				<div id="canvas"></div>
+				
+			</div>
+			<div id="error-container" class="left-container">
+			</div>
 		</div>
+		<div id="right-panel">
+			<div id="home-panel" class="right-container">
+				Welcome to Playbook!
+			</div>
+			<div id="plays-panel" class="right-container"></div>
+			<div id="play-panel" class="right-container">
+				<div id="play-contents"></div>
+				<div id="set"></div>
+				<div id="annotation"></div>
+				<div id="article"></div>
+			</div>
+			<div id="error-panel" class="right-container">
+			</div>
+		</div>
+		<br class="clear" />
 	</div>
+	
 	
 	<div id="new-play-container">
 		<div id="new-play-field-type" class="new-play-page">
@@ -496,27 +486,27 @@
 							
 							<div class="submenu">
 								<ul>
-									<li class="suboption option">
+									<li class="suboption option help-option instructions" data-value="instructions">
 										<div class="option-icon icon-half-notes-2"></div>
 										<span class="option-title">Instructions</span>
 										<br class="clear" />
 									</li>
-									<li class="suboption option">
+									<li class="suboption option help-option tutorial" data-value="tutorial">
 										<div class="option-icon icon-half-gamepad"></div>
 										<span class="option-title">Tutorial</span>
 										<br class="clear" />
 									</li>
-									<li class="suboption option">
+									<li class="suboption option help-option faq" data-value="faq">
 										<div class="option-icon icon-half-circle-question-mark"></div>
 										<span class="option-title">FAQ</span>
 										<br class="clear" />
 									</li>
-									<li class="suboption option">
+									<li class="suboption option help-option keyboard-shortcuts" data-value="keyboard-shortcuts">
 										<div class="option-icon icon-half-keyboard-wireless"></div>
 										<span class="option-title">Keyboard Shortcuts</span>
 										<br class="clear" />
 									</li>
-									<li class="suboption option">
+									<li class="suboption option help-option report-issue" data-value="report-issue">
 										<div class="option-icon icon-half-warning-sign"></div>
 										<span class="option-title">Report an issue</span>
 										<br class="clear" />
@@ -724,6 +714,8 @@
 		</div>
 	</script>
 	
+	<!-- Print Template Pages -->
+	
 	<script type="text/template" id="play-print-template">
 		<div class="play-attributes">
 			<div class="name">
@@ -753,8 +745,55 @@
 		</div>
 	</script>
 	
+	<!-- Static Template Pages -->
+	
+	<script type="text/template" id="popup-template">
+		<div id="popup-container">
+			<div id="popup-window">
+				<div id="popup-close">Close</div>
+				<div id="popup-contents">{{&contents}}</div>
+			</div>
+		</div>
+	</script>
+	
+	<script type="text/template" id="instructions-template">
+		<div id="instructions">
+			<div class="popup-title">Instructions:</div>
+			<span class="instruction-header">Starting Off</span>
+			1. Add players to the play or use a preset formation template.<br>
+			1a. No need to worry about saving, everything is saved automatically!<br>
+			<span class="instruction-header">Designing the Play</span>
+			2. Click the next step and adjust the object positions to show movement.<br>
+			3. Modify further sets to continue the play's progression.<br>
+			<span class="instruction-header">Finishing Touches</span>
+			4. Animate and practice your play!
+		</div>
+	</script>
+	
+	<script type="text/template" id="tutorial-template">
+		COMING SOON!
+	</script>
+	
+	<script type="text/template" id="faq-template">
+		COMING SOON!
+	</script>
+	
+	<script type="text/template" id="keyboard-shortcuts-template">
+		COMING SOON!
+	</script>
+	
+	<script type="text/template" id="report-issue-template">
+		COMING SOON!
+	</script>
+	
+	<!-- Error Template Pages -->
+	
 	<script type="text/template" id="401-error">
 		Permission Denied. Sorry you do not have appropriate permissions to see this play.
+	</script>
+	
+	<script type="text/template" id="404-template">
+		Page Not Found.
 	</script>
 </body>
 </html>

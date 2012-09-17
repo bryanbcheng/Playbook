@@ -1509,6 +1509,7 @@ $(function() {
 			"mouseout .option-menu"		: "hideSuboptions",
 			
 			"click .privacy-option"	: "updatePrivacy",
+			"click .help-option"	: "showHelp",
 		},
 		
 		initialize: function() {
@@ -1704,6 +1705,18 @@ $(function() {
 				
 				this.model.save({privacy: newValue}, {silent: true});
 			}
+		},
+		
+		showHelp: function(e) {
+			var helpOption = $(e.target).closest(".help-option").data("value");
+			
+			var template = $("#" + helpOption + "-template").html();
+			
+			coverScreen();
+			
+			// generate popup
+			var popup = $("#popup-template").html();
+			$("body").append(Mustache.render(popup, {contents: template}));
 		},
 	});
 	
