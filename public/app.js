@@ -687,8 +687,6 @@ $(function() {
 		},
 		
 		login: function(e) {
-			e.stopPropagation();
-			
 			this.loginScreen();
 		},
 		
@@ -700,7 +698,7 @@ $(function() {
 			
 			this.render();
 			
-			e.stopPropagation();
+			$.playbook.app.navigate("/", {trigger: true});
 		},
 		
 		getUser: function() {
@@ -1725,28 +1723,43 @@ $(function() {
 			coverScreen();
 			
 			// generate popup
-			var popup = $("#popup-template").html();
-			$("body").append(Mustache.render(popup, {contents: template}));
-			
-			// Close event handlers
-			// TODO: use once?
-			$("#whiteout").on("click", function() {
-				$("#whiteout").off("click");
-				$("#popup-container").fadeOut(350, "swing", function() {
-					$("#popup-container").remove();
+			if ($("#popup-container")[0]) {
+				var popup = $("#popup-template").html();
+				var popupHtml = Mustache.render(popup, {contents: template});
+				
+				$("#popup-container").html($(popupHtml).html());
+				
+				$("#popup-close").on("click", function(e) {
+					$("#whiteout").off("click");
+					$("#popup-container").fadeOut(350, "swing", function() {
+						$("#popup-container").remove();
+					});
+					uncoverScreen();
 				});
-				uncoverScreen();
-			});
-			
-			$("#popup-close").on("click", function(e) {
-				$("#whiteout").off("click");
-				$("#popup-container").fadeOut(350, "swing", function() {
-					$("#popup-container").remove();
+			} else {
+				var popup = $("#popup-template").html();
+				$("body").append(Mustache.render(popup, {contents: template}));
+				
+				// Close event handlers
+				// TODO: use once?
+				$("#whiteout").on("click", function() {
+					$("#whiteout").off("click");
+					$("#popup-container").fadeOut(350, "swing", function() {
+						$("#popup-container").remove();
+					});
+					uncoverScreen();
 				});
-				uncoverScreen();
-			});
-			
-			$("#popup-container").fadeIn(350, "swing");
+				
+				$("#popup-close").on("click", function(e) {
+					$("#whiteout").off("click");
+					$("#popup-container").fadeOut(350, "swing", function() {
+						$("#popup-container").remove();
+					});
+					uncoverScreen();
+				});
+				
+				$("#popup-container").fadeIn(350, "swing");	
+			}
 		},
 	});
 	
@@ -2789,15 +2802,30 @@ function uncoverScreen() {
 // TODO: only active inside play menu
 function keyboardShortcut(e) {
 	if (e.target.tagName === "BODY") {
-		if (e.keyCode === 37 || e.keyCode === 38) {
+		if (e.keyCode === 37 || e.keyCode === 38) { // ←↑
 			e.preventDefault();
 			$(".prev-set").click();
-		} else if (e.keyCode === 39 || e.keyCode === 40) {
+		} else if (e.keyCode === 39 || e.keyCode === 40) { // →↓
 			e.preventDefault();
 			$(".next-set").click();
-		} else if (e.charCode === 32) {
+		} else if (e.charCode === 32) { // <space>
 			e.preventDefault();
 			$(".animate").click();
+		} else if (e.charCode === 43) { // +
+			e.preventDefault();
+			$(".add-set").click();
+		} else if (e.charCode === 45) { // -
+			e.preventDefault();
+			$(".remove-set").click();
+		} else if (e.charCode === 73 || e.charCode == 105) { // i
+			e.preventDefault();
+			$(".instructions").click();
+		} else if (e.charCode === 63) { // ?
+			e.preventDefault();
+			$(".keyboard-shortcuts").click();
+		} else {
+			console.log(e.keyCode);
+			console.log(e.charCode);
 		}
 	}
 }
