@@ -821,13 +821,15 @@ $(function() {
 		showArticlePropOptions: function(e) {
 			if ($(e.target).closest(".article-prop").hasClass("disabled")) return;
 		
-			$(e.target).closest(".article-prop").find("ul").fadeIn(350, "swing");
+			$(e.target).closest(".article-prop").find("ul").removeClass("fading");
+			$(e.target).closest(".article-prop").find("ul").css({height: "auto", opacity: 1, visibility: "visible"});
 		},
 		
 		hideArticlePropOptions: function(e) {
 			if ($(e.relatedTarget).closest(".article-prop")[0] === $(e.target).closest(".article-prop")[0]) return;
 			
-			$(e.target).closest(".article-prop").find("ul").fadeOut(350, "swing");
+			$(e.target).closest(".article-prop").find("ul").addClass("fading");
+			$(e.target).closest(".article-prop").find("ul").css({height: 0, opacity: 0, visibility: "hidden"});
 		},
 		
 		fadeArticlePropOptions: function(e) {
@@ -1514,6 +1516,8 @@ $(function() {
 		
 		initialize: function() {
 			this.model.on('change', this.render, this);
+			
+			this.lock = {};
 		},
 		
 		render: function(bindEvents) {
@@ -1644,13 +1648,15 @@ $(function() {
 		},
 		
 		showFormations: function(e) {
-			this.$el.find(".formations").fadeIn(350, "swing");
+			this.$el.find(".formations").removeClass("fading");
+			this.$el.find(".formations").css({height: "auto", opacity: 1, visibility: "visible"});
 		},
 		
 		hideFormations: function(e) {
 			if ($(e.relatedTarget).closest(".new-formation").length) return;
 			
-			this.$el.find(".formations").fadeOut(350, "swing");
+			this.$el.find(".formations").addClass("fading");
+			this.$el.find(".formations").css({height: 0, opacity: 0, visibility: "hidden"});
 		},
 		
 		useFormation: function(e) {
@@ -1677,23 +1683,27 @@ $(function() {
 		},
 		
 		showOptions: function(e) {
-			this.$el.find(".options").fadeIn(350, "swing");
+			this.$el.find(".options").removeClass("fading");
+			this.$el.find(".options").css({height: "auto", opacity: 1, visibility: "visible"});
 		},
 		
 		hideOptions: function(e) {
 			if ($(e.relatedTarget).closest(".play-options").length) return;
 			
-			this.$el.find(".options").fadeOut(350, "swing");
+			this.$el.find(".options").addClass("fading");
+			this.$el.find(".options").css({height: 0, opacity: 0, visibility: "hidden"});
 		},
 		
 		showSuboptions: function(e) {
-			$(e.target).closest(".option-menu").find(".submenu").fadeIn(350, "swing");
+			$(e.target).closest(".option-menu").find(".submenu").removeClass("fading");
+			$(e.target).closest(".option-menu").find(".submenu").css({height: "auto", opacity: 1, visibility: "visible"});
 		},
 		
 		hideSuboptions: function(e) {
 			if ($(e.relatedTarget).closest(".option-menu")[0] === $(e.target).closest(".option-menu")[0]) return;
 			
-			$(e.target).closest(".option-menu").find(".submenu").fadeOut(350, "swing");
+			$(e.target).closest(".option-menu").find(".submenu").addClass("fading");
+			$(e.target).closest(".option-menu").find(".submenu").css({height: 0, opacity: 0, visibility: "hidden"});
 		},
 		
 		updatePrivacy: function(e) {
@@ -1860,12 +1870,14 @@ $(function() {
 			}});
 			
 			htmlObj.find(".animate-control").on("mouseover", function(e) {
-				$(this).find(".animation").fadeIn(350, "swing");
+				$(this).find(".animation").removeClass("fading");
+				$(this).find(".animation").css({opacity: 1, visibility: "visible"});
 				
 				$(this).on("mouseout", function(e) {
 					if ($(e.relatedTarget).closest(".animate-control").length) return;
 					
-					$(this).find(".animation").fadeOut(350, "swing");
+					$(this).find(".animation").addClass("fading");
+					$(this).find(".animation").css({opacity: 0, visibility: "hidden"});
 					
 					$(this).off("mouseout");
 				});
@@ -2185,13 +2197,15 @@ $(function() {
 		},
 		
 		showFieldPropOptions: function(e) {
-			$(e.target).closest(".field-prop").find("ul").fadeIn(350, "swing");
+			$(e.target).closest(".field-prop").find("ul").removeClass("fading");
+			$(e.target).closest(".field-prop").find("ul").css({height: "auto", opacity: 1, visibility: "visible"});
 		},
 		
 		hideFieldPropOptions: function(e) {
 			if ($(e.relatedTarget).closest(".field-prop").attr("id") == $(e.target).closest(".field-prop").attr("id")) return;
 			
-			$(e.target).closest(".field-prop").find("ul").fadeOut(350, "swing");
+			$(e.target).closest(".field-prop").find("ul").addClass("fading");
+			$(e.target).closest(".field-prop").find("ul").css({height: 0, opacity: 0, visibility: "hidden"});
 		},
 		
 		fadeFieldPropOptions: function(e) {
@@ -2533,13 +2547,16 @@ $(function() {
 		
 		showFilterOptions: function(e) {
 			var filter = $(e.target).closest(".filter");
-			filter.find("ul").css({left: -1, top: filter.height()}).fadeIn(350, "swing");
+		
+			filter.find("ul").removeClass("fading");
+			filter.find("ul").css({left: -1, top: filter.height()}).css({height: "auto", opacity: 1, visibility: "visible"});
 		},
 		
 		hideFilterOptions: function(e) {
 			if ($(e.relatedTarget).closest(".filter").data("type") == $(e.target).closest(".filter").data("type")) return;
 			
-			$(e.target).closest(".filter").find("ul").fadeOut(350, "swing");
+			$(e.target).closest(".filter").find("ul").addClass("fading");
+			$(e.target).closest(".filter").find("ul").css({height: 0, opacity: 0, visibility: "hidden"});
 		},
 		
 		fadeFilter: function(e) {

@@ -486,10 +486,17 @@ body {
 	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	color: black;
-	display: none;
+	height: 0;
+	opacity: 0;
 	position: absolute;
 /* 	top: 53px; */
+	visibility: hidden;
 	z-index: 9999;
+	
+	transition: opacity .35s ease;
+	-moz-transition: opacity .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #plays-panel .filter li {
@@ -689,10 +696,17 @@ body {
 }
 
 #play .formations, #play .options {
-	display: none;
+	height: 0;
+	opacity: 0;
 	position: absolute;
 	top: 60px;
+	visibility: hidden;
 	z-index: 9999;
+	
+	transition: opacity .35s ease;
+	-moz-transition: opacity .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #play .formations ul {
@@ -756,11 +770,18 @@ body {
 }
 
 #play .submenu {
-	display: none;
+	height: 0;
+	opacity: 0;
 	position: absolute;
 	left: 110px;
 	top: 0;
+	visibility: hidden;
 	z-index: 9999;
+	
+	transition: opacity .35s ease;
+	-moz-transition: opacity .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #play .submenu ul {
@@ -889,10 +910,16 @@ body {
 	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	color: black;
-	display: none;
+	height: 0;
+	opacity: 0;
 	position: absolute;
-/* 	top: 53px; */
+	visibility: hidden;
 	z-index: 9999;
+	
+	transition: opacity .35s ease;
+	-moz-transition: opacity .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #field-type ul {
@@ -1154,19 +1181,25 @@ body {
 	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	cursor: auto;
-	display: none;
 	float: none;
 	font-size: 14px;
 	font-weight: normal;
 	height: 120px;
 	left: -1px;
 	line-height: 14px;
+	opacity: 0;
+	overflow: hidden;
 	padding: 5px;
 	position: absolute;
-	overflow: hidden;
 	top: 24px;
+	visibility: hidden;
 	width: 30px;
 	z-index: 9999;
+	
+	transition: opacity .35s ease, height 0s linear .35s;
+	-moz-transition: opacity .35s ease, height 0s linear .35s;
+	-webkit-transition: all .35s ease, height 0s linear .35s;
+	-o-transition: all .35s ease, height 0s linear .35s;
 }
 
 #play-contents .animation-speed {
@@ -1652,10 +1685,16 @@ body {
 	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,.3);
 	color: black;
-	display: none;
+	height: 0;
+	opacity: 0;
 	position: absolute;
-/* 	top: 53px; */
+	visibility: hidden;
 	z-index: 9999;
+	
+	transition: opacity .35s ease;
+	-moz-transition: opacity .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
 }
 
 #article .article-type ul {
@@ -2321,6 +2360,7 @@ body {
 #popup-contents .popup-title {
 	font-size: 20px;
 	font-variant: small-caps;
+	margin-bottom: 15px;
 }
 
 #popup-close {
@@ -2339,8 +2379,55 @@ body {
 #instructions .instruction-header {
 	display: block;
     font-style: italic;
-    margin-top: 20px;
     text-decoration: underline;
+}
+
+#instructions .instruction-block {
+	margin-bottom: 15px;
+}
+
+#keyboard-shortcuts {
+	display: table;
+}
+
+#keyboard-shortcuts .column {
+	display: table-cell;
+	width: 250px;
+}
+
+#keyboard-shortcuts .entry {
+	height: 20px;
+}
+
+#keyboard-shortcuts .header {
+	color: rgba(59, 191, 206, 1);
+	font-weight: bold;
+	margin-left: 85px;
+	width: 165px;
+}
+
+#keyboard-shortcuts .shortcut {
+	color: rgba(59, 191, 206, 1);
+	display: block;
+	float: left;
+	line-height: 20px;
+	text-align: right;
+	width: 65px;
+}
+
+#keyboard-shortcuts .divider {
+	display: block;
+	float: left;
+	margin: 0 2px;
+	text-align: center;
+	width: 16px;
+}
+
+#keyboard-shortcuts .action {
+	display: block;
+	float: left;
+	line-height: 20px;
+	width: 165px;
 }
 
 /* Print */
@@ -2364,6 +2451,13 @@ body {
 }
 
 /* Misc */
+
+.fading {
+	transition: opacity .35s ease, visibility 0s linear .35s !important;
+	-moz-transition: opacity .35s ease, visibility 0s linear .35s !important;
+	-webkit-transition: all .35s ease, visibility 0s linear .35s !important;
+	-o-transition: all .35s ease, visibility 0s linear .35s !important;
+}
 
 br.clear {
 	clear: both;
