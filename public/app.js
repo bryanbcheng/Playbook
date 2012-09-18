@@ -2817,6 +2817,21 @@ function keyboardShortcut(e) {
 		} else if (e.charCode === 45) { // -
 			e.preventDefault();
 			$(".remove-set").click();
+		} else if (e.charCode === 49) { // 1
+			e.preventDefault();
+			$("#team0").find(".add-player").click();
+		} else if (e.charCode === 50) { // 2
+			e.preventDefault();
+			$("#team1").find(".add-player").click();
+		} else if (e.charCode === 66 || e.charCode == 98) { // b
+			e.preventDefault();
+			$(".add-ball").click();
+		} else if (e.charCode === 67 || e.charCode == 99) { // c
+			e.preventDefault();
+			$(".add-cone").click();
+		} else if (e.charCode === 78 || e.charCode == 110) { // n
+			e.preventDefault();
+			$(".add-ann").click();
 		} else if (e.charCode === 73 || e.charCode == 105) { // i
 			e.preventDefault();
 			$(".instructions").click();

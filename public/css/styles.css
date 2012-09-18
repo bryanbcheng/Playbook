@@ -2156,8 +2156,9 @@ body {
 }
 
 #new-play-field-size .choice {
-	height: 368px;
+	height: 268px;
 	margin-left: 28px;
+	padding: 50px 0;
 	width: 146px;
 }
 
@@ -2165,25 +2166,23 @@ body {
 	margin-left: 0 !important;
 }
 
-/* 
 #new-play-field-size .icon {
-	background-image: url("/images/sportIconSet.png");
-	height: 100px;
+	background-image: url("/images/fieldSizeSet.png");
+	height: 200px;
 	margin: 0 auto;
 	width: 100px;
 }
- */
 
 #new-play-field-size .full .icon {
-/* 	background-position: -100px -200px; */
+	background-position: 0 0;
 }
 
 #new-play-field-size .half .icon {
-/* 	background-position: 0 -200px; */
+	background-position: -100px 0;
 }
 
 #new-play-field-size .empty .icon {
-/* 	background-position: -100px 0; */
+	background-position: -200px 0;
 }
 
 #new-play-options .choice {
@@ -2369,7 +2368,9 @@ body {
 }
 
 #popup-close:hover {
+	color: rgba(59, 191, 206, 1);
 	cursor: pointer;
+	text-decoration: underline;
 }
 
 #instructions {
@@ -2377,6 +2378,7 @@ body {
 }
 
 #instructions .instruction-header {
+	color: rgba(59, 191, 206, 1);
 	display: block;
     font-style: italic;
     text-decoration: underline;
@@ -2384,6 +2386,24 @@ body {
 
 #instructions .instruction-block {
 	margin-bottom: 15px;
+}
+
+#instructions .instruction-block li {
+	display: block;
+	overflow: hidden;
+	width: 500px;
+}
+
+#instructions .number {
+	display: block;
+	float: left;
+	width: 25px;
+}
+
+#instructions .instr {
+	display: block;
+	float: left;
+	width: 475px;
 }
 
 #keyboard-shortcuts {
