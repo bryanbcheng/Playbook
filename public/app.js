@@ -442,7 +442,7 @@ $(function() {
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
 				privacy: "public", // public for now, changed to protected later
-				owner: $.playbook.user ? $.playbook.user.get("_id") : null, // add prop
+				user: $.playbook.user ? $.playbook.user.get("_id") : null, // add prop
 			};
 		},
 		
@@ -1631,7 +1631,7 @@ $(function() {
 		
 		render: function(bindEvents) {
 			// Check if owner
-			this.model.set("isOwner", this.model.get("owner") === ($.playbook.user ? $.playbook.user.get("_id") : null), {silent: true});
+			this.model.set("isOwner", this.model.get("owner") && this.model.get("owner") === ($.playbook.user ? $.playbook.user.get("_id") : null), {silent: true});
 		
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			$("#play").append(this.el);
