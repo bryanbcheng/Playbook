@@ -533,6 +533,9 @@ $(function() {
 		events: {
 			"click .login"	: "login",
 			"click .logout"	: "logout",
+			
+			"click .new-play"	: "newPlay",
+			"click .view-plays"	: "viewPlays",
 			"click .profile"	: "showProfile",
 			"click .teams"	: "showTeams",
 		},
@@ -730,6 +733,24 @@ $(function() {
 			this.render();
 			
 			$.playbook.app.navigate("/", {trigger: true});
+		},
+		
+		newPlay: function() {
+			$.playbook.NewPlay.newPlay();
+			
+			coverScreen();
+			$("#whiteout").on("click", function() {
+				$("#whiteout").off("click");
+				$("#new-play-container").fadeOut(350, "swing");
+				uncoverScreen();
+			});
+			$("#new-play-container").find(".new-play-page").hide();
+			$("#new-play-field-type").fadeIn(350, "swing");
+			$("#new-play-container").fadeIn(350, "swing");
+		},
+		
+		viewPlays: function() {
+			$.playbook.app.navigate("plays", {trigger: true});
 		},
 		
 		showProfile: function() {
