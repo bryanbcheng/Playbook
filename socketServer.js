@@ -41,6 +41,7 @@ var mongourl = generate_mongo_url(mongo);
 var mongoose = require('mongoose')
   , db = mongoose.connect(mongourl)
   , User = require('./models.js').User(db)
+  ,	Team = require('./models.js').Team(db)
   , Play = require('./models.js').Play(db)
   , Set = require('./models.js').Set(db)
   , Path = require('./models.js').Path(db)
@@ -116,27 +117,17 @@ io.sockets.on('connection', function(socket) {
 			var jump = data.jump;
 			if (jump != null) delete data.jump;
 			
-			_.extend(data, {privacy: "public"});
+			if (data.owner) {
+			} else if (data._id && data._id.$in) {
+			} else {
+				_.extend(data, {privacy: "public"});
+			}
 			
 			Play.find(data, selectFields, {sort: {_id : -1}, skip: jump * pageSize, limit: pageSize}, send_result);
 		} else {
 			Play.find({privacy: "public"}, selectFields, {sort: {_id : -1}, limit: pageSize}, send_result);
 		}
 	});
-
-// var current_id; // id of first record on current page.
-// 
-// // go to page current+N
-// db.collection.find({_id: {$gt: current_id}}).
-//               skip(N * page_size).
-//               limit(page_size).
-//               sort({_id: 1});
-// 
-// // go to page current-N
-// db.collection.find({_id: {$lt: current_id}}).
-//               skip((N-1)*page_size).
-//               limit(page_size).
-//               sort({_id: 1});
 
 	// custom plays events
 	// plays:info - get info about all the public plays
@@ -156,7 +147,11 @@ io.sockets.on('connection', function(socket) {
 		
 		if(!_.isEmpty(data)) {
 			// Find based on query
-			_.extend(data, {privacy: "public"});
+			if (data.owner) {
+			} else if (data._id && data._id.$in) {
+			} else {
+				_.extend(data, {privacy: "public"});
+			}
 			
 			Play.count(data, send_result);
 		} else {

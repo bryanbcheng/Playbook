@@ -1379,22 +1379,6 @@ $(function() {
 				prevSet.trigger("show");
 		},
 		
-		// Only called from reset all
-// 		clearAll: function() {
-// 			// Remove layer from canvas
-// 			this.layer.clear();
-// 			stage.remove(this.layer);
-// 			$(this.layer.getCanvas().element).remove();
-// 			
-// 			// Remove set DOM
-// 			this.remove();
-// 			$("#" + this.model.get("_id")).remove();
-// 			
-// 			// Delete model
-// 			this.model.off();
-// 			this.model.destroy({wait: true});
-// 		},
-		
 		addPath: function(item) {
 			var pathView = new $.playbook.PathView({model: item, layer: this.layer});
 		},
@@ -1514,8 +1498,6 @@ $(function() {
 		
 		initialize: function() {
 			this.model.on('change', this.render, this);
-			
-			this.lock = {};
 		},
 		
 		render: function(bindEvents) {
@@ -2432,22 +2414,29 @@ $(function() {
 		listTemplate: $("#play-list-template").html(),
 		
 		events: {
+			"click .all-plays"	: "showAllPlays",
+			"click .recent-plays"	: "showRecentPlays",
+			"click .my-plays"	: "showMyPlays",
+		
 			"click .prev"	: "previousPage",
 			"click .next" 	: "nextPage",
 		},
 		
 		initialize: function() {
-			 _.bindAll(this, 'fetch', 'pagination', 'previousPage', 'nextPage');
+			 _.bindAll(this, 'fetch', 'showAllPlays', 'showRecentPlays', 'showMyPlays', 'pagination', 'previousPage', 'nextPage');
 			this.collection.on('refresh', this.render, this);
 			this.collection.on('filter', this.filter, this);
 			
-			this.collection.trigger("filter");
+			this.tab = "all-plays";
+			this.showAllPlays();
 		},
 		
 		render: function() {
 			var view = this;
 			
-			this.$el.html(Mustache.render(this.template, $.extend({}, this.collection.toJSON(), this.info)));
+			this.$el.html(Mustache.render(this.template, $.extend({}, this.collection.toJSON(), this.info, {user: $.playbook.user})));
+			
+			$("." + this.tab).addClass("selected");
 			
 			this.collection.each(function(play) {
 				var html = Mustache.render(view.listTemplate, play.toJSON()),
@@ -2461,18 +2450,50 @@ $(function() {
 		
 		fetch: function() {
 			this.collection.fetch({
-				data: this.data,
+				data: _.extend({}, this.data, this.filterOptions),
 				success: function(collection, response) {
 					collection.trigger('refresh');
 				}
 			});
 		},
 		
+		showAllPlays: function() {
+			if ($("#play-list-tabs").find(".selected").hasClass("all-plays")) return;
+			$("#play-list-tabs").find(".selected").removeClass("selected");
+			$("#play-list-tabs").find(".all-plays").addClass("selected");
+			this.tab = "all-plays";
+			
+			this.data = {};
+			this.filter(this.filterOptions); // keep same filter in effect
+		},
+		
+		showRecentPlays: function() {
+			if ($("#play-list-tabs").find(".selected").hasClass("recent-plays")) return;
+			$("#play-list-tabs").find(".selected").removeClass("selected");
+			$("#play-list-tabs").find(".recent-plays").addClass("selected");
+			this.tab = "recent-plays";
+			
+			if (localStorage) {
+				this.data._id = {$in: JSON.parse(localStorage.getItem("recentPlays"))};
+			}
+			this.filter(this.filterOptions);
+		},
+		
+		showMyPlays: function() {
+			if ($("#play-list-tabs").find(".selected").hasClass("my-plays")) return;
+			$("#play-list-tabs").find(".selected").removeClass("selected");
+			$("#play-list-tabs").find(".my-plays").addClass("selected");
+			this.tab = "my-plays";
+			
+			this.data = {owner: $.playbook.user};
+			this.filter(this.filterOptions);
+		},
+		
 		filter: function(options) {
-			this.data = _.extend({}, options);
+			this.filterOptions = _.extend({}, options);
 			
 			var io = this.collection.socket;
-			io.emit("plays:info", this.data, this.pagination);
+			io.emit("plays:info", _.extend({}, this.data, this.filterOptions), this.pagination);
 		},
 		
 		pagination: function(err, data) {
@@ -2598,15 +2619,6 @@ $(function() {
 				this.collection.trigger("filter", this.options);
 			}
 		},
-		
-		// fetch: function() {
-// 			this.collection.fetch({
-// 				data: {page : this.info.page - 1},
-// 				success: function(collection, response) {
-// 					collection.trigger('init');
-// 				}
-// 			});
-// 		},
 	});
 	
 	$.playbook.NewPlay = function() {
@@ -2653,6 +2665,24 @@ $(function() {
 			clearDivs();
 			
 			$("#playbook").attr("class", "play");
+			
+			if (localStorage) {
+				var recentPlays = JSON.parse(localStorage.getItem("recentPlays")) || [];
+				
+				if (recentPlays) {
+					recentPlays = $.grep(recentPlays, function(value, index) {
+						return value != _id;
+					});
+					
+					recentPlays.unshift(_id);
+					// limit recent plays to 8
+					if (recentPlays.length > 8) {
+						recentPlays.pop();
+					}
+					
+					localStorage.setItem("recentPlays", JSON.stringify(recentPlays));
+				}
+			}
 		
 			var play = new $.playbook.Play({_id: _id});
 			

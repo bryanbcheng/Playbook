@@ -14,6 +14,12 @@ var User = new Schema({
   ,	name		: String
   ,	password	: String // FOR NOW STORE RAW STRING...
   ,	token		: String
+  , teams		: [Schema.ObjectId]
+}, { strict: true });
+
+var Team = new Schema({
+	name		: String
+  ,	players		: [Schema.ObjectId]
 }, { strict: true });
 
 var Article = new Schema({
@@ -77,6 +83,11 @@ var Play = new Schema({
 mongoose.model('User', User);
 exports.User = function(db) {
 	return db.model('User');
+};
+
+mongoose.model('Team', Team);
+exports.Team = function(db) {
+	return db.model('Team');
 };
 
 mongoose.model('Play', Play);

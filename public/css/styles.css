@@ -267,10 +267,43 @@ body {
 
 }
 
+#play-list-tabs {
+	margin: 15px 0 0 15px;
+	overflow: hidden;
+}
+
+#play-list-tabs .tab {
+	border: 1px solid #CDCDCD;
+	border-bottom: none;
+	border-radius: 5px 5px 0 0;
+	float: left;
+	height: 30px;
+	line-height: 30px;
+	margin-right: 15px;
+	padding: 0 5px;
+	text-align: center;
+	width: 100px;
+	
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
+}
+
+#play-list-tabs .tab:hover {
+	background-color: rgba(59, 191, 206, 0.25);
+	color: #000000;
+	cursor: pointer;
+}
+
+#play-list-tabs .selected {
+	background-color: rgba(59, 191, 206, 1);
+	color: #FFFFFF;
+}
+
 #play-list {
 	border: 1px solid #CDCDCD;
 	border-radius: 5px;
-	margin-top: 15px;
 }
 
 #play-list li {
@@ -2404,6 +2437,30 @@ body {
 	display: block;
 	float: left;
 	width: 475px;
+}
+
+#faq {
+
+}
+
+#faq .faq-list {
+	height: 365px;
+	overflow: auto;
+}
+
+#faq .faq-item {
+	margin-bottom: 15px;
+}
+
+#faq .question {
+	color: rgba(59, 191, 206, 1);
+	font-style: italic;
+	line-height: 20px;
+	text-decoration: underline;
+}
+
+#faq .answer {
+	line-height: 20px;
 }
 
 #keyboard-shortcuts {

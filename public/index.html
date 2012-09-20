@@ -337,6 +337,11 @@
 	
 	<script type="text/template" id="play-collection-template">
 		<h2>Plays</h2>
+		<div id="play-list-tabs">
+			<div class="tab all-plays">All Plays</div>
+			<div class="tab recent-plays">Recent Plays</div>
+			{{#user}}<div class="tab my-plays">My Plays</div>{{/user}}
+		</div>
 		<div id="play-list"></div>
 		<div id="pagination">
 			{{#prev}}<div class="button prev icon-half-thin-arrow-left"></div>{{/prev}}
@@ -519,16 +524,6 @@
 					</ul>
 				</div>
 			</div>
-			<!-- 
-<div class="action-container reset-play" title="Reset Play">
-				<div class="action-icon icon-half-repeat"></div>
-				<div class="action-name">Reset</div>
-			</div>
-			<div class="action-container print-play" title="Print Play">
-				<div class="action-icon icon-half-print"></div>
-				<div class="action-name">Print</div>
-			</div>
- -->
 		</div>
 		<div class="play-attributes">
 			<div class="name" title="Play Name" contenteditable="true">
@@ -814,8 +809,30 @@
 	</script>
 	
 	<script type="text/template" id="faq-template">
-		<h1 class="popup-title">F.A.Q.:</h1>
-		COMING SOON!
+		<div id="faq">
+			<h1 class="popup-title">F.A.Q.:</h1>
+			<ul class="faq-list">
+				<li class="faq-item">
+					<div class="question">How do I save my play?</div>
+					<div class="answer">No need to worry about saving, everything is saved automatically!</div>
+				</li>
+				<li class="faq-item">
+					<div class="question">How do I prevent other people from seeing my play?</div>
+					<div class="answer">Plays are set to protected by default, see below for what each privacy setting entails. Only the owner can change the privacy setting.<br><br>
+					Public - Anyone can search for and access these plays. The owner may lock the play to prevent everyone from editing.<br>
+					Protected - These plays will not appear in search results, but anyone with the link can still access the play.<br>
+					Private - These will not appear in search results and a user cannot access them even with a link, unless they are the owner.</div>
+				</li>
+				<li class="faq-item">
+					<div class="question">Help! What do the dashed lines mean?</div>
+					<div class="answer">The dashed lines are an indication the the object has moved in the current set and where they moved from. On the contrary, the arrows point to where the objects will move toward for the next set.</div>
+				</li>
+				<li class="faq-item">
+					<div class="question">How do I draw a curved path?</div>
+					<div class="answer">Sorry as of right now, there is no way of drawing curved paths, but that may change in a future release, so be sure to stay tuned.</div>
+				</li>
+			</ul>
+		</div>
 	</script>
 	
 	<script type="text/template" id="keyboard-shortcuts-template">
@@ -905,7 +922,6 @@
 					<span class="action">Show Keyboard Shortcuts</span>
 				</li>
 			</ul>
-		</section>
 		</section>
 	</script>
 	
