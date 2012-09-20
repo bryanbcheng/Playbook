@@ -10,7 +10,30 @@ $(function() {
 	$.playbook.User = Backbone.Model.extend({
 		idAttribute: "_id",
 		
-		socket: socket
+		initialize: function() {
+			_.bindAll(this, 'serverChange');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+			}
+			
+			this.on("addIoBind", this.addIoBind, this);
+		},
+		
+		urlRoot: "user",
+		
+		socket: socket,
+		
+		addIoBind: function() {
+			this.ioBind('update', this.serverChange, this);
+		},
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+			
+			this.trigger("change");
+		},
 	});
 	
 	$.playbook.Article = Backbone.RelationalModel.extend({
@@ -419,7 +442,7 @@ $(function() {
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
 				privacy: "public", // public for now, changed to protected later
-				user: $.playbook.user, // add prop
+				owner: $.playbook.user ? $.playbook.user.get("_id") : null, // add prop
 			};
 		},
 		
@@ -510,10 +533,13 @@ $(function() {
 		events: {
 			"click .login"	: "login",
 			"click .logout"	: "logout",
+			"click .profile"	: "showProfile",
+			"click .teams"	: "showTeams",
 		},
 		
 		initialize: function() {
 			_.bindAll(this, 'render', 'loginScreen', 'closeLoginScreen', 'loginCallback', 'signupCallback', 'logout');
+			
 			// show login div
 			if (localStorage) {
 				var userData = JSON.parse(localStorage.getItem("userData"));
@@ -521,7 +547,10 @@ $(function() {
 				if (userData) {
 					// assume logged in for now
 					this.model = new $.playbook.User(userData);
-					$.playbook.user = userData._id;
+					$.playbook.user = this.model;
+					
+					this.model.on('change', this.render, this);
+					
 					this.render();
 // 					socket.emit("user:login", user, loginCallback);
 				} else {
@@ -534,7 +563,7 @@ $(function() {
 		
 		render: function() {
 			this.$el.html(Mustache.render(this.template, this.model ? this.model.toJSON() : {_id : null}));
-			$("#user-panel").html(this.el);
+			$("#user-control-panel").html(this.el);
 			
 			this.delegateEvents();
 			
@@ -665,7 +694,7 @@ $(function() {
 				}
 				
 				this.model = new $.playbook.User(result);
-				$.playbook.user = result._id;
+				$.playbook.user = this.model;
 				
 				this.closeLoginScreen();
 			}
@@ -680,7 +709,9 @@ $(function() {
 				localStorage.setItem("userData", JSON.stringify(result));
 				
 				this.model = new $.playbook.User(result);
-				$.playbook.user = result._id;
+				$.playbook.user = this.model;
+				
+				this.model.trigger("addIoBind");
 				
 				this.closeLoginScreen();
 			}
@@ -701,8 +732,106 @@ $(function() {
 			$.playbook.app.navigate("/", {trigger: true});
 		},
 		
+		showProfile: function() {
+			$.playbook.app.navigate("user/" + $.playbook.user.get("_id"), {trigger: true});
+		},
+		
+		showTeams: function() {
+			$.playbook.app.navigate("/", {trigger: true});
+		},
+		
 		getUser: function() {
 			return this.model ? this.model.get("_id") : null;
+		},
+	});
+	
+	$.playbook.ProfileView = Backbone.View.extend({
+		el: $("#user-container"),
+	
+		tagName: "div",
+		className: "profile-view",
+		
+		template: $("#profile-template").html(),
+		
+		events: {
+			"click .update"	: "updateProfile",
+// 			"blur .name"		: "updateName",
+		},
+		
+		initialize: function() {
+			this.model.on('change', this.render, this);
+			
+			this.model.trigger("change");
+		},
+		
+		render: function(bindEvents) {
+			// Check if user
+			this.model.set("self", this.model.get("_id") === ($.playbook.user ? $.playbook.user.get("_id") : null), {silent: true});
+		
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			
+			return this;
+		},
+		
+		updateProfile: function() {
+			var user = {};
+			// ignore email since readonly
+			user.name = $("#user-container").find(".name-field").val();
+			user.old = $("#user-container").find(".old-password-field").val();
+			user.password = $("#user-container").find(".new-password-field").val();
+			user.confirm = $("#user-container").find(".confirm-new-password-field").val();
+			
+			// Check conditions
+			var warnings = [];
+			
+			if (user.old === "" && (user.password || user.confirm)) {
+				warnings.push("Please enter current password.")
+			}
+			
+			if (user.password !== user.confirm) {
+				warnings.push("New passwords do not match.");
+			}
+			
+			if (warnings.length) {
+				$("#user-container").find(".success").html("");
+				var warning = $("#user-container").find(".warning");
+				warning.html("");
+				$.each(warnings, function(index, value) {
+					warning.append("<li>" + value + "</li>");
+				});
+				return;
+			}
+			
+			var saveAttr = {};
+			if (user.name && this.model.get("name") !== user.name) {
+				saveAttr.name = user.name;
+			}
+			
+			if (user.old && user.password && user.confirm) {
+				saveAttr.old = user.old;
+				saveAttr.password = user.password;
+			}
+			
+			// Don't save if no changes
+			if (_.isEmpty(saveAttr)) {
+				return;
+			}
+			
+			this.model.save(saveAttr, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					model.unset("old", {silent: true});
+					model.unset("password", {silent: true});
+					localStorage.setItem("userData", JSON.stringify(model.toJSON()));
+					model.trigger("change");
+					$("#user-container").find(".success").html("Update Successful!");
+				},
+				error: function(model, response) {
+					$("#user-container").find(".success").html("");
+					$("#user-container").find(".warning").html("<li>" + response + "</li>");
+				},
+			});
 		},
 	});
 	
@@ -1502,7 +1631,7 @@ $(function() {
 		
 		render: function(bindEvents) {
 			// Check if owner
-			this.model.set("isOwner", this.model.get("owner") === $.playbook.user, {silent: true});
+			this.model.set("isOwner", this.model.get("owner") === ($.playbook.user ? $.playbook.user.get("_id") : null), {silent: true});
 		
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			$("#play").append(this.el);
@@ -2434,9 +2563,13 @@ $(function() {
 		render: function() {
 			var view = this;
 			
-			this.$el.html(Mustache.render(this.template, $.extend({}, this.collection.toJSON(), this.info, {user: $.playbook.user})));
+			this.$el.html(Mustache.render(this.template, $.extend({}, this.collection.toJSON(), this.info, {user: $.playbook.user ? $.playbook.user.get("_id") : null})));
 			
 			$("." + this.tab).addClass("selected");
+			
+			if (this.collection.length === 0) {
+				
+			}
 			
 			this.collection.each(function(play) {
 				var html = Mustache.render(view.listTemplate, play.toJSON()),
@@ -2474,7 +2607,7 @@ $(function() {
 			this.tab = "recent-plays";
 			
 			if (localStorage) {
-				this.data._id = {$in: JSON.parse(localStorage.getItem("recentPlays"))};
+				this.data = {_id: {$in: JSON.parse(localStorage.getItem("recentPlays"))}};
 			}
 			this.filter(this.filterOptions);
 		},
@@ -2485,7 +2618,7 @@ $(function() {
 			$("#play-list-tabs").find(".my-plays").addClass("selected");
 			this.tab = "my-plays";
 			
-			this.data = {owner: $.playbook.user};
+			this.data = {owner: $.playbook.user.get("_id")};
 			this.filter(this.filterOptions);
 		},
 		
@@ -2626,7 +2759,7 @@ $(function() {
 		
 		return {
 			newPlay: function() {
-				play = new $.playbook.Play({owner: $.playbook.user});
+				play = new $.playbook.Play({owner: $.playbook.user ? $.playbook.user.get("_id") : null});
 			},
 			
 			play: function() {
@@ -2637,10 +2770,12 @@ $(function() {
 	
 	$.playbook.Router = Backbone.Router.extend({
 		routes: {
-			"":					"home",
-			"plays":			"show_plays",
-			"play/:_id":		"show_play",
-			"error/:status":	"error",
+			""				: "home",
+			"plays"			: "showPlays",
+			"play/:_id"		: "showPlay",
+			"user/:_id"		: "showUser",
+			"team/:_id"		: "showTeam",
+			"error/:status"	: "error",
 		},
 		
 		home: function() {
@@ -2649,7 +2784,7 @@ $(function() {
 			$("#playbook").attr("class", "home");
 		},
 		
-		show_plays: function() {
+		showPlays: function() {
 			clearDivs();
 			
 			$("#playbook").attr("class", "plays");
@@ -2660,7 +2795,7 @@ $(function() {
 			var playsFilterView = new $.playbook.PlaysFilterView({collection: plays});
 		},
 		
-		show_play: function(_id) {
+		showPlay: function(_id) {
 			// clear previous divs
 			clearDivs();
 			
@@ -2689,6 +2824,34 @@ $(function() {
 			var playView = new $.playbook.PlayView({model: play});
 			
 			var playContentsView = new $.playbook.PlayContentsView({model: play});
+		},
+		
+		showUser: function(_id) {
+			clearDivs();
+			
+			$("#playbook").attr("class", "user");
+			
+			if (_id === ($.playbook.user ? $.playbook.user.get("_id") : null)) {
+				var profileView = new $.playbook.ProfileView({model: $.playbook.user});
+			} else {
+				$.playbook.app.navigate("error/401", {trigger: true});
+			}
+			
+// 			var plays = new $.playbook.PlayCollection();
+			
+// 			var playsView = new $.playbook.PlayCollectionView({collection: plays});
+// 			var playsFilterView = new $.playbook.PlaysFilterView({collection: plays});
+		},
+		
+		showTeam: function(_id) {
+			clearDivs();
+			
+			$("#playbook").attr("class", "team");
+			
+// 			var plays = new $.playbook.PlayCollection();
+			
+// 			var playsView = new $.playbook.PlayCollectionView({collection: plays});
+// 			var playsFilterView = new $.playbook.PlaysFilterView({collection: plays});
 		},
 		
 		error: function(status) {

@@ -63,7 +63,7 @@ io.sockets.on('connection', function(socket) {
 			if (user.password !== data.password) {
 				return callback("The email or password you entered is incorrect.");
 			} else {
-				var authData = {_id : user._id, name: user.name, token : user.token, remember: data.remember};
+				var authData = {_id : user._id, email: user.email, name: user.name, token : user.token, remember: data.remember, teams: user.teams};
 				
 				callback(null, authData);
 			}
@@ -85,15 +85,44 @@ io.sockets.on('connection', function(socket) {
 		var newUser = new User({
 			email: data.email,
 			name: data.name, 
-			password: data.password, // HASH SOON
-			token: token
+			password: data.password, // TODO: HASH SOON
+			token: token,
+			teams: []
 		});
 		
 		newUser.save();
 		
 		//socket.broadcast.emit('users:create', newUser);
-		var authData = {_id : newUser._id, name: user.name, token : newUser.token};
+		var authData = {_id : newUser._id, email: newUser.email, name: newUser.name, token : newUser.token, teams: newUser.teams};
 		callback(null, authData);
+	});
+
+	socket.on('user:update', function(data, callback) {
+		User.findOne({'_id' :data._id}, function(err, user) {
+			if (err)
+				return callback(err);
+			else if (!user) {
+				return callback(new Error("Could not find user with _id=" + user._id));
+			}
+			console.log(data);
+			if (data.password && user.password !== data.old) {
+				return callback("The current password you entered is incorrect.");
+			} else {
+				for (var attr in data) {
+					if (attr !== '_id')
+						user[attr] = data[attr];
+				}
+				
+				// TODO: hash password
+				user.save();
+				
+				var authData = {_id : user._id, email: user.email, name: user.name, token : user.token, teams: user.teams};
+				console.log(authData);
+				//socket.emit('user/' + data._id + ':update', user);
+				socket.broadcast.emit('user/' + data._id + ':update', authData);
+				callback(null, authData);
+			}
+		});
 	});
 
 	// plays:read
@@ -720,6 +749,12 @@ var errorResponse = function(status, message) {
 /* Routes */
 
 app.get('/', function(req, res) {
+	res.sendfile(__dirname + '/public/index.html');
+});
+app.get('/user/:_id', function(req, res) {
+	res.sendfile(__dirname + '/public/index.html');
+});
+app.get('/team/:_id', function(req, res) {
 	res.sendfile(__dirname + '/public/index.html');
 });
 app.get('/plays', function(req, res) {

@@ -35,7 +35,7 @@
 		<div id="header-contents">
 			<img id="icon" src="/images/playbookIcon.png" />
 			<h1>PlayBook</h1>
-			<div id="user-panel">
+			<div id="user-control-panel">
 			</div>
 		</div>
 	</div>
@@ -59,8 +59,9 @@
 			<div id="play-container" class="left-container">
 				<div id="play"></div>
 				<div id="canvas"></div>
-				
 			</div>
+			<div id="user-container" class="left-container"></div>
+			<div id="team-container" class="left-container"></div>
 			<div id="error-container" class="left-container">
 			</div>
 		</div>
@@ -75,12 +76,13 @@
 				<div id="annotation"></div>
 				<div id="article"></div>
 			</div>
+			<div id="user-panel" class="right-container"></div>
+			<div id="team-panel" class="right-container"></div>
 			<div id="error-panel" class="right-container">
 			</div>
 		</div>
 		<br class="clear" />
 	</div>
-	
 	
 	<div id="new-play-container">
 		<div id="new-play-field-type" class="new-play-page">
@@ -259,13 +261,23 @@
 	
 	<!-- Templates -->
 	
+	<!-- User Templates -->
 	<script type="text/template" id="user-template">
 		<!-- Logged In -->
 		{{#_id}}
 		<div class="name">{{name}}</div>
+		<!-- My Profile -->
+		<div class="button profile" title="My Profile">
+			<div class="icon-user"></div>
+			<span>Profile</span>
+		</div>
 		<!-- My teams -->
+		<div class="button teams" title="My Teams">
+			<div class="icon-group"></div>
+			<span>Teams</span>
+		</div>
 		<!-- Account settings -->
-		<div class="button logout">
+		<div class="button logout" title="Logout">
 			<div class="icon-power"></div>
 			<span>Log Out</span>
 		</div>
@@ -335,6 +347,50 @@
 		</div>
 	</script>
 	
+	<script type="text/tempalte" id="profile-template">
+		<div class="profile-view">
+			<!-- Self Profile -->
+			{{#self}}
+			<h3>Profile Settings</h3>
+			<div class="success"></div>
+			<div class="warning"></div>
+			<div class="field">
+				<div class="icon-envelope"></div>
+				<input class="email-field" value="{{email}}" readonly="readonly"></input>
+				<br class="clear" />
+			</div>
+			<div class="field">
+				<div class="icon-vcard"></div>
+				<input class="name-field" value="{{name}}"></input>
+				<br class="clear" />
+			</div>
+			<div class="field">
+				<div class="icon-unlock"></div>
+				<input class="old-password-field" type="password" placeholder="Current Password:"></input>
+				<br class="clear" />
+			</div>
+			<div class="field">
+				<div class="icon-lock"></div>
+				<input class="new-password-field" type="password" placeholder="New Password:"></input>
+				<br class="clear" />
+			</div>
+			<div class="field">
+				<div class="icon-rotation-lock"></div>
+				<input class="confirm-new-password-field" type="password" placeholder="Confirm New Password:"></input>
+				<br class="clear" />
+			</div>
+			<div class="click-button update">Update</div>
+<!-- 			<div class="click-button cancel">Cancel</div> -->
+			<br class="clear" />
+			{{/self}}
+			<!-- Other's Profile -->
+			{{^self}}
+			{{/self}}
+		</div>
+	</script>
+	
+	<!-- Plays Templates -->
+	
 	<script type="text/template" id="play-collection-template">
 		<h2>Plays</h2>
 		<div id="play-list-tabs">
@@ -395,6 +451,8 @@
 			</ul>
 		</div>
 	</script>
+	
+	<!-- Play Templates -->
 	
 	<script type="text/template" id="play-template">
 		<div class="actions">
