@@ -36,6 +36,49 @@ $(function() {
 		},
 	});
 	
+	$.playbook.Team = Backbone.Model.extend({
+		idAttribute: "_id",
+		
+		initialize: function() {
+			_.bindAll(this, 'serverChange');
+			if (!this.isNew()) {
+				this.ioBind('update', this.serverChange, this);
+			}
+			
+			this.on("addIoBind", this.addIoBind, this);
+		},
+		
+		urlRoot: "team",
+		
+		socket: socket,
+		
+		addIoBind: function() {
+			this.ioBind('update', this.serverChange, this);
+		},
+		
+		serverChange: function(data) {
+			// Useful to prevent loops when dealing with client-side updates (ie: forms).
+			data.fromServer = true;
+			this.set(data);
+			
+			this.trigger("change");
+		},
+	});
+	
+	$.playbook.Teams = Backbone.Collection.extend({
+		model: $.playbook.Team,
+		
+		initialize: function() {
+			
+		},
+		
+		url: "teams",
+		
+		socket: socket,
+		
+		
+	});
+	
 	$.playbook.Article = Backbone.RelationalModel.extend({
 		idAttribute: "_id",
 		
@@ -758,7 +801,11 @@ $(function() {
 		},
 		
 		showTeams: function() {
-			$.playbook.app.navigate("/", {trigger: true});
+			if (!this.teamsView) {
+				this.teamsView = new $.playbook.TeamsView();
+			} else {
+				this.teamsView.toggle();
+			}
 		},
 		
 		getUser: function() {
@@ -776,7 +823,6 @@ $(function() {
 		
 		events: {
 			"click .update"	: "updateProfile",
-// 			"blur .name"		: "updateName",
 		},
 		
 		initialize: function() {
@@ -853,6 +899,158 @@ $(function() {
 					$("#user-container").find(".warning").html("<li>" + response + "</li>");
 				},
 			});
+		},
+	});
+	
+	$.playbook.TeamsView = Backbone.View.extend({
+		tagName: "div",
+		className: "teams-view",
+		
+		template: $("#teams-template").html(),
+		
+		events: {
+			"click .team-link"	: "showTeam",
+			"click .join-team"	: "showJoinTeam",
+			"click .create-team"	: "showCreateTeam",
+			
+			"click .join"	: "joinTeam",
+			"click .create"	: "createTeam",
+			"click .cancel"	: "hideForms",
+		},
+		
+		initialize: function() {
+			this.collection = new $.playbook.Teams();
+			this.showOrHide = false;
+		
+			_.bindAll(this, 'show', 'toggle', 'checkMouse');
+			this.collection.on('refresh', this.render, this);
+			
+			this.collection.fetch({
+				data: _.extend({}, {players: $.playbook.user.get("_id")}),
+				success: function(collection, response) {
+					collection.trigger('refresh');
+				}
+			});
+		},
+		
+		render: function() {
+			var view = this;
+			this.$el.html(Mustache.render(this.template, {teams: this.collection.toJSON()}));
+			
+			if (this.collection.length === 0) {
+				this.$el.find("#team-list").append("<li class='team-item'><span>No Teams Joined...</span></li>");
+			}
+			
+// 			$("#user-control-panel .teams-view").remove();
+			$("#user-control-panel").append(this.el);
+			
+			this.show();
+		},
+		
+		show: function() {
+			// If already showing
+			if (this.showOrHide) return;
+			
+			this.showOrHide = true;
+			
+			$(document).on("mousedown", this.checkMouse);
+			this.$el.toggle(this.showOrHide);
+		},
+		
+		toggle: function() {
+			this.showOrHide = !this.showOrHide;
+			
+			if (this.showOrHide) {
+				$(document).on("mousedown", this.checkMouse);
+			} else {
+				$(document).off("mousedown", this.checkMouse);
+			}
+
+			this.$el.toggle(this.showOrHide);
+		},
+		
+		checkMouse: function(e) {
+			if ($(e.target).closest(".teams-view")[0] || $(e.target).closest(".button").hasClass("teams")) return;
+			
+			this.showOrHide = false;
+			
+			$(document).off("mousedown", this.checkMouse);
+			this.$el.toggle(this.showOrHide);
+		},
+		
+		showTeam: function(e) {
+			$.playbook.app.navigate("team/" + $(e.target).closest(".team-item").attr("id"), {trigger: true});
+		},
+		
+		showJoinTeam: function() {
+			this.$el.find(".create-team").removeClass("selected");
+			this.$el.find(".create-team-form").hide();
+			
+			this.$el.find(".join-team").addClass("selected");
+			this.$el.find(".join-team-form").show();
+		},
+		
+		showCreateTeam: function() {
+			this.$el.find(".join-team").removeClass("selected");
+			this.$el.find(".join-team-form").hide();
+			
+			this.$el.find(".create-team").addClass("selected");
+			this.$el.find(".create-team-form").show();
+		},
+
+		joinTeam: function() {
+			
+		},
+		
+		createTeam: function() {
+			var team = {};
+			team.name = $("#team-forms").find(".create-team-form").find(".name-field").val();
+			team.password = $("#team-forms").find(".create-team-form").find(".password-field").val();
+			team.confirm = $("#team-forms").find(".create-team-form").find(".confirm-password-field").val();
+			
+			// Check conditions
+			var warnings = [];
+			if (team.name === "") {
+				warnings.push("Please enter a team name.");
+			}
+			
+			if (team.password === "" || team.confirm === "") {
+				warnings.push("Please enter a password."); // TODO: correct text enter a password and confirmation???
+			} else if (team.password !== team.confirm) {
+				warnings.push("Passwords do not match.");
+			}
+			
+			if (warnings.length) {
+				var warning = $("#team-forms").find(".create-team-form").find(".warning");
+				warning.html("");
+				$.each(warnings, function(index, value) {
+					warning.append("<li>" + value + "</li>");
+				});
+				return;
+			}
+			
+			// send socket
+			var view = this;
+			var team = new $.playbook.Team({name: team.name, password: team.password, user: $.playbook.user.get("_id")});
+			team.save({}, {
+				silent: true,
+				wait: true,
+				success: function(model, response) {
+					model.unset("password", {silent: true});
+					model.unset("user", {silent: true});
+					
+					view.collection.add(model);
+					view.collection.trigger("refresh");
+				},
+				error: function(model, response) {
+					$("#team-forms").find(".create-team-form").find(".warning").html("<li>" + response + "</li>");
+				},
+			});
+		},
+		
+		hideForms: function() {
+			this.$el.find(".selected").removeClass("selected");
+			this.$el.find(".team-form").hide();
 		},
 	});
 	
@@ -2589,7 +2787,7 @@ $(function() {
 			$("." + this.tab).addClass("selected");
 			
 			if (this.collection.length === 0) {
-				
+				$("#play-list").append("<li class='empty'>No Plays Found...</li>");
 			}
 			
 			this.collection.each(function(play) {

@@ -399,6 +399,59 @@
 		</div>
 	</script>
 	
+	<script type="text/template" id="teams-template">
+		<h3>My Teams</h3>
+		<ul id="team-list">
+			{{#teams}}
+				<li id="{{_id}}" class="team-item"><a class="team-link">{{name}}</a></li>
+			{{/teams}}
+		</ul>
+		<div class="click-button join-team">Join Team</div>
+		<div class="click-button create-team">Create Team</div>
+		<br class="clear" />
+		<div id="team-forms">
+			<div class="team-form join-team-form">
+				<div class="warning"></div>
+				<div class="field">
+					<div class="icon-vcard"></div>
+					<input class="name-field" placeholder="Team Name:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-lock"></div>
+					<input class="password-field" type="password" placeholder="Team Password:"></input>
+					<br class="clear" />
+				</div>
+				<div class="click-button join">Join</div>
+				<div class="click-button cancel">Cancel</div>
+			</div>
+			<div class="team-form create-team-form">
+				<div class="warning"></div>
+				<div class="field">
+					<div class="icon-vcard"></div>
+					<input class="name-field" placeholder="Team Name:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-lock"></div>
+					<input class="password-field" type="password" placeholder="Team Password:"></input>
+					<br class="clear" />
+				</div>
+				<div class="field">
+					<div class="icon-rotation-lock"></div>
+					<input class="confirm-password-field" type="password" placeholder="Confirm Team Password:"></input>
+					<br class="clear" />
+				</div>
+				<div class="click-button create">Create</div>
+				<div class="click-button cancel">Cancel</div>
+			</div>
+		</div>
+	</script>
+	
+	<script type="text/template" id="team-template">
+	
+	</script>
+	
 	<!-- Plays Templates -->
 	
 	<script type="text/template" id="play-collection-template">

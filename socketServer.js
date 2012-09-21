@@ -97,6 +97,7 @@ io.sockets.on('connection', function(socket) {
 		callback(null, authData);
 	});
 
+	// user:update
 	socket.on('user:update', function(data, callback) {
 		User.findOne({'_id' :data._id}, function(err, user) {
 			if (err)
@@ -123,6 +124,55 @@ io.sockets.on('connection', function(socket) {
 				callback(null, authData);
 			}
 		});
+	});
+
+	// teams:read
+	socket.on('teams:read', function(data, callback) {
+		var send_result = function(err, teams) {
+			if (err) {
+				return callback(err);
+			}
+
+			callback(null, teams);
+		};
+		
+		// Makes the result of the query much smaller and faster
+		var selectFields = "name players";
+		Team.find(data, selectFields, {sort: {_id : -1}}, send_result);
+	});
+	
+	// team:create
+	socket.on('team:create', function(data, callback) {
+		var newTeam = new Team({
+			name: data.name, 
+			password: data.password,
+			players: [data.user],
+		});
+		
+		User.findById(data.user, function(err, user) {
+			if (err)
+				return callback(err);
+			else if (!user) {
+				return callback("Could not find user.");
+			}
+			
+			newTeam.save();
+			
+			user.teams.push(newTeam._id);
+			
+			//socket.broadcast.emit('team:create', newTeam);
+			callback(null, newTeam);
+		});
+	});
+	
+	// team:read
+	socket.on('team:read', function(data, callback) {
+		// DO NOTHING FOR NOW
+	});
+	
+	// team:join
+	socket.on('team:join', function(data, callback) {
+		// DO NOTHING FOR NOW
 	});
 
 	// plays:read

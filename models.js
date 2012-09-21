@@ -12,13 +12,14 @@ var mongoose = require('mongoose')
 var User = new Schema({
 	email		: { type: String, unique: true }
   ,	name		: String
-  ,	password	: String // FOR NOW STORE RAW STRING...
+  ,	password	: String // TODO: FOR NOW STORE RAW STRING...
   ,	token		: String
   , teams		: [Schema.ObjectId]
 }, { strict: true });
 
 var Team = new Schema({
-	name		: String
+	name		: { type: String, unique: true }
+  ,	password	: String // TODO: hash
   ,	players		: [Schema.ObjectId]
 }, { strict: true });
 
