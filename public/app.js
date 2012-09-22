@@ -577,6 +577,7 @@ $(function() {
 			"click .login"	: "login",
 			"click .logout"	: "logout",
 			
+			"click .name"	: "showProfile",
 			"click .new-play"	: "newPlay",
 			"click .view-plays"	: "viewPlays",
 			"click .profile"	: "showProfile",
@@ -982,6 +983,11 @@ $(function() {
 		
 		showTeam: function(e) {
 			$.playbook.app.navigate("team/" + $(e.target).closest(".team-item").attr("id"), {trigger: true});
+			
+			this.showOrHide = false;
+			
+			$(document).off("mousedown", this.checkMouse);
+			this.$el.toggle(this.showOrHide);
 		},
 		
 		showJoinTeam: function() {
@@ -2097,14 +2103,6 @@ $(function() {
 				var popupHtml = Mustache.render(popup, {contents: template});
 				
 				$("#popup-container").html($(popupHtml).html());
-				
-				$("#popup-close").on("click", function(e) {
-					$("#whiteout").off("click");
-					$("#popup-container").fadeOut(350, "swing", function() {
-						$("#popup-container").remove();
-					});
-					uncoverScreen();
-				});
 			} else {
 				var popup = $("#popup-template").html();
 				$("body").append(Mustache.render(popup, {contents: template}));
@@ -2119,15 +2117,26 @@ $(function() {
 					uncoverScreen();
 				});
 				
-				$("#popup-close").on("click", function(e) {
-					$("#whiteout").off("click");
-					$("#popup-container").fadeOut(350, "swing", function() {
-						$("#popup-container").remove();
-					});
-					uncoverScreen();
+				$("#popup-container").fadeIn(350, "swing");	
+			}
+			
+			$("#popup-close").on("click", function(e) {
+				$("#whiteout").off("click");
+				$("#popup-container").fadeOut(350, "swing", function() {
+					$("#popup-container").remove();
+				});
+				uncoverScreen();
+			});
+			
+			if (helpOption === "report-issue") {
+				$("#report-issue .submit").on("click", function() {
+					// SEND ISSUE
+					$("#report-issue .warning").html("SORRY, coming soon!");
 				});
 				
-				$("#popup-container").fadeIn(350, "swing");	
+				$("#report-issue .cancel").on("click", function() {
+					$("#popup-close").click();
+				});
 			}
 		},
 	});
