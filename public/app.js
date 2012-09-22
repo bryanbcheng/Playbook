@@ -922,7 +922,7 @@ $(function() {
 			this.collection = new $.playbook.Teams();
 			this.showOrHide = false;
 		
-			_.bindAll(this, 'show', 'toggle', 'checkMouse');
+			_.bindAll(this, 'show', 'toggle', 'checkMouse', 'showJoinTeam', 'showCreateTeam', 'joinTeam', 'joinCallback', 'createTeam', 'hideForms');
 			this.collection.on('refresh', this.render, this);
 			
 			this.collection.fetch({
@@ -999,7 +999,45 @@ $(function() {
 		},
 
 		joinTeam: function() {
+			var team = {};
+			team.name = $("#team-forms").find(".join-team-form").find(".name-field").val();
+			team.password = $("#team-forms").find(".join-team-form").find(".password-field").val();
 			
+			// Check conditions
+			var warnings = [];
+			if (team.name === "") {
+				warnings.push("Please enter a team name.");
+			}
+			
+			if (team.password === "") {
+				warnings.push("Please enter a password."); // TODO: correct text enter a password and confirmation???
+			}
+			
+			if (warnings.length) {
+				var warning = $("#team-forms").find(".join-team-form").find(".warning");
+				warning.html("");
+				$.each(warnings, function(index, value) {
+					warning.append("<li>" + value + "</li>");
+				});
+				return;
+			}
+			
+			team.user = $.playbook.user.get("_id");
+			// send socket
+			var view = this;
+			socket.emit("team:join", team, this.joinCallback);
+		},
+		
+		joinCallback: function(err, result) {
+			if (err) {
+				$("#team-forms").find(".join-team-form").find(".warning").html("<li>" + err + "</li>");
+			} else {
+				// Join Successful
+				var team = new $.playbook.Team(result);
+				
+				this.collection.add(team);
+				this.collection.trigger("refresh");
+			}
 		},
 		
 		createTeam: function() {

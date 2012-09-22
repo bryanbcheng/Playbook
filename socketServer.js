@@ -172,7 +172,22 @@ io.sockets.on('connection', function(socket) {
 	
 	// team:join
 	socket.on('team:join', function(data, callback) {
-		// DO NOTHING FOR NOW
+		Team.findOne({name: data.name}, function(err, team) {			
+			if (err)
+				return callback(err);
+			else if (!team) {
+				return callback("The team name or password you entered is incorrect.");
+			}
+			
+			if (team.password !== data.password) {
+				return callback("The team name or password you entered is incorrect.");
+			} else {
+				if (_.include(team.players, data.user)) {
+					callback("You have already joined the team.");	
+				}
+// 				callback(null, authData);
+			}
+		});
 	});
 
 	// plays:read
