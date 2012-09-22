@@ -1024,7 +1024,6 @@ $(function() {
 			
 			team.user = $.playbook.user.get("_id");
 			// send socket
-			var view = this;
 			socket.emit("team:join", team, this.joinCallback);
 		},
 		

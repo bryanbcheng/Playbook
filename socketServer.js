@@ -159,6 +159,7 @@ io.sockets.on('connection', function(socket) {
 			newTeam.save();
 			
 			user.teams.push(newTeam._id);
+			user.save();
 			
 			//socket.broadcast.emit('team:create', newTeam);
 			callback(null, newTeam);
@@ -181,12 +182,28 @@ io.sockets.on('connection', function(socket) {
 			
 			if (team.password !== data.password) {
 				return callback("The team name or password you entered is incorrect.");
-			} else {
-				if (_.include(team.players, data.user)) {
-					callback("You have already joined the team.");	
-				}
-// 				callback(null, authData);
 			}
+			
+			var added = team.players.addToSet(data.user);
+			
+			if (_.isEmpty(added)) {
+				return callback("You have already joined this team.");
+			}
+			
+			User.findById(data.user, function(err, user) {
+				if (err)
+					return callback(err);
+				else if (!user) {
+					return callback("Could not find user.");
+				}
+				
+				team.save();
+				
+				user.teams.push(team._id);
+				user.save();
+				
+				callback(null, team);
+			});
 		});
 	});
 
