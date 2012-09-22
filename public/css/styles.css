@@ -188,6 +188,7 @@ body {
 
 #team-list .team-item a {
 	color: rgba(59, 191, 206, 1);
+	text-transform: capitalize;
 
 	transition: all .35s ease;
 	-moz-transition: all .35s ease;

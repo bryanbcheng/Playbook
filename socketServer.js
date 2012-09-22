@@ -156,7 +156,7 @@ io.sockets.on('connection', function(socket) {
 	// team:create
 	socket.on('team:create', function(data, callback) {
 		var newTeam = new Team({
-			name: data.name, 
+			name: data.name.toLowerCase(), 
 			password: bcrypt.hashSync(data.password, saltRounds),
 			players: [data.user],
 		});
@@ -185,7 +185,7 @@ io.sockets.on('connection', function(socket) {
 	
 	// team:join
 	socket.on('team:join', function(data, callback) {
-		Team.findOne({name: data.name}, function(err, team) {			
+		Team.findOne({name: data.name.toLowerCase()}, function(err, team) {			
 			if (err)
 				return callback(err);
 			else if (!team) {
