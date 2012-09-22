@@ -773,6 +773,8 @@ $(function() {
 			this.model = null;
 			$.playbook.user = null;
 			
+			this.teamsView = null;
+			
 			this.render();
 			
 			$.playbook.app.navigate("/", {trigger: true});

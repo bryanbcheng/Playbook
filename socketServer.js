@@ -2,6 +2,7 @@
 var express = require('express'),
 	_ = require('underscore'),
 	util = require('util'),
+	bcrypt = require('bcrypt'),
 	crypto = require('crypto');
 
 var app = express();
@@ -53,14 +54,14 @@ var pageSize = 8;
 io.sockets.on('connection', function(socket) {
 	// user:login
 	socket.on('user:login', function(data, callback) {
-		User.findOne({email: data.email}, function(err, user) {			
+		User.findOne({email: data.email.toLowerCase()}, function(err, user) {			
 			if (err)
 				return callback(err);
 			else if (!user) {
-				return callback("The email or password you entered is incorrect.");
+				return callback("The email or password you entered is incorrect.1");
 			}
 			
-			if (user.password !== data.password) {
+			if (!bcrypt.compareSync(data.password, user.password)) {
 				return callback("The email or password you entered is incorrect.");
 			} else {
 				var authData = {_id : user._id, email: user.email, name: user.name, token : user.token, remember: data.remember, teams: user.teams};
@@ -71,30 +72,37 @@ io.sockets.on('connection', function(socket) {
 	});
 	
 	// user:signup
+	var saltRounds = 10;
 	socket.on('user:signup', function(data, callback) {
-		// Generate remember me token
-		try {
-			var buf = crypto.randomBytes(12);
-			var token = buf.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
-		} catch (ex) {
-		  // handle error
-		}
-		
-		// Hash password
-		
-		var newUser = new User({
-			email: data.email,
-			name: data.name, 
-			password: data.password, // TODO: HASH SOON
-			token: token,
-			teams: []
+		User.findOne({email: data.email.toLowerCase()}, function(err, user) {
+			if (err)
+				return callback(err);
+			else if (user) {
+				return callback("Email already in use. Try again?");
+			}
+			
+			// Generate remember me token
+			try {
+				var buf = crypto.randomBytes(12);
+				var token = buf.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
+			} catch (ex) {
+			  // handle error
+			}
+			
+			var newUser = new User({
+				email: data.email.toLowerCase(),
+				name: data.name, 
+				password: bcrypt.hashSync(data.password, saltRounds),
+				token: token,
+				teams: []
+			});
+			
+			newUser.save();
+			
+			//socket.broadcast.emit('users:create', newUser);
+			var authData = {_id : newUser._id, email: newUser.email, name: newUser.name, token : newUser.token, teams: newUser.teams};
+			callback(null, authData);
 		});
-		
-		newUser.save();
-		
-		//socket.broadcast.emit('users:create', newUser);
-		var authData = {_id : newUser._id, email: newUser.email, name: newUser.name, token : newUser.token, teams: newUser.teams};
-		callback(null, authData);
 	});
 
 	// user:update
@@ -105,16 +113,20 @@ io.sockets.on('connection', function(socket) {
 			else if (!user) {
 				return callback(new Error("Could not find user with _id=" + user._id));
 			}
-			console.log(data);
-			if (data.password && user.password !== data.old) {
+			
+			if (data.password && !bcrypt.compareSync(data.old, user.password)) {
 				return callback("The current password you entered is incorrect.");
 			} else {
 				for (var attr in data) {
-					if (attr !== '_id')
-						user[attr] = data[attr];
+					if (attr !== '_id') {
+						if (attr === 'password') {
+							user.password = bcrypt.hashSync(data.password, saltRounds);
+						} else {
+							user[attr] = data[attr];
+						}
+					}
 				}
 				
-				// TODO: hash password
 				user.save();
 				
 				var authData = {_id : user._id, email: user.email, name: user.name, token : user.token, teams: user.teams};
@@ -145,7 +157,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('team:create', function(data, callback) {
 		var newTeam = new Team({
 			name: data.name, 
-			password: data.password,
+			password: bcrypt.hashSync(data.password, saltRounds),
 			players: [data.user],
 		});
 		
@@ -180,7 +192,7 @@ io.sockets.on('connection', function(socket) {
 				return callback("The team name or password you entered is incorrect.");
 			}
 			
-			if (team.password !== data.password) {
+			if (!bcrypt.compareSync(data.password, team.password)) {
 				return callback("The team name or password you entered is incorrect.");
 			}
 			
