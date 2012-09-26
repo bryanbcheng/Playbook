@@ -61,6 +61,14 @@ var Set = new Schema({
   , annotations	: [Annotation]
 }, { strict: true });
 
+var Owner = new Schema({
+	ownerId: Schema.ObjectId
+  ,	ownerType: { type: String, enum: ['user', 'team'] }
+}, {
+	strict: true
+  ,	_id: false
+});
+
 var Play = new Schema({
 	name		: String
   , description	: String
@@ -72,7 +80,7 @@ var Play = new Schema({
   , sets		: [Set]
   , privacy		: { type : String, enum: ['public', 'protected', 'private'], required: true }
   , categories	: [String]
-  , owner		: Schema.ObjectId
+  , owners		: [Owner]
 }, { strict: true });
 
 // validate teamColors, teamShapes length == 2
@@ -94,6 +102,11 @@ exports.Team = function(db) {
 mongoose.model('Play', Play);
 exports.Play = function(db) {
 	return db.model('Play');
+};
+
+mongoose.model('Owner', Owner);
+exports.Owner = function(db) {
+	return db.model('Owner');
 };
 
 mongoose.model('Set', Set);

@@ -494,7 +494,7 @@ $(function() {
 				fieldSize: $("#field-size").data("value") ? $("#field-size").data("value") : "full",
 				teamColors: ["#0000ff", "#ff0000", ],
 				teamShapes: ["circle", "circle", ],
-				privacy: "public", // public for now, changed to protected later
+				privacy: "protected",
 				user: $.playbook.user ? $.playbook.user.get("_id") : null, // add prop
 			};
 		},
@@ -638,7 +638,9 @@ $(function() {
 			} else {
 				$("body").append($("#login-template").html());
 				$("#login-container").fadeIn(350, "swing");
-				$("#login-page").fadeIn(350, "swing");
+				$("#login-page").fadeIn(350, "swing", function() {
+					$("#login-page .email-field").focus();
+				});
 				
 				$("#login").on("click", function(e) {
 					var user = {};
@@ -792,7 +794,11 @@ $(function() {
 		},
 		
 		newPlay: function() {
-			$.playbook.NewPlay.newPlay();
+			if ($.playbook.user) {
+				$.playbook.NewPlay.newPlay($.playbook.user.get("_id"), "user");
+			} else {
+				$.playbook.NewPlay.newPlay();
+			}
 			
 			coverScreen();
 			$("#whiteout").on("click", function() {
@@ -839,9 +845,11 @@ $(function() {
 		},
 		
 		initialize: function() {
+			_.bindAll(this, 'render', 'updateProfile');
+			
 			this.model.on('change', this.render, this);
 			
-			this.model.trigger("change");
+			this.render();
 		},
 		
 		render: function(bindEvents) {
@@ -2002,7 +2010,11 @@ $(function() {
 		},
 		
 		newPlay: function() {
-			$.playbook.NewPlay.newPlay();
+			if ($.playbook.user) {
+				$.playbook.NewPlay.newPlay($.playbook.user.get("_id"), "user");
+			} else {
+				$.playbook.NewPlay.newPlay();
+			}
 			
 			coverScreen();
 			$("#whiteout").on("click", function() {
@@ -2969,7 +2981,7 @@ $(function() {
 			$("#play-list-tabs").find(".my-plays").addClass("selected");
 			this.tab = "my-plays";
 			
-			this.data = {owner: $.playbook.user.get("_id")};
+			this.data = {owners: {ownerId: $.playbook.user.get("_id"), ownerType: "user"}};
 			this.filter(this.filterOptions);
 		},
 		
@@ -3109,8 +3121,8 @@ $(function() {
 		var play;
 		
 		return {
-			newPlay: function() {
-				play = new $.playbook.Play({owner: $.playbook.user ? $.playbook.user.get("_id") : null});
+			newPlay: function(ownerId, ownerType) {
+				play = new $.playbook.Play({owners: [{ownerId: ownerId, ownerType: ownerType}]});
 			},
 			
 			play: function() {
@@ -3187,11 +3199,6 @@ $(function() {
 			} else {
 				$.playbook.app.navigate("error/401", {trigger: true});
 			}
-			
-// 			var plays = new $.playbook.PlayCollection();
-			
-// 			var playsView = new $.playbook.PlayCollectionView({collection: plays});
-// 			var playsFilterView = new $.playbook.PlaysFilterView({collection: plays});
 		},
 		
 		showTeam: function(_id) {
@@ -3228,7 +3235,11 @@ $(function() {
 		});
 		
 		$("#new-play").on("click", function() {
-			$.playbook.NewPlay.newPlay();
+			if ($.playbook.user) {
+				$.playbook.NewPlay.newPlay($.playbook.user.get("_id"), "user");
+			} else {
+				$.playbook.NewPlay.newPlay();
+			}
 			
 			coverScreen();
 			$("#whiteout").on("click", function() {

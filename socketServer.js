@@ -44,6 +44,7 @@ var mongoose = require('mongoose')
   , User = require('./models.js').User(db)
   ,	Team = require('./models.js').Team(db)
   , Play = require('./models.js').Play(db)
+  ,	Owner = require('./models.js').Owner(db)
   , Set = require('./models.js').Set(db)
   , Path = require('./models.js').Path(db)
   , Annotation = require('./models.js').Annotation(db)
@@ -268,7 +269,8 @@ io.sockets.on('connection', function(socket) {
 			var jump = data.jump;
 			if (jump != null) delete data.jump;
 			
-			if (data.owner) {
+			if (data.owners) {
+				data.owners.ownerId = mongoose.Types.ObjectId(data.owners.ownerId);
 			} else if (data._id && data._id.$in) {
 			} else {
 				_.extend(data, {privacy: "public"});
@@ -298,12 +300,12 @@ io.sockets.on('connection', function(socket) {
 		
 		if(!_.isEmpty(data)) {
 			// Find based on query
-			if (data.owner) {
+			if (data.owners) {
+				data.owners.ownerId = mongoose.Types.ObjectId(data.owners.ownerId);
 			} else if (data._id && data._id.$in) {
 			} else {
 				_.extend(data, {privacy: "public"});
 			}
-			
 			Play.count(data, send_result);
 		} else {
 			Play.count({privacy: "public"}, send_result);
@@ -320,7 +322,7 @@ io.sockets.on('connection', function(socket) {
 			teamColors: data.teamColors,
 			teamShapes: data.teamShapes,
 			privacy: data.privacy,
-			owner: data.owner,
+			owners: data.owners,
 		});
 		newPlay.save();
 		
