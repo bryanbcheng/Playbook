@@ -2904,8 +2904,11 @@ $(function() {
 			this.collection.on('refresh', this.render, this);
 			this.collection.on('filter', this.filter, this);
 			
-			this.tab = "all-plays";
-			this.showAllPlays();
+			if ($.playbook.user) {
+				this.showMyPlays();
+			} else {		
+				this.showAllPlays();
+			}
 		},
 		
 		render: function() {
