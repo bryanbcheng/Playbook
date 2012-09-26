@@ -138,6 +138,20 @@ io.sockets.on('connection', function(socket) {
 		});
 	});
 
+	// users:read
+	socket.on('users:read', function(data, callback) {
+		var send_result = function(err, users) {
+			if (err) {
+				return callback(err);
+			}
+
+			callback(null, users);
+		};
+		
+		var selectFields = "name email";
+		User.find(data, selectFields, {sort: {_id : -1}}, send_result);
+	});
+
 	// teams:read
 	socket.on('teams:read', function(data, callback) {
 		var send_result = function(err, teams) {
@@ -180,7 +194,21 @@ io.sockets.on('connection', function(socket) {
 	
 	// team:read
 	socket.on('team:read', function(data, callback) {
-		// DO NOTHING FOR NOW
+		var send_result = function(err, team) {
+			if (err) {
+				return callback(err);
+			}
+			
+			if(team) {
+				return callback(null, team);
+			} else {
+				return callback(new Error("Could not find play"));
+			}
+		};
+		
+		if(data._id) {
+			Team.findById(data._id, send_result);
+		}
 	});
 	
 	// team:join

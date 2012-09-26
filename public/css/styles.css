@@ -2382,6 +2382,42 @@ body {
 	text-shadow: 0 1px 0 rgba(85, 196, 51, 0.4);
 }
 
+/* Team Views */
+
+#team-container h3, #team-panel h3 {
+	font-size: 30px;
+	font-weight: bold;
+	line-height: 36px;
+}
+
+#team-panel {
+
+}
+
+#member-list {
+	
+}
+
+#member-list .member-item {
+	height: 30px;
+	line-height: 30px;
+}
+
+#member-list .member-item a {
+	color: rgba(59, 191, 206, 1);
+	text-transform: capitalize;
+
+	transition: all .35s ease;
+	-moz-transition: all .35s ease;
+	-webkit-transition: all .35s ease;
+	-o-transition: all .35s ease;
+}
+
+#member-list .member-item a:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
 /* New Play Flow Views */
 
 #new-play-container {

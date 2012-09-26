@@ -447,9 +447,23 @@
 			</div>
 		</div>
 	</script>
-	
+		
 	<script type="text/template" id="team-template">
+		<div class="team-view">
+			<h3>{{name}}</h3>
+			
+		</div>
+	</script>
 	
+	<script type="text/template" id="team-members-template">
+		<div class="team-members-view">
+			<h3>Team Members</h3>
+			<ul id="member-list">
+				{{#users}}
+					<li id="{{_id}}" class="member-item"><a class="member-link">{{name}}</a></li>
+				{{/users}}
+			</ul>
+		</div>
 	</script>
 	
 	<!-- Plays Templates -->

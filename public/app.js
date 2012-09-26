@@ -35,6 +35,18 @@ $(function() {
 			this.trigger("change");
 		},
 	});
+		
+	$.playbook.Users = Backbone.Collection.extend({
+		model: $.playbook.User,
+		
+		initialize: function() {
+		
+		},
+		
+		url: "users",
+		
+		socket: socket,
+	});
 	
 	$.playbook.Team = Backbone.Model.extend({
 		idAttribute: "_id",
@@ -75,8 +87,6 @@ $(function() {
 		url: "teams",
 		
 		socket: socket,
-		
-		
 	});
 	
 	$.playbook.Article = Backbone.RelationalModel.extend({
@@ -1096,6 +1106,77 @@ $(function() {
 		hideForms: function() {
 			this.$el.find(".selected").removeClass("selected");
 			this.$el.find(".team-form").hide();
+		},
+	});
+	
+	$.playbook.TeamView = Backbone.View.extend({
+		el: $("#team-container"),
+		
+		template: $("#team-template").html(),
+		
+		events: {
+// 			"click .update"	: "updateProfile",
+		},
+		
+		initialize: function() {
+			this.model.on('change', this.render, this);
+			
+			this.model.fetch({
+				success: function(model, response) {
+// 					model.trigger('change');
+					// change triggered automatically
+				},
+				error: function(model, response) {
+					// navigate to error pages
+					$.playbook.app.navigate("error/" + response.status, {trigger: true});
+				},
+			});
+		},
+		
+		render: function(bindEvents) {
+			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
+			return this;
+		},
+	});
+	
+	$.playbook.TeamMembersView = Backbone.View.extend({
+		el: $("#team-panel"),
+		
+		tagName: "div",
+		className: "team-members-view",
+		
+		template: $("#team-members-template").html(),
+		
+		events: {
+			"click .member-link"	: "showUser",
+		},
+		
+		initialize: function(options) {
+			this.collection = new $.playbook.Users();
+			
+// 			_.bindAll(this, 'show', 'toggle', 'checkMouse', 'showJoinTeam', 'showCreateTeam', 'joinTeam', 'joinCallback', 'createTeam', 'hideForms');
+			this.collection.on('refresh', this.render, this);
+			
+			this.collection.fetch({
+				data: _.extend({}, {teams: options._id}),
+				success: function(collection, response) {
+					collection.trigger('refresh');
+				}
+			});
+		},
+		
+		render: function() {
+			this.$el.html(Mustache.render(this.template, {users: this.collection.toJSON()}));
+			
+			if (this.collection.length === 0) {
+				this.$el.find("#member-list").append("<li class='member-item'><span>No Members Joined...</span></li>");
+			}
+			
+			return this;
+		},
+		
+		showUser: function(e) {
+			$.playbook.app.navigate("user/" + $(e.target).closest(".member-item").attr("id"), {trigger: true});
 		},
 	});
 	
@@ -3115,10 +3196,9 @@ $(function() {
 			
 			$("#playbook").attr("class", "team");
 			
-// 			var plays = new $.playbook.PlayCollection();
-			
-// 			var playsView = new $.playbook.PlayCollectionView({collection: plays});
-// 			var playsFilterView = new $.playbook.PlaysFilterView({collection: plays});
+			var team = new $.playbook.Team({_id: _id});
+			var teamView = new $.playbook.TeamView({model: team});
+			var teamMembersView = new $.playbook.TeamMembersView({_id: _id});
 		},
 		
 		error: function(status) {
