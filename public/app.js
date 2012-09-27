@@ -1984,7 +1984,21 @@ $(function() {
 		
 		render: function(bindEvents) {
 			// Check if owner
-			this.model.set("isOwner", this.model.get("owner") && this.model.get("owner") === ($.playbook.user ? $.playbook.user.get("_id") : null), {silent: true});
+			var isOwner;
+			if (this.model.get("owners") && $.playbook.user) {
+				$.each(this.model.get("owners"), function(index, value) {
+					if (value.ownerType === "user" && value.ownerId === $.playbook.user.get("_id")) {
+						isOwner = true;
+						return false;
+					}
+				})
+				
+				if (!isOwner) isOwner = false;
+			} else {
+				isOwner = false;
+			}
+			
+			this.model.set("isOwner", isOwner, {silent: true});
 		
 			this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 			$("#play").append(this.el);

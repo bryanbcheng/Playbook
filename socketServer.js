@@ -381,6 +381,23 @@ io.sockets.on('connection', function(socket) {
 		callback(null, newPlay);
 	});
 	
+	var checkAccess = function(userId, ownerList) {
+		// get list of user's teams
+		var hasAccess = false;
+		_.each(ownerList, function(value, index, list) {
+			if (value.ownerType === "user") {
+				for (var attr in value.ownerId) {
+					console.log(attr);
+				}
+				if (value.ownerId.toString() === userId) hasAccess = true;
+			} else if (value.ownerType === "team") {
+				
+			}
+		});
+		
+		return hasAccess;
+	};
+	
 	// play:read
 	socket.on('play:read', function(data, callback) {
 		var send_result = function(err, play) {
@@ -393,7 +410,7 @@ io.sockets.on('connection', function(socket) {
 				if (play.privacy === "public" || play.privacy === "protected") {
 					return callback(null, play);
 				} else if (play.privacy === "private") {
-					if (play.owner == data.user) {
+					if (checkAccess(data.user, play.owners.toObject())) {
 						return callback(null, play);
 					} else {
 						return callback(errorResponse(401, "Permission denied."));
