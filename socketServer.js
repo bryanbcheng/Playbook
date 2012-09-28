@@ -381,21 +381,25 @@ io.sockets.on('connection', function(socket) {
 		callback(null, newPlay);
 	});
 	
-	var checkAccess = function(userId, ownerList) {
-		// get list of user's teams
-		var hasAccess = false;
-		_.each(ownerList, function(value, index, list) {
-			if (value.ownerType === "user") {
-				for (var attr in value.ownerId) {
-					console.log(attr);
+	var checkAccess = function(userId, ownerList, callback) {
+		User.findById(userId, function(err, user) {
+			var hasAccess = false;
+			// Convert from ObjectId to string for comparison
+			_.each(user.teams, function(value, index, list) {
+				list[index] = value.toString();
+			});
+			_.each(ownerList, function(value, index, list) {
+				if (value.ownerType === "user") {
+					if (value.ownerId.toString() === userId) hasAccess = true;
+				} else if (value.ownerType === "team") {
+					if (_.include(user.teams, value.ownerId.toString())) {
+						hasAccess = true;
+					}
 				}
-				if (value.ownerId.toString() === userId) hasAccess = true;
-			} else if (value.ownerType === "team") {
-				
-			}
+			});
+			
+			callback(hasAccess);
 		});
-		
-		return hasAccess;
 	};
 	
 	// play:read
@@ -410,11 +414,13 @@ io.sockets.on('connection', function(socket) {
 				if (play.privacy === "public" || play.privacy === "protected") {
 					return callback(null, play);
 				} else if (play.privacy === "private") {
-					if (checkAccess(data.user, play.owners.toObject())) {
-						return callback(null, play);
-					} else {
-						return callback(errorResponse(401, "Permission denied."));
-					}
+					checkAccess(data.user, play.owners.toObject(), function(hasAccess) {
+						if (hasAccess) {
+							return callback(null, play);
+						} else {
+							return callback(errorResponse(401, "Permission denied."));
+						}
+					});
 				}
 			} else {
 				return callback(new Error("Could not find play"));
@@ -571,6 +577,18 @@ io.sockets.on('connection', function(socket) {
 			socket.broadcast.emit('play/' + data._id + ':formation', play);
 // 			callback(null, play);
 		});
+	});
+	
+	// play:share
+	socket.on('play:share', function(data) {
+		Play.findOne({'_id' :data._id}, function(err, play) {
+			play.owners.push(data.owner);
+			
+			play.save();
+			
+			socket.emit('play/' + data._id + ':share', play);
+			socket.broadcast.emit('play/' + data._id + ':share', play);
+		});	
 	});
 	
 	// set:create

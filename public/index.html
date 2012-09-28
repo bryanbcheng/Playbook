@@ -533,47 +533,6 @@
 	
 	<script type="text/template" id="play-template">
 		<div class="actions">
-			<!-- 
-<div class="action-container new-play" title="New Play">
-				<div class="action-icon icon-half-file"></div>
-				<div class="action-name">New</div>
-			</div>
-			<div class="action-container new-formation" title="New Formation">
-				<div class="action-icon icon-half-show-thumbnails"></div>
-				<div class="action-name">Template</div>
-				
-				<div class="formations {{fieldType}}">
-					<ul class="ultimate-formations">
-						<li class="formation-option" data-value="vertical">Vertical Stack</li>
-						<li class="formation-option" data-value="horizontal">Horizontal Stack</li>
-						<li class="formation-option" data-value="side">Side Stack</li>
-						<li class="formation-option" data-value="split">Split Stack</li>
-						<li class="formation-option" data-value="l">L Stack</li>
-					</ul>
-					<ul class="soccer-formations">
-						<li class="formation-option" data-value="4-4-2">4-4-2 Formation</li>
-						<li class="formation-option" data-value="4-3-3">4-3-3 Formation</li>
-						<li class="formation-option" data-value="3-4-3">3-4-3 Formation</li>
-						<li class="formation-option" data-value="3-5-2">3-5-2 Formation</li>
-					</ul>
-					<ul class="football-formations">
-						<li class="formation-option" data-value="i">I Formation</li>
-						<li class="formation-option" data-value="pro">Pro Set Formation</li>
-						<li class="formation-option" data-value="shotgun">Shotgun Formation</li>
-						<li class="formation-option" data-value="spread">Spread Formation</li>
-						<li class="formation-option" data-value="4-3">4-3 Defense</li>
-						<li class="formation-option" data-value="3-4">3-4 Defense</li>
-						<li class="formation-option" data-value="4-2-5">4-2-5 Nickel</li>
-						<li class="formation-option" data-value="3-5-3">3-5-3 Nickel</li>
-					</ul>
-					<ul class="basketball-formations">
-						<li class="formation-option" data-value="threeOutTwoIn">3 Out 2 In</li>
-						<li class="formation-option" data-value="oneTwoTwoZone">1-2-2 Zone</li>
-						<li class="formation-option" data-value="twoThreeZone">2-3 Zone</li>
-					</ul>
-				</div>
-			</div>
- -->
 			<div class="action-container play-options" title="Play Options">
 				<div class="action-icon icon-half-cogwheel"></div>
 				<div class="action-name">Options</div>
@@ -604,6 +563,27 @@
 										<div class="option-icon icon-half-lock"></div>
 										<span class="option-title">Private</span>
 										<div class="option-sub icon-half-ok-2"></div>
+										<br class="clear" />
+									</li>
+								</ul>
+							</div>
+							<br class="clear" />
+						</li>
+						<li class="option option-menu share-play">
+							<div class="option-icon icon-half-share"></div>
+							<span class="option-title">Share</span>
+							<div class="option-sub icon-half-play"></div>
+							
+							<div class="submenu">
+								<ul>
+									<li class="suboption option share-option public-option" data-value="share-user">
+										<div class="option-icon icon-half-user-add"></div>
+										<span class="option-title">Share With User</span>
+										<br class="clear" />
+									</li>
+									<li class="suboption option share-option protected-option" data-value="share-team">
+										<div class="option-icon icon-half-group-add"></div>
+										<span class="option-title">Share With Team</span>
 										<br class="clear" />
 									</li>
 								</ul>
@@ -875,6 +855,36 @@
 			</div>
 			<br class="clear" />
 		</div>
+	</script>
+	
+	<!-- Sharing Template Pages -->
+	
+	<script type="text/template" id="share-team-template">
+		<div id="share-team">
+			<h1 class="popup-title">Share With Team</h1>
+			<span class="popup-subtitle">Choose a team to share this play with.</span>
+			<div id="share-team-list" class="share-prop" data-value="default">
+				<li class="selected">
+					<span>Choose a team...</span>
+				</li>
+				<ul class="share-list"></ul>
+			</div>
+			<div class="click-button cancel">Cancel</div>
+			<div class="click-button share">Share</div>
+		</div>
+	</script>
+	
+	<script type="text/template" id="share-user-template">
+		<div id="share-user">
+			<h1 class="popup-title">Share With User</h1>
+			COMING SOON!
+		</div>
+	</script>
+	
+	<script type="text/template" id="share-item-template">
+		<li class="share-option" data-value="{{_id}}">
+			<span>{{name}}</span>
+		</li>
 	</script>
 	
 	<!-- Static Template Pages -->

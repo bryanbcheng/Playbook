@@ -11,6 +11,16 @@ $(function() {
 		idAttribute: "_id",
 		
 		initialize: function() {
+			var model = this;
+			var teamsCollection = new $.playbook.Teams();
+			
+			teamsCollection.fetch({
+				data: _.extend({}, {players: model.get("_id")}),
+				success: function(collection, response) {
+					model.set("teamsList", collection);
+				}
+			});
+			
 			_.bindAll(this, 'serverChange');
 			if (!this.isNew()) {
 				this.ioBind('update', this.serverChange, this);
@@ -940,18 +950,13 @@ $(function() {
 		},
 		
 		initialize: function() {
-			this.collection = new $.playbook.Teams();
+			this.collection = $.playbook.user.get("teamsList");
 			this.showOrHide = false;
 		
 			_.bindAll(this, 'show', 'toggle', 'checkMouse', 'showJoinTeam', 'showCreateTeam', 'joinTeam', 'joinCallback', 'createTeam', 'hideForms');
 			this.collection.on('refresh', this.render, this);
 			
-			this.collection.fetch({
-				data: _.extend({}, {players: $.playbook.user.get("_id")}),
-				success: function(collection, response) {
-					collection.trigger('refresh');
-				}
-			});
+			this.collection.trigger('refresh');
 		},
 		
 		render: function() {
@@ -1975,6 +1980,7 @@ $(function() {
 			"mouseout .option-menu"		: "hideSuboptions",
 			
 			"click .privacy-option"	: "updatePrivacy",
+			"click .share-option"	: "showShare",
 			"click .help-option"	: "showHelp",
 		},
 		
@@ -2195,6 +2201,111 @@ $(function() {
 				
 				this.model.save({privacy: newValue}, {silent: true});
 			}
+		},
+		
+		showShare: function(e) {
+			var view = this;
+			var shareOption = $(e.target).closest(".share-option").data("value");
+			
+			var template = $("#" + shareOption + "-template").html();
+			
+			if (shareOption === "share-team") {
+				var templateObj = $(template);
+				
+				// this.get("owners")
+				var teams = $.extend({}, $.playbook.user.get("teamsList"));
+				teams.each(function(team) {
+					var itemHtml = Mustache.render($("#share-item-template").html(), team.toJSON());
+					templateObj.find("#share-team-list .share-list").append(itemHtml);
+				});
+				
+				template = $('<div>').append(templateObj.clone()).html();
+			}
+			
+			coverScreen();
+			
+			// generate popup
+			if ($("#popup-container")[0]) {
+				var popup = $("#popup-template").html();
+				var popupHtml = Mustache.render(popup, {contents: template});
+				
+				$("#popup-container").html($(popupHtml).html());
+			} else {
+				var popup = $("#popup-template").html();
+				$("body").append(Mustache.render(popup, {contents: template}));
+				
+				// Close event handlers
+				// TODO: use once?
+				$("#whiteout").on("click", function() {
+					$("#whiteout").off("click");
+					$("#popup-container").fadeOut(350, "swing", function() {
+						$("#popup-container").remove();
+					});
+					uncoverScreen();
+				});
+				
+				$("#popup-container").fadeIn(350, "swing");	
+			}
+			
+			//showSharePropOptions
+			$(".share-prop").on("mouseover", function(e) {
+				$(e.target).closest(".share-prop").find(".share-list").removeClass("fading");
+				$(e.target).closest(".share-prop").find(".share-list").css({height: "auto", opacity: 1, visibility: "visible"});
+			});
+			
+			//hideSharePropOptions
+			$(".share-prop").on("mouseout", function(e) {
+				if ($(e.relatedTarget).closest(".share-prop").attr("id") == $(e.target).closest(".share-prop").attr("id")) return;
+				
+				$(e.target).closest(".share-prop").find(".share-list").addClass("fading");
+				$(e.target).closest(".share-prop").find(".share-list").css({height: 0, opacity: 0, visibility: "hidden"});
+			});
+			
+			// fadeSharePropOptions
+			$(".share-option").on("mouseover", function(e) {
+				$(e.target).closest(".share-prop").addClass("share-faded");
+			});
+			
+			//unfadeSharePropOptions
+			$(".share-option").on("mouseout", function(e) {
+				$(e.target).closest(".share-prop").removeClass("share-faded");
+			});
+			
+			//selectOption
+			$(".share-option").on("click", function(e) {
+				var shareProp = $(e.target).closest(".share-prop");
+				var shareOption = $(e.target).closest(".share-option");
+				
+				if (shareProp.data("value") !== shareOption.data("value")) {
+					shareProp.data("value", shareOption.data("value"));
+					shareProp.find(".selected").html(shareOption.html());
+				}
+			});
+			
+			$(".share").on("click", function(e) {
+				var owner = {};
+				owner.ownerId = $("#" + shareOption + " .share-prop").data("value");
+				
+				if (owner.ownerId === "default") return;
+				
+				if (shareOption === "share-user") {
+					owner.ownerType = "user";
+				} else if (shareOption === "share-team") {
+					owner.ownerType = "team";
+				}
+				
+				var io = view.model.socket;
+				
+				io.emit("play:share", {_id: view.model.get("_id"), owner: owner});
+			});
+			
+			$("#popup-close, .cancel").on("click", function(e) {
+				$("#whiteout").off("click");
+				$("#popup-container").fadeOut(350, "swing", function() {
+					$("#popup-container").remove();
+				});
+				uncoverScreen();
+			});
 		},
 		
 		showHelp: function(e) {

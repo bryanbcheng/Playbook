@@ -33,7 +33,7 @@
 .icon-snowflake{ background-position: -48px -96px; }
 .icon-fire{ background-position: -96px -96px; }
 .icon-cogwheels{ background-position: -144px -96px; }
-.icon-parents{ background-position: -192px -96px; }
+.icon-group-add{ background-position: -192px -96px; }
 .icon-binoculars{ background-position: -240px -96px; }
 .icon-road{ background-position: -288px -96px; }
 .icon-search{ background-position: -336px -96px; }
@@ -444,7 +444,7 @@
 .icon-half-snowflake{ background-position: -24px -48px; }
 .icon-half-fire{ background-position: -48px -48px; }
 .icon-half-cogwheels{ background-position: -72px -48px; }
-.icon-half-parents{ background-position: -96px -48px; }
+.icon-half-group-add{ background-position: -96px -48px; }
 .icon-half-binoculars{ background-position: -120px -48px; }
 .icon-half-road{ background-position: -144px -48px; }
 .icon-half-search{ background-position: -168px -48px; }
@@ -855,7 +855,7 @@
 .icon-half-snowflake{ background-position: -32px -64px; }
 .icon-half-fire{ background-position: -64px -64px; }
 .icon-half-cogwheels{ background-position: -96px -64px; }
-.icon-half-parents{ background-position: -128px -64px; }
+.icon-half-group-add{ background-position: -128px -64px; }
 .icon-half-binoculars{ background-position: -160px -64px; }
 .icon-half-road{ background-position: -192px -64px; }
 .icon-half-search{ background-position: -224px -64px; }
